@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+korean-lunar-calendar
+mediapipe
+opencv-python
+python-multipart
+numpy

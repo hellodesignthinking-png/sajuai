@@ -1,0 +1,5 @@
+{
+  "name": "Fate-Sync Anime AI",
+  "description": "사주, 관상, 손금, MBTI를 통합 분석하여 당신과 가장 닮은 만화 캐릭터로 변신하고 운명을 확인하세요.",
+  "requestFramePermissions": ["camera", "microphone"]
+}
