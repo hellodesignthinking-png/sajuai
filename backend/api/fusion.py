@@ -352,7 +352,7 @@ async def analyze_fusion(data: FusionRequest):
 
         # 3. Gemini 호출
         model = genai.GenerativeModel(
-            model_name="gemini-2.0-flash",
+            model_name="gemini-2.5-flash",
             generation_config={
                 "temperature": 0.85,
                 "top_p": 0.95,
