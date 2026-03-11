@@ -23,7 +23,7 @@ class StoryInput(BaseModel):
 @router.post("/generate")
 async def generate_story(data: StoryInput):
     try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-flash-latest')
         primary_element = max(data.elements, key=lambda k: data.elements[k])
         
         gyeokguk = data.pro_oracle.get('gyeokguk', 'Unknown') if data.pro_oracle else 'Unknown'
@@ -52,6 +52,8 @@ async def generate_story(data: StoryInput):
         [주의사항]
         - 반드시 "당신의 3D 디지털 트윈 계측치가 증명하듯..." 같은 문구를 사용해 기술적 신뢰감을 부여하세요.
         - 언어: 한국어. 문체: 고풍스러우면서도 통찰력 있는 모던 오리엔탈 스타일.
+        - ⚠️ 중요: 사용자의 MBTI({data.mbti})를 절대 기준으로 삼고 다른 MBTI를 유추하거나 언급하지 마세요. (MBTI 정합성 유지)
+        - 오리지널 애니메이션/영화 캐릭터를 한 명 매칭하여 서술에 포함해 주세요. 이 캐릭터는 사용자의 사주와 MBTI 시너지에 완벽히 부합해야 합니다.
 
         마크다운 형식으로 출력해 주세요.
         """

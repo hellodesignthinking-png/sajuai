@@ -1,8 +1,13 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from backend.api.saju import router as saju_router
 from backend.api.vision import router as vision_router
 from backend.api.synergy import router as synergy_router
 from backend.api.story import router as story_router
 from backend.api.matching import router as matching_router
+from backend.api.image import router as image_router
+from backend.api.chat import router as chat_router
+from backend.api.fusion import router as fusion_router
 
 app = FastAPI(title="Fate-Sync API")
 
@@ -19,6 +24,9 @@ app.include_router(vision_router, prefix="/api")
 app.include_router(synergy_router, prefix="/api")
 app.include_router(story_router, prefix="/api")
 app.include_router(matching_router, prefix="/api")
+app.include_router(image_router, prefix="/api")
+app.include_router(chat_router, prefix="/api")
+app.include_router(fusion_router, prefix="/api")
 
 @app.get("/")
 def read_root():

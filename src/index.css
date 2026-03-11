@@ -6,11 +6,16 @@
   --font-sans: "Noto Sans KR", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Noto Serif KR", "Cormorant Garamond", serif;
   --font-display: "Anton", sans-serif;
-  
+
   --color-mystic-bg: #060612;
-  --color-mystic-accent: #a78bfa;
-  --color-mystic-gold: #fbbf24;
+  --color-mystic-accent: var(--dynamic-accent, #a78bfa);
+  --color-mystic-gold: var(--dynamic-gold, #fbbf24);
   --color-mystic-ink: #0a0a1a;
+}
+
+:root {
+  --dynamic-gold: #fbbf24;
+  --dynamic-accent: #a78bfa;
 }
 
 body {
@@ -48,7 +53,7 @@ body {
 .atmosphere {
   position: fixed;
   inset: 0;
-  background: 
+  background:
     radial-gradient(circle at 50% -10%, rgba(167, 139, 250, 0.12) 0%, transparent 60%),
     radial-gradient(circle at 10% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
     radial-gradient(circle at 90% 10%, rgba(251, 191, 36, 0.04) 0%, transparent 40%),
@@ -61,17 +66,18 @@ body {
 
 /* Refined Glass morphism - Gold/Purple Oriental Style */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(24px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+  backdrop-filter: blur(40px);
   border-radius: 32px;
-  border: 1px solid rgba(167, 139, 250, 0.08);
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  border: 1px solid rgba(167, 139, 250, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .glass-panel:hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(167, 139, 250, 0.15);
-  box-shadow: 0 0 40px rgba(167, 139, 250, 0.05);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  border-color: rgba(167, 139, 250, 0.35);
+  box-shadow: 0 15px 45px rgba(167, 139, 250, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* Gold line accent for premium feel */
@@ -91,8 +97,17 @@ body {
 
 /* Slam-in animation */
 @keyframes slamIn {
-  0% { transform: scale(1.1) translateY(20px); opacity: 0; filter: blur(10px); }
-  100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
+  0% {
+    transform: scale(1.1) translateY(20px);
+    opacity: 0;
+    filter: blur(10px);
+  }
+
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    filter: blur(0);
+  }
 }
 
 .animate-slam {
@@ -101,8 +116,13 @@ body {
 
 /* Floating shimmer for premium cards */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .shimmer {
@@ -113,8 +133,15 @@ body {
 
 /* Pulsating glow for synergy score */
 @keyframes pulseGlow {
-  0%, 100% { filter: drop-shadow(0 0 10px rgba(167, 139, 250, 0.3)); }
-  50% { filter: drop-shadow(0 0 25px rgba(167, 139, 250, 0.6)); }
+
+  0%,
+  100% {
+    filter: drop-shadow(0 0 10px rgba(167, 139, 250, 0.3));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 25px rgba(167, 139, 250, 0.6));
+  }
 }
 
 .pulse-glow {
@@ -139,6 +166,23 @@ body {
   background: rgba(167, 139, 250, 0.25);
 }
 
+/* Input / date / time 색상 강제 (iOS Safari 포함) */
+input[type="date"],
+input[type="time"],
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  color-scheme: dark;
+  color: #ffffff;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(148, 163, 184, 0.8);
+  /* slate-400 */
+}
+
 /* Prose overrides for markdown rendering */
 .prose p {
   margin-top: 0.5em;
@@ -153,24 +197,285 @@ body {
   .no-print {
     display: none !important;
   }
+
   body {
     background: white !important;
-    color: black !important;
+    color: #1a1a2e !important;
+    font-family: "Noto Serif KR", Georgia, serif !important;
+    font-size: 11pt !important;
+    line-height: 1.8 !important;
   }
+
+  /* Thesis page breaks */
+  #report-content>div {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  #saju,
+  #mbti,
+  #physiognomy,
+  #palmistry,
+  #timeline,
+  #advice,
+  #alternative-solution {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  /* Data labels stay sans-serif for clarity */
+  .font-black,
+  .uppercase,
+  [class*="tracking-"] {
+    font-family: "Noto Sans KR", "Inter", sans-serif !important;
+  }
+
   .glass-panel {
     background: #f8fafc !important;
     border: 1px solid #e2e8f0 !important;
     backdrop-filter: none !important;
   }
-  .text-white, .text-indigo-100, .text-slate-300, .text-slate-400, .text-slate-500 {
+
+  .text-white,
+  .text-indigo-100,
+  .text-white,
+  .text-[var(--z-indigo)],
+  .text-[var(--z-indigo)] {
     color: #1e293b !important;
   }
+
   .text-transparent {
     color: #4f46e5 !important;
     background: none !important;
     -webkit-background-clip: unset !important;
   }
-  .shadow-2xl, .shadow-xl {
+
+  .shadow-2xl,
+  .shadow-xl {
     box-shadow: none !important;
   }
+
+  /* Print-only cover header */
+  #summary {
+    page-break-after: always;
+    break-after: page;
+  }
+}
+
+/* ━━━ Mobile Responsive ━━━ */
+@media (max-width: 768px) {
+  body {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  .glass-panel {
+    border-radius: 1.25rem;
+    padding: 1.25rem;
+  }
+
+  /* Ensure touch targets are at least 44px */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+  }
+
+  /* Fix overflow on small screens */
+  .overflow-x-hidden {
+    overflow-x: hidden;
+  }
+
+  /* Reduce animations on mobile for performance */
+  .animate-slam {
+    animation-duration: 0.4s;
+  }
+
+  /* Scrollbar hide on mobile */
+  ::-webkit-scrollbar {
+    width: 2px;
+  }
+}
+
+/* Safe area for notched phones */
+@supports (padding: max(0px)) {
+  .safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  .safe-area-top {
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+  }
+}
+
+/* Prevent horizontal overflow globally */
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Mobile bottom nav spacing */
+@media (max-width: 1024px) {
+  #report-content {
+    padding-bottom: 5rem !important;
+  }
+}
+
+/* Mobile result page typography */
+@media (max-width: 768px) {
+
+  #report-content h2,
+  #report-content h3 {
+    font-size: 1.1rem !important;
+    line-height: 1.3;
+  }
+
+  #report-content .display {
+    font-size: 1.25rem !important;
+  }
+
+  #report-content .serif {
+    font-size: 0.875rem !important;
+  }
+
+  /* Tighter padding for report cards on mobile */
+  #report-content .glass-panel {
+    padding: 1.25rem !important;
+  }
+
+  /* Markdown prose mobile sizing */
+  #report-content .prose,
+  #report-content .text-sm {
+    font-size: 0.8rem !important;
+    line-height: 1.6;
+  }
+
+  /* Reduce large blur effects on mobile for performance */
+  [class*="blur-\["] {
+    filter: blur(40px) !important;
+  }
+}
+
+/* ━━━ V49: High-End Refinement Animations ━━━ */
+@keyframes sweep {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+    opacity: 0;
+  }
+}
+
+.animate-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-sweep::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right,
+      transparent,
+      rgba(251, 191, 36, 0.4),
+      rgba(255, 255, 255, 0.6),
+      rgba(251, 191, 36, 0.4),
+      transparent);
+  animation: sweep 4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes goldLeaf {
+
+  0%,
+  100% {
+    filter: contrast(1.1) brightness(1.1) saturate(1.2) drop-shadow(0 0 5px rgba(251, 191, 36, 0.5));
+  }
+
+  50% {
+    filter: contrast(1.3) brightness(1.4) saturate(1.5) drop-shadow(0 0 20px rgba(251, 191, 36, 0.8));
+  }
+}
+
+.gold-leaf-text {
+  background: linear-gradient(135deg, #f5d87d 0%, #D4AF37 40%, #b8860b 60%, #f5d87d 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: goldLeaf 3s infinite ease-in-out, shimmer 8s infinite linear;
+}
+
+/* Custom Cursor Star Dust */
+.star-dust {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  background: #D4AF37;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  filter: blur(1px);
+}
+
+/* Smooth Easing for Scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ━━━ Robust 3D Flip Utilities ━━━ */
+.card-container {
+  perspective: 1000px;
+}
+
+.card-flipper {
+  transition: transform 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.group:hover .card-flipper {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.card-back {
+  transform: rotateY(180deg);
 }

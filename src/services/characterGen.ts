@@ -1,15 +1,15 @@
 /**
  * ============================================================
  *  Fate-Sync: 타로카드 이미지 생성 엔진
- *  
- *  1차: Gemini AI 이미지 생성 (캐릭터 + 타로 스타일)
+ *
+ *  1차: /api/generate-image (Vercel Serverless → Gemini AI)
  *  2차: Canvas2D 합성 fallback (사용자 얼굴 + 타로 프레임)
+ *
+ *  ✅ SECURE: API 키는 서버 환경변수에만 존재
  * ============================================================
  */
 
-import { GoogleGenAI } from '@google/genai';
-
-// ─── AI 타로 이미지 생성 (Gemini) ─────────────────
+// ─── AI 타로 이미지 생성 (→ /api/generate-image) ──────────
 export async function generateAiTarotImage(
   visualPrompt: string,
   numeral: string,
@@ -17,136 +17,95 @@ export async function generateAiTarotImage(
   cardNameEN: string,
   faceImageBase64?: string
 ): Promise<string | null> {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!apiKey) {
-    console.warn('TAROT-AI: API Key 없음');
-    return null;
-  }
-
-  console.log('TAROT-AI: Gemini 이미지 생성 시작...');
+  console.log('TAROT-AI: /api/generate-image 요청 시작...');
 
   // 얼굴 사진이 있을 때와 없을 때 프롬프트 분기
   let fullPrompt: string;
-  
+
   if (faceImageBase64) {
-    // ★ visualPrompt에서 캐릭터 이름을 의상 설명으로만 사용
-    // 캐릭터 이름이 AI가 그 캐릭터 얼굴을 그리게 만드는 근본 원인
     const costumeOnly = visualPrompt
       .replace(/tony stark/gi, 'a genius inventor')
       .replace(/iron man/gi, 'a high-tech armored hero')
       .replace(/아이언맨/g, '첨단 갑옷을 입은 영웅')
       .replace(/토니 스타크/g, '천재 발명가');
 
-    fullPrompt = `You are painting a PORTRAIT of the person in the attached photo, styled as a classic Rider-Waite tarot card.
+    fullPrompt = `You are painting a character portrait of the person in the attached photo, styled as a classic Rider-Waite tarot card crossed with high-quality Anime style (e.g., Studio Ghibli, Demon Slayer, or One Piece).
 
-⚠️ ABSOLUTE RULE: The person in the attached photo is your ONLY reference for the face. 
-You are NOT drawing any fictional character's face. You are drawing THIS REAL PERSON.
+⚠️ ABSOLUTE RULE: The person in the attached photo is your ONLY reference for the face, but properly stylized into anime art.
 
 STEP 1 — STUDY THE PHOTO CAREFULLY:
 Look at the attached photo and memorize:
 • Their EXACT hairstyle (length, color, texture, parting)
-• Any hat, cap, headband, hairpin, glasses → MUST appear in the card
-• Facial hair: If they have NO beard/mustache/goatee, the card character must be COMPLETELY CLEAN-SHAVEN
-• Their face shape, eye shape (monolid/double eyelid), nose, lips, eyebrow shape
-• Their skin tone
+• Any headwear or glasses MUST appear in the card
+• Facial hair must match the photo
+• Their face shape, eye shape, nose, and lips
 
-STEP 2 — PAINT THEIR PORTRAIT IN TAROT STYLE:
-• This is a PORTRAIT of the photo's person — NOT a fictional character
-• Anyone who knows this person should recognize them immediately
-• Paint in Rider-Waite tarot style: bold outlines, medieval woodcut aesthetic, rich flat colors
-• Their hairstyle from the photo MUST be kept exactly (if wearing hat → draw the hat)
-• Their facial hair status MUST match (no beard in photo = absolutely no beard in card)
-• Do NOT add any facial hair, scars, or features that are NOT in the photo
+STEP 2 — PAINT THEIR PORTRAIT IN ANIME TAROT STYLE:
+• Draw the user's face in a premium Anime style (vibrant colors, expressive eyes, stylized shading).
+• Frame the character within a 19th-century classic 'Rider-Waite' Tarot Card border and symbolic layout.
+• Keep the user's real hairstyle and facial hair carefully adapted to the anime aesthetic.
 
 STEP 3 — ADD COSTUME & CARD ELEMENTS:
-Card: "${numeral} - ${cardNameEN}"
-• Dress this person in a costume inspired by: ${costumeOnly}
-• The costume is ONLY about clothing/armor/props — NOT the character's face or hair
-• Keep the person's own hairstyle and head accessories from the photo
-• The face belongs to the PHOTO PERSON, the outfit belongs to the character
-
-Art style:
-• Authentic 1909 Rider-Waite tarot deck illustration
-• Medieval woodcut lines, Renaissance color palette, hand-painted look
-• Ornate golden tarot card border frame
-• Roman numeral "${numeral}" at top, "${userName}" at bottom
-• Mystical celestial background
-• 2:3 ratio, upper body portrait
+Card Name: "${numeral} - ${cardNameEN}"
+• Dress the anime portrait character in a costume inspired by: ${costumeOnly}
+• The face belongs to the PHOTO PERSON (anime-stylized), the outfit and props belong to the tarot character "${cardNameEN}".
+• Add the 'FATE-SYNC' logo elegantly near the top border.
+• Roman numeral "${numeral}" at the top, and "${cardNameEN}" written clearly at the bottom.
+• Background should be mystical and fit the character's tarot theme.
+• Professional tarot card proportions (2:3).
 
 Generate ONLY the tarot card image.`;
   } else {
-    // 얼굴 없음 모드: 캐릭터 기반
-    fullPrompt = `Create a classic Rider-Waite tarot card "${numeral} - ${cardNameEN}".
+    fullPrompt = `Create a classic Rider-Waite tarot card "${numeral} - ${cardNameEN}" fused with high-quality Anime style (Studio Ghibli / Demon Slayer aesthetic).
 
 Character: ${visualPrompt}
 
 Art direction:
-- Classic Rider-Waite Renaissance painting style
-- Upper body portrait, ornate golden border, mystical symbols
-- Roman numeral "${numeral}" at top, "${userName}" at bottom
-- Professional tarot card proportions (2:3)
-- Medieval woodcut/engraving aesthetic
+- Anime character set within a classic 19th-century Rider-Waite Tarot bordering and symbolic layout.
+- Upper body portrait, ornate golden border, mystical symbols.
+- Include 'FATE-SYNC' logo elegantly near the top border.
+- Roman numeral "${numeral}" at the top, and "${cardNameEN}" clearly at the bottom.
+- Professional tarot card proportions (2:3).
 
 Generate ONLY the tarot card image.`;
   }
 
   try {
-    const genAI = new GoogleGenAI({ apiKey });
-    
-    const modelNames = [
-      'gemini-2.0-flash-exp-image-generation',
-      'gemini-2.5-flash-image',
-    ];
-
-    // 멀티모달 컨텐츠 구성 (텍스트 + 얼굴 이미지)
-    let contents: any;
+    // 얼굴 이미지 Base64 준비
+    let faceData: string | undefined;
+    let faceMime: string | undefined;
     if (faceImageBase64) {
-      // base64에서 데이터 부분만 추출
-      const base64Data = faceImageBase64.includes(',') 
-        ? faceImageBase64.split(',')[1] 
-        : faceImageBase64;
-      const mimeType = faceImageBase64.includes('image/png') ? 'image/png' : 'image/jpeg';
-      
-      contents = [
-        { text: fullPrompt },
-        { inlineData: { mimeType, data: base64Data } }
-      ];
-      console.log('TAROT-AI: 얼굴 이미지 포함하여 요청');
-    } else {
-      contents = fullPrompt;
-    }
-
-    for (const modelName of modelNames) {
-      try {
-        console.log(`TAROT-AI: 모델 ${modelName} 시도...`);
-        
-        const response = await genAI.models.generateContent({
-          model: modelName,
-          contents,
-          config: {
-            responseModalities: ['TEXT', 'IMAGE'],
-          },
-        });
-
-        if (response.candidates && response.candidates[0]?.content?.parts) {
-          for (const part of response.candidates[0].content.parts) {
-            if (part.inlineData && part.inlineData.mimeType?.startsWith('image/')) {
-              const base64 = part.inlineData.data;
-              const mime = part.inlineData.mimeType;
-              console.log(`TAROT-AI: ✅ 이미지 생성 성공 (${modelName}, ${mime})`);
-              return `data:${mime};base64,${base64}`;
-            }
-          }
-        }
-        console.warn(`TAROT-AI: ${modelName} 응답에 이미지 없음`);
-      } catch (modelErr: any) {
-        console.warn(`TAROT-AI: ${modelName} 실패:`, modelErr.message || modelErr);
-        continue;
+      if (faceImageBase64.includes(',')) {
+        const parts = faceImageBase64.split(',');
+        faceData = parts[1];
+        faceMime = faceImageBase64.includes('image/png') ? 'image/png' : 'image/jpeg';
+      } else {
+        faceData = faceImageBase64;
+        faceMime = 'image/jpeg';
       }
     }
-    
-    console.warn('TAROT-AI: 모든 모델 시도 실패');
-    return null;
+
+    const body: Record<string, any> = { prompt: fullPrompt };
+    if (faceData && faceMime) {
+      body.faceImageBase64 = faceData;
+      body.faceMimeType = faceMime;
+    }
+
+    const res = await fetch('http://localhost:8000/api/generate-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      console.warn('TAROT-AI: 서버 오류:', e.error);
+      return null;
+    }
+
+    const { imageBase64, mimeType } = await res.json();
+    console.log('TAROT-AI: ✅ 이미지 생성 성공');
+    return `data:${mimeType};base64,${imageBase64}`;
   } catch (err) {
     console.error('TAROT-AI: 전체 실패:', err);
     return null;
@@ -190,7 +149,7 @@ export async function generateTarotCard(
   ctx.save();
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  
+
   // 로마 숫자
   ctx.font = 'bold 28px "Noto Serif KR", Georgia, "Times New Roman", serif';
   ctx.fillStyle = colors.gold;
@@ -202,16 +161,16 @@ export async function generateTarotCard(
 
   // ━━━ 4. 사용자 얼굴 — 회화 스타일 변환 ━━━
   const imgArea = { x: 55, y: 80, w: W - 110, h: H - 280 };
-  
+
   try {
     const faceImg = await loadImage(faceImageBase64);
-    
+
     // 임시 캔버스에서 아트 필터 처리
     const artCanvas = document.createElement('canvas');
     artCanvas.width = imgArea.w;
     artCanvas.height = imgArea.h;
     const artCtx = artCanvas.getContext('2d')!;
-    
+
     // 이미지 중앙 크롭
     const srcRatio = faceImg.width / faceImg.height;
     const dstRatio = imgArea.w / imgArea.h;
@@ -237,7 +196,7 @@ export async function generateTarotCard(
     artCtx.globalCompositeOperation = 'source-over';
 
     // 아트 필터 3: 비네팅 (가장자리 어둡게)
-    const vignette = artCtx.createRadialGradient(imgArea.w/2, imgArea.h/2, imgArea.w*0.25, imgArea.w/2, imgArea.h/2, imgArea.w*0.65);
+    const vignette = artCtx.createRadialGradient(imgArea.w / 2, imgArea.h / 2, imgArea.w * 0.25, imgArea.w / 2, imgArea.h / 2, imgArea.w * 0.65);
     vignette.addColorStop(0, 'rgba(0,0,0,0)');
     vignette.addColorStop(0.7, 'rgba(0,0,0,0.15)');
     vignette.addColorStop(1, 'rgba(0,0,0,0.6)');
@@ -281,7 +240,7 @@ export async function generateTarotCard(
     // 이미지 없으면 신비 배경
     ctx.save();
     drawArchShape(ctx, imgArea.x, imgArea.y, imgArea.w, imgArea.h, 24);
-    const fallback = ctx.createRadialGradient(W/2, imgArea.y + imgArea.h/2, 30, W/2, imgArea.y + imgArea.h/2, imgArea.w/2);
+    const fallback = ctx.createRadialGradient(W / 2, imgArea.y + imgArea.h / 2, 30, W / 2, imgArea.y + imgArea.h / 2, imgArea.w / 2);
     fallback.addColorStop(0, colors.center);
     fallback.addColorStop(1, '#0d0618');
     ctx.fillStyle = fallback;
@@ -291,10 +250,10 @@ export async function generateTarotCard(
 
   // ━━━ 5. 하단: 카드 이름 + 장식 ━━━
   const lowerY = H - 160;
-  
+
   // 구분 장식선
   drawDecorativeLine(ctx, 80, lowerY - 10, W - 80, colors.gold);
-  
+
   // 한글 카드 이름
   ctx.save();
   ctx.textAlign = 'center';
@@ -305,7 +264,7 @@ export async function generateTarotCard(
   ctx.shadowBlur = 15;
   ctx.fillText(cardNameKR, W / 2, lowerY + 25);
   ctx.shadowBlur = 0;
-  
+
   // 영어 이름
   ctx.font = 'italic 16px Georgia, "Times New Roman", serif';
   ctx.fillStyle = `${colors.gold}AA`;
@@ -382,13 +341,13 @@ function drawOrnateFrame(ctx: CanvasRenderingContext2D, W: number, H: number, co
   ctx.shadowBlur = 10;
   ctx.stroke();
   ctx.shadowBlur = 0;
-  
+
   // 내부 프레임
   roundRect(ctx, 25, 25, W - 50, H - 50, 12);
   ctx.strokeStyle = `${colors.gold}40`;
   ctx.lineWidth = 1;
   ctx.stroke();
-  
+
   // 코너 장식 (4개)
   const corners = [
     { x: 25, y: 25, rot: 0 },
@@ -419,7 +378,7 @@ function drawOrnateFrame(ctx: CanvasRenderingContext2D, W: number, H: number, co
 // 장식 구분선
 function drawDecorativeLine(ctx: CanvasRenderingContext2D, x1: number, y: number, x2: number, color: string) {
   const midX = (x1 + x2) / 2;
-  
+
   // 그래디언트 라인
   const grad = ctx.createLinearGradient(x1, 0, x2, 0);
   grad.addColorStop(0, 'transparent');
@@ -427,14 +386,14 @@ function drawDecorativeLine(ctx: CanvasRenderingContext2D, x1: number, y: number
   grad.addColorStop(0.5, color);
   grad.addColorStop(0.85, `${color}60`);
   grad.addColorStop(1, 'transparent');
-  
+
   ctx.strokeStyle = grad;
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(x1, y);
   ctx.lineTo(x2, y);
   ctx.stroke();
-  
+
   // 중앙 다이아몬드
   ctx.fillStyle = color;
   ctx.beginPath();

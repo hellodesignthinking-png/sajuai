@@ -1,0 +1,54 @@
+# dependencies
+node_modules
+.vercel
+dist
+dist-ssr
+*.local
+.env
+.venv
+venv
+
+# python
+__pycache__
+*.pyc
+.ipynb_checkpoints
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+
+# Editor
+.vscode
+.idea
+
+# trash / temp scripts
+patch_*.py
+fix_*.py
+tmp_*.py
+fix.py
+fix3.py
+patch.py
+patch2.py
+patch3.py
+patch4.py
+refactor.py
+setup_synergy.py
+test_gemini.py
+backend_synergy_patch.py
+dev-api-server.js
+*.txt
+*.yaml
+*.js
+!frontend/**/*.js
+!backend/**/*.js
+!src/**/*.js
+!*.config.js
+!vercel.json
+
+# Build files
+out.json
+*.task
