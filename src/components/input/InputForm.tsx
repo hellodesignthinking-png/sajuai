@@ -55,7 +55,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
   const isStep1Valid = form.birthYear && form.birthMonth && form.birthDay;
 
   const labelStyle: React.CSSProperties = {
-    fontSize: '13px',
+    fontSize: '14px',
     color: 'var(--text-muted)',
     marginBottom: '8px',
     display: 'block',
@@ -79,7 +79,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        padding: '40px 20px 80px',
+        padding: '24px 16px 80px',
       }}
     >
       {/* Header */}
@@ -152,7 +152,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
           background: 'var(--card)',
           border: '1px solid var(--border)',
           borderRadius: '20px',
-          padding: '32px',
+          padding: '24px 20px',
         }}
       >
         <AnimatePresence mode="wait">
@@ -336,7 +336,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                       type="button"
                       onClick={() => set('mbti', type)}
                       style={{
-                        padding: '8px 4px',
+                        padding: '10px 4px',
                         borderRadius: '8px',
                         border: `1px solid ${form.mbti === type ? 'var(--gold)' : 'var(--border)'}`,
                         background:
@@ -345,10 +345,11 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                             : 'rgba(255,255,255,0.02)',
                         color: form.mbti === type ? 'var(--gold)' : 'var(--text-muted)',
                         cursor: 'pointer',
-                        fontSize: '12px',
+                        fontSize: '13px',
                         fontWeight: form.mbti === type ? 700 : 400,
                         transition: 'all 0.15s',
                         fontFamily: 'Noto Sans KR, sans-serif',
+                        minHeight: '44px',
                       }}
                     >
                       {type}

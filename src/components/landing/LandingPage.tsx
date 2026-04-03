@@ -106,7 +106,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
           zIndex: 1,
           maxWidth: '860px',
           margin: '0 auto',
-          padding: '40px 24px 80px',
+          padding: '24px 16px 80px',
         }}
       >
         {/* Nav */}
@@ -118,7 +118,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '80px',
+            marginBottom: '48px',
           }}
         >
           <span
@@ -260,9 +260,9 @@ export default function LandingPage({ onStart }: LandingPageProps) {
           transition={{ duration: 0.6, delay: 0.7 }}
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '16px',
-            marginBottom: '80px',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+            gap: '12px',
+            marginBottom: '48px',
           }}
         >
           {t.landing.features.map((f, i) => (
@@ -301,8 +301,8 @@ export default function LandingPage({ onStart }: LandingPageProps) {
             background: 'var(--card)',
             border: '1px solid var(--border-gold)',
             borderRadius: '20px',
-            padding: '32px',
-            marginBottom: '60px',
+            padding: '24px 16px',
+            marginBottom: '48px',
           }}
         >
           <p
@@ -319,8 +319,8 @@ export default function LandingPage({ onStart }: LandingPageProps) {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '16px',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: '12px',
             }}
           >
             {t.landing.resultItems.map((item, i) => (

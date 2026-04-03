@@ -26,7 +26,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <h2
       style={{
-        fontSize: '17px',
+        fontSize: '18px',
         fontWeight: 700,
         color: 'var(--text)',
         marginBottom: '14px',
@@ -82,7 +82,7 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
         style={{
           background: 'linear-gradient(180deg, rgba(212,175,55,0.08) 0%, transparent 100%)',
           borderBottom: '1px solid var(--border)',
-          padding: '40px 24px 32px',
+          padding: '32px 16px 24px',
           textAlign: 'center',
           marginBottom: '40px',
         }}
@@ -115,9 +115,9 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
         style={{
           maxWidth: '720px',
           margin: '0 auto',
-          padding: '0 20px',
+          padding: '0 16px',
           display: 'grid',
-          gap: '36px',
+          gap: '32px',
         }}
       >
         {/* ── FREE: 1. 책사의 한마디 ─────────────────────── */}
