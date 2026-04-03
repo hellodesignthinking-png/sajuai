@@ -1,23 +1,14 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useLang } from '../../i18n';
+import LanguageToggle from '../common/LanguageToggle';
 
 interface LandingPageProps {
   onStart: () => void;
 }
 
-const FEATURES = [
-  { icon: '🔯', title: '사주팔자 분석', desc: '천간지지로 타고난 운의 구조를 계산' },
-  { icon: '♈', title: '서양 점성술', desc: '행성 위치와 하우스로 타이밍을 분석' },
-  { icon: '🔢', title: '수비학', desc: '생년월일 수비학으로 인생 주기를 계산' },
-];
-
-const QUOTES = [
-  '때를 아는 자가 천하를 얻는다',
-  '知彼知己 百戰不殆',
-  '지피지기 백전불태',
-];
-
 export default function LandingPage({ onStart }: LandingPageProps) {
+  const { t, lang } = useLang();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Subtle particle background
@@ -138,17 +129,20 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               letterSpacing: '2px',
             }}
           >
-            AI 책사
+            {t.appName}
           </span>
-          <span
-            style={{
-              fontSize: '12px',
-              color: 'var(--text-muted)',
-              letterSpacing: '1px',
-            }}
-          >
-            CAREER STRATEGIST
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span
+              style={{
+                fontSize: '12px',
+                color: 'var(--text-muted)',
+                letterSpacing: '1px',
+              }}
+            >
+              {t.tagline}
+            </span>
+            <LanguageToggle />
+          </div>
         </motion.div>
 
         {/* Hero */}
@@ -161,7 +155,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
             style={{ marginBottom: '32px' }}
           >
             <span className="tag" style={{ fontSize: '12px', letterSpacing: '2px' }}>
-              ⚔️ 제갈량 AI 책사
+              {t.landing.badge}
             </span>
           </motion.div>
 
@@ -178,9 +172,20 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               letterSpacing: '-1px',
             }}
           >
-            <span className="gold-text">당신의 때</span>를
-            <br />
-            알아라
+            {lang === 'ko' ? (
+              <>
+                <span className="gold-text">{t.landing.heroTitle1}</span>
+                {t.landing.heroTitle2}
+                <br />
+                {t.landing.heroTitle3}
+              </>
+            ) : (
+              <>
+                {t.landing.heroTitle1}
+                <br />
+                <span className="gold-text">{t.landing.heroTitle3}</span>
+              </>
+            )}
           </motion.h1>
 
           {/* Subtitle */}
@@ -196,11 +201,12 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               lineHeight: 1.8,
             }}
           >
-            지금이 봄인가, 겨울인가.
+            {t.landing.subtitle1}
             <br />
-            AI 책사가 사주·점성술·수비학으로
+            {t.landing.subtitle2}
             <br />
-            <strong style={{ color: 'var(--text)' }}>당신의 커리어 전략</strong>을 계산합니다.
+            <strong style={{ color: 'var(--text)' }}>{t.landing.subtitle3strong}</strong>
+            {t.landing.subtitle3end}
           </motion.p>
 
           {/* Quote */}
@@ -216,7 +222,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               fontFamily: 'Noto Serif KR, serif',
             }}
           >
-            " {QUOTES[0]} "
+            " {t.landing.quote} "
           </motion.p>
 
           {/* CTA */}
@@ -230,7 +236,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
             whileTap={{ scale: 0.98 }}
             style={{ fontSize: '17px', padding: '16px 48px' }}
           >
-            ⚔️ 지금 내 때 분석하기
+            {t.landing.ctaStart}
           </motion.button>
 
           <motion.p
@@ -243,7 +249,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               color: 'var(--text-muted)',
             }}
           >
-            무료 · 약 30초 소요
+            {t.landing.ctaFree}
           </motion.p>
         </div>
 
@@ -259,7 +265,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
             marginBottom: '80px',
           }}
         >
-          {FEATURES.map((f, i) => (
+          {t.landing.features.map((f, i) => (
             <motion.div
               key={i}
               className="card"
@@ -308,7 +314,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               textTransform: 'uppercase',
             }}
           >
-            분석 결과
+            {t.landing.resultsLabel}
           </p>
           <div
             style={{
@@ -317,14 +323,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               gap: '16px',
             }}
           >
-            {[
-              { icon: '🏆', text: '커리어 전성기 Top 5' },
-              { icon: '📊', text: '생애 주기 운 그래프' },
-              { icon: '🌸', text: '현재 커리어 계절' },
-              { icon: '📅', text: '올해 분기별 전략' },
-              { icon: '🧠', text: 'MBTI 시너지 분석' },
-              { icon: '⚡', text: '책사의 날카로운 한마디' },
-            ].map((item, i) => (
+            {t.landing.resultItems.map((item, i) => (
               <div
                 key={i}
                 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
@@ -348,7 +347,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
             onClick={onStart}
             style={{ fontSize: '16px' }}
           >
-            무료로 시작하기 →
+            {t.landing.ctaBottom}
           </button>
         </motion.div>
       </div>

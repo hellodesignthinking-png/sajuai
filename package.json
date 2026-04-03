@@ -15,11 +15,15 @@
     "@tosspayments/tosspayments-sdk": "^2.6.0",
     "framer-motion": "^11.0.0",
     "html2canvas": "^1.4.1",
+    "i18next": "^26.0.3",
     "lucide-react": "^0.562.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "react-i18next": "^17.0.2",
+    "react-router-dom": "^7.14.0",
     "recharts": "^2.12.7",
-    "tailwindcss": "^4.2.1"
+    "tailwindcss": "^4.2.1",
+    "vite-plugin-pwa": "^1.2.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

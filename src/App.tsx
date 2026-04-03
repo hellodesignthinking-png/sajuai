@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { UserInput, AnalysisResult } from './types';
 import { useAnalysis } from './hooks/useAnalysis';
@@ -8,6 +9,11 @@ import InputForm from './components/input/InputForm';
 import LoadingScreen from './components/common/LoadingScreen';
 import ResultDashboard from './components/result/ResultDashboard';
 import PaymentModal from './components/payment/PaymentModal';
+import Admin from './pages/Admin';
+import { LangContext, translations } from './i18n';
+import type { Lang } from './i18n';
+import { crossValidateResult } from './services/gemini';
+import type { CrossValidationResult } from './services/gemini';
 
 type LocalScreen = 'landing' | 'input';
 
@@ -18,14 +24,88 @@ const pageTransition = {
   transition: { duration: 0.3 },
 };
 
-// Inner component so it can access PaymentContext
+// ──────────────────────────────────────────────
+// Notification helper (D-day alerts)
+// ──────────────────────────────────────────────
+function requestNotificationPermission(lang: Lang) {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') {
+    Notification.requestPermission().then((perm) => {
+      if (perm === 'granted') {
+        const msg = lang === 'ko' ? 'D-day 알림이 설정되었습니다!' : 'D-day notifications enabled!';
+        new Notification('AI 책사', { body: msg, icon: '/favicon.ico' });
+      }
+    });
+  }
+}
+
+// ──────────────────────────────────────────────
+// Admin analytics logger (no PII)
+// ──────────────────────────────────────────────
+function logAnalysis(input: UserInput) {
+  try {
+    const total = parseInt(localStorage.getItem('sajuai_total_analyses') ?? '0', 10) + 1;
+    localStorage.setItem('sajuai_total_analyses', String(total));
+
+    const rawLogs = localStorage.getItem('sajuai_analysis_logs');
+    const logs = rawLogs ? JSON.parse(rawLogs) : [];
+    const decade = `${Math.floor(input.birthYear / 10) * 10}s`;
+    logs.push({
+      time: new Date().toLocaleString('ko-KR'),
+      mbti: input.mbti,
+      gender: input.gender,
+      birthDecade: decade,
+    });
+    // Keep last 100 logs
+    if (logs.length > 100) logs.splice(0, logs.length - 100);
+    localStorage.setItem('sajuai_analysis_logs', JSON.stringify(logs));
+  } catch {
+    // localStorage may be disabled
+  }
+}
+
+// ──────────────────────────────────────────────
+// Main app (inside providers)
+// ──────────────────────────────────────────────
 function AppInner() {
   const [screen, setScreen] = useState<LocalScreen>('landing');
   const [isPaymentReturn, setIsPaymentReturn] = useState(false);
+  const [validation, setValidation] = useState<CrossValidationResult | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
+  const [lang, setLang] = useState<Lang>(() => {
+    return (localStorage.getItem('sajuai_lang') as Lang) ?? 'ko';
+  });
+
   const { state, result, error, userInput, analyze, restore, retry, reset } = useAnalysis();
   const { markAsPaid, isModalOpen } = usePayment();
 
-  // Handle Toss payment redirect return on mount
+  const t = translations[lang];
+
+  // Persist language choice
+  useEffect(() => {
+    localStorage.setItem('sajuai_lang', lang);
+  }, [lang]);
+
+  // Request notification permission after successful analysis
+  useEffect(() => {
+    if (state === 'success' && result && userInput) {
+      requestNotificationPermission(lang);
+    }
+  }, [state, result, userInput, lang]);
+
+  // Cross-validate when result is ready
+  useEffect(() => {
+    if (state === 'success' && result && userInput) {
+      setIsValidating(true);
+      crossValidateResult(userInput, result, lang)
+        .then((v) => setValidation(v))
+        .finally(() => setIsValidating(false));
+    } else {
+      setValidation(null);
+    }
+  }, [state, result, userInput, lang]);
+
+  // Handle Toss payment redirect
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const paymentKey = params.get('paymentKey');
@@ -34,17 +114,14 @@ function AppInner() {
     const paymentFail = params.get('payment');
 
     if (paymentFail === 'fail') {
-      // Clean URL
       window.history.replaceState({}, '', window.location.pathname);
       return;
     }
 
     if (paymentKey && orderId && amount) {
-      // Clean URL immediately
       window.history.replaceState({}, '', window.location.pathname);
       setIsPaymentReturn(true);
 
-      // Restore saved analysis result from sessionStorage
       try {
         const savedResult = sessionStorage.getItem('sajuai_result');
         const savedInput = sessionStorage.getItem('sajuai_user_input');
@@ -54,10 +131,9 @@ function AppInner() {
           restore(parsedResult, parsedInput);
         }
       } catch {
-        // sessionStorage parse failed — start fresh
+        // sessionStorage parse failed
       }
 
-      // Confirm payment with backend
       fetch('/api/payment/confirm', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -67,10 +143,11 @@ function AppInner() {
         .then((data) => {
           if (data.success) {
             markAsPaid();
+            const payments = parseInt(localStorage.getItem('sajuai_total_payments') ?? '0', 10) + 1;
+            localStorage.setItem('sajuai_total_payments', String(payments));
           }
         })
         .catch(() => {
-          // Even if confirm fails, mark as paid optimistically for test mode
           markAsPaid();
         })
         .finally(() => {
@@ -90,93 +167,124 @@ function AppInner() {
 
   const handleStart = () => setScreen('input');
   const handleBack = () => setScreen('landing');
-  const handleSubmit = (input: UserInput) => analyze(input);
+  const handleSubmit = (input: UserInput) => {
+    logAnalysis(input);
+    analyze(input, lang);
+  };
   const handleReset = () => {
     reset();
+    setValidation(null);
     setScreen('landing');
   };
 
   return (
-    <>
-      <AnimatePresence mode="wait">
-        {view === 'landing' && (
-          <motion.div key="landing" {...pageTransition}>
-            <LandingPage onStart={handleStart} />
-          </motion.div>
-        )}
+    <LangContext.Provider value={{ lang, setLang, t }}>
+      <>
+        <AnimatePresence mode="wait">
+          {view === 'landing' && (
+            <motion.div key="landing" {...pageTransition}>
+              <LandingPage onStart={handleStart} />
+            </motion.div>
+          )}
 
-        {view === 'input' && (
-          <motion.div key="input" {...pageTransition}>
-            <InputForm onSubmit={handleSubmit} onBack={handleBack} />
-          </motion.div>
-        )}
+          {view === 'input' && (
+            <motion.div key="input" {...pageTransition}>
+              <InputForm onSubmit={handleSubmit} onBack={handleBack} />
+            </motion.div>
+          )}
 
-        {view === 'loading' && (
-          <motion.div key="loading" {...pageTransition}>
-            <LoadingScreen />
-          </motion.div>
-        )}
+          {view === 'loading' && (
+            <motion.div key="loading" {...pageTransition}>
+              <LoadingScreen />
+            </motion.div>
+          )}
 
-        {view === 'result' && result && userInput && (
-          <motion.div key="result" {...pageTransition}>
-            <ResultDashboard result={result} userInput={userInput} onReset={handleReset} />
-          </motion.div>
-        )}
+          {view === 'result' && result && userInput && (
+            <motion.div key="result" {...pageTransition}>
+              {/* Cross-validation badge */}
+              {(isValidating || validation) && (
+                <div style={{
+                  position: 'fixed', top: '16px', right: '16px', zIndex: 1000,
+                  background: isValidating ? 'rgba(0,0,0,0.7)' : 'rgba(20,20,20,0.95)',
+                  border: '1px solid rgba(212,175,55,0.4)',
+                  borderRadius: '20px', padding: '6px 14px',
+                  fontSize: '12px', color: isValidating ? 'var(--text-muted)' : 'var(--gold)',
+                  backdropFilter: 'blur(8px)',
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                }}>
+                  {isValidating ? (
+                    <>{lang === 'ko' ? 'AI 교차 검증 중...' : 'AI cross-validating...'}</>
+                  ) : validation ? (
+                    <>{validation.message}</>
+                  ) : null}
+                </div>
+              )}
+              <ResultDashboard result={result} userInput={userInput} onReset={handleReset} />
+            </motion.div>
+          )}
 
-        {view === 'error' && (
-          <motion.div key="error" {...pageTransition}>
-            <div
-              style={{
-                minHeight: '100vh',
-                background: 'var(--bg)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '24px',
-                gap: '24px',
-                textAlign: 'center',
-              }}
-            >
-              <span style={{ fontSize: '48px' }}>⚠️</span>
-              <div>
-                <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '8px' }}>
-                  분석 중 오류가 발생했습니다
-                </h2>
-                <p
-                  style={{
-                    fontSize: '14px',
-                    color: 'var(--text-muted)',
-                    maxWidth: '400px',
-                    lineHeight: 1.7,
-                  }}
-                >
-                  {error}
-                </p>
+          {view === 'error' && (
+            <motion.div key="error" {...pageTransition}>
+              <div
+                style={{
+                  minHeight: '100vh',
+                  background: 'var(--bg)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '24px',
+                  gap: '24px',
+                  textAlign: 'center',
+                }}
+              >
+                <span style={{ fontSize: '48px' }}>⚠️</span>
+                <div>
+                  <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '8px' }}>
+                    {t.error.title}
+                  </h2>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      color: 'var(--text-muted)',
+                      maxWidth: '400px',
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    {error}
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <button className="btn-primary" onClick={retry}>
+                    {t.error.retry}
+                  </button>
+                  <button className="btn-secondary" onClick={handleReset}>
+                    {t.error.home}
+                  </button>
+                </div>
               </div>
-              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
-                <button className="btn-primary" onClick={retry}>
-                  다시 시도하기
-                </button>
-                <button className="btn-secondary" onClick={handleReset}>
-                  처음으로
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      {/* Payment modal — rendered outside AnimatePresence so it stays on top */}
-      {isModalOpen && <PaymentModal />}
-    </>
+        {isModalOpen && <PaymentModal />}
+      </>
+    </LangContext.Provider>
   );
 }
 
+// ──────────────────────────────────────────────
+// Root with routing
+// ──────────────────────────────────────────────
 export default function App() {
   return (
-    <PaymentProvider>
-      <AppInner />
-    </PaymentProvider>
+    <BrowserRouter>
+      <PaymentProvider>
+        <Routes>
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/*" element={<AppInner />} />
+        </Routes>
+      </PaymentProvider>
+    </BrowserRouter>
   );
 }
