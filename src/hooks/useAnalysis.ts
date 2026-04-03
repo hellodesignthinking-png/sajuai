@@ -10,13 +10,13 @@ export function useAnalysis() {
   const [error, setError] = useState<string | null>(null);
   const [userInput, setUserInput] = useState<UserInput | null>(null);
 
-  const analyze = useCallback(async (input: UserInput) => {
+  const analyze = useCallback(async (input: UserInput, lang: 'ko' | 'en' = 'ko') => {
     setState('loading');
     setError(null);
     setUserInput(input);
 
     try {
-      const data = await analyzeCareer(input);
+      const data = await analyzeCareer(input, lang);
       setResult(data);
       setState('success');
     } catch (err) {
