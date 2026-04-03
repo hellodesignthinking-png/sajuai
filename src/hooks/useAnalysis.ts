@@ -27,6 +27,12 @@ export function useAnalysis() {
     }
   }, []);
 
+  const restore = useCallback((savedResult: AnalysisResult, savedInput: UserInput) => {
+    setResult(savedResult);
+    setUserInput(savedInput);
+    setState('success');
+  }, []);
+
   const retry = useCallback(() => {
     if (userInput) {
       analyze(userInput);
@@ -40,5 +46,5 @@ export function useAnalysis() {
     setUserInput(null);
   }, []);
 
-  return { state, result, error, userInput, analyze, retry, reset };
+  return { state, result, error, userInput, analyze, restore, retry, reset };
 }

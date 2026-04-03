@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import type { AnalysisResult, UserInput } from '../../types';
 import GoldenYearsChart from '../charts/GoldenYearsChart';
@@ -12,6 +13,8 @@ import NetworkingGuide from './NetworkingGuide';
 import GrowthMissions from './GrowthMissions';
 import VirtueChallenge from '../social/VirtueChallenge';
 import ShareSection from '../social/ShareSection';
+import PaywallOverlay from '../payment/PaywallOverlay';
+import PricingCard from '../payment/PricingCard';
 
 interface Props {
   result: AnalysisResult;
@@ -57,11 +60,20 @@ const fadeUp = {
 
 export default function ResultDashboard({ result, userInput, onReset }: Props) {
   const age = new Date().getFullYear() - userInput.birthYear;
-  const peakYear = result.top5_golden_years?.length
-    ? [...result.top5_golden_years].sort((a, b) => b.score - a.score)[0].year
-    : new Date().getFullYear();
-
+  const sortedYears = [...result.top5_golden_years].sort((a, b) => b.score - a.score);
+  const topYear = sortedYears[0];
+  const peakYear = topYear?.year ?? new Date().getFullYear();
   const calLabel = userInput.calendarType === 'lunar' ? '음력' : '양력';
+
+  // Save result to sessionStorage so it can be restored after Toss payment redirect
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('sajuai_result', JSON.stringify(result));
+      sessionStorage.setItem('sajuai_user_input', JSON.stringify(userInput));
+    } catch {
+      // sessionStorage not available
+    }
+  }, [result, userInput]);
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', padding: '0 0 80px' }}>
@@ -108,49 +120,87 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
           gap: '36px',
         }}
       >
-        {/* ── 1. 책사의 한마디 ─────────────────────────── */}
+        {/* ── FREE: 1. 책사의 한마디 ─────────────────────── */}
         <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.1 }}>
           <SharpFeedback feedback={result.sharp_feedback} />
         </motion.section>
 
         <SectionDivider />
 
-        {/* ── 2. 현재 커리어 계절 ───────────────────────── */}
+        {/* ── FREE: 2. 현재 커리어 계절 ───────────────────── */}
         <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.15 }}>
           <SectionTitle>🌸 현재 커리어 계절</SectionTitle>
           <SeasonCard season={result.current_season} details={result.season_details} />
         </motion.section>
 
-        {/* ── 3. 12년 계절 주기 (Phase 2) ──────────────── */}
-        {result.season_cycle?.length > 0 && (
+        {/* ── FREE: 3. 전성기 #1 티저 ─────────────────────── */}
+        {topYear && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.2 }}>
-            <SectionTitle>🔄 커리어 12년 주기</SectionTitle>
-            <SeasonCycle cycle={result.season_cycle} peakYear={peakYear} />
-          </motion.section>
-        )}
-
-        {/* ── 4. 계절 심층 가이드 (Phase 2) ────────────── */}
-        {result.season_guidance && (
-          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.25 }}>
-            <SectionTitle>📖 계절별 심층 가이드</SectionTitle>
-            <SeasonGuidance guidance={result.season_guidance} season={result.current_season} />
+            <SectionTitle>🏆 나의 최고 전성기</SectionTitle>
+            <div className="card">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div
+                  style={{
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, var(--gold) 0%, #b8882a 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '22px',
+                    flexShrink: 0,
+                  }}
+                >
+                  👑
+                </div>
+                <div>
+                  <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                    커리어 최정점 해
+                  </p>
+                  <p style={{ fontSize: '28px', fontWeight: 900, color: 'var(--gold)', lineHeight: 1 }}>
+                    {topYear.year}년
+                  </p>
+                  <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    {topYear.reason}
+                  </p>
+                </div>
+              </div>
+              <div
+                style={{
+                  marginTop: '16px',
+                  padding: '12px 14px',
+                  background: 'rgba(212,175,55,0.06)',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(212,175,55,0.15)',
+                  fontSize: '13px',
+                  color: 'var(--text-muted)',
+                }}
+              >
+                🔒 Top 2~5 전성기 + 상세 분석은 프리미엄에서 확인하세요
+              </div>
+            </div>
           </motion.section>
         )}
 
         <SectionDivider />
 
-        {/* ── 5. 전성기 Top 5 ───────────────────────────── */}
+        {/* ── PRICING CTA ─────────────────────────────────── */}
+        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.25 }}>
+          <PricingCard />
+        </motion.section>
+
+        {/* ── PREMIUM: 4. 전성기 Top 5 전체 ───────────────── */}
         <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.3 }}>
-          <SectionTitle>🏆 전성기 Top 5</SectionTitle>
-          <div className="card">
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
-              커리어 정점이 될 연도 Top 5 (점수 기준 시각화)
-            </p>
-            <GoldenYearsChart data={result.top5_golden_years} />
-            <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
-              {[...result.top5_golden_years]
-                .sort((a, b) => b.score - a.score)
-                .map((y, i) => (
+          <SectionTitle>🏆 전성기 Top 5 상세 분석</SectionTitle>
+          <PaywallOverlay>
+            <div className="card">
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
+                커리어 정점이 될 연도 Top 5 (점수 기준 시각화)
+              </p>
+              <GoldenYearsChart data={result.top5_golden_years} />
+              <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
+                {sortedYears.map((y, i) => (
                   <div key={y.year} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                     <span
                       style={{
@@ -197,93 +247,124 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
                     </div>
                   </div>
                 ))}
+              </div>
             </div>
-          </div>
+          </PaywallOverlay>
         </motion.section>
 
-        {/* ── 6. 생애 주기 그래프 ──────────────────────── */}
-        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.35 }}>
+        {/* ── PREMIUM: 5. 생애 주기 그래프 ────────────────── */}
+        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.32 }}>
           <SectionTitle>📊 생애 주기 운 그래프</SectionTitle>
-          <div className="card">
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
-              10년 단위 커리어 기회/위기 점수
-            </p>
-            <LifeCycleChart data={result.life_cycle_scores} currentAge={age} />
-            <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
-              {result.life_cycle_scores.map((l) => (
-                <div key={l.age_range} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                  <span
-                    style={{
-                      fontSize: '13px',
-                      fontWeight: 700,
-                      color: 'var(--gold)',
-                      minWidth: '40px',
-                      marginTop: '2px',
-                    }}
-                  >
-                    {l.age_range}
-                  </span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                      <div className="score-bar" style={{ flex: 1 }}>
-                        <div className="score-bar-fill" style={{ width: `${l.score}%` }} />
+          <PaywallOverlay>
+            <div className="card">
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
+                10년 단위 커리어 기회/위기 점수
+              </p>
+              <LifeCycleChart data={result.life_cycle_scores} currentAge={age} />
+              <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
+                {result.life_cycle_scores.map((l) => (
+                  <div key={l.age_range} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                    <span
+                      style={{
+                        fontSize: '13px',
+                        fontWeight: 700,
+                        color: 'var(--gold)',
+                        minWidth: '40px',
+                        marginTop: '2px',
+                      }}
+                    >
+                      {l.age_range}
+                    </span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                        <div className="score-bar" style={{ flex: 1 }}>
+                          <div className="score-bar-fill" style={{ width: `${l.score}%` }} />
+                        </div>
+                        <span style={{ fontSize: '12px', color: 'var(--text-muted)', minWidth: '30px' }}>
+                          {l.score}
+                        </span>
                       </div>
-                      <span style={{ fontSize: '12px', color: 'var(--text-muted)', minWidth: '30px' }}>
-                        {l.score}
-                      </span>
+                      <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                        {l.description}
+                      </p>
                     </div>
-                    <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-                      {l.description}
-                    </p>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          </PaywallOverlay>
         </motion.section>
+
+        {/* ── PREMIUM: 6. 12년 계절 주기 ──────────────────── */}
+        {result.season_cycle?.length > 0 && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.34 }}>
+            <SectionTitle>🔄 커리어 12년 주기</SectionTitle>
+            <PaywallOverlay>
+              <SeasonCycle cycle={result.season_cycle} peakYear={peakYear} />
+            </PaywallOverlay>
+          </motion.section>
+        )}
+
+        {/* ── PREMIUM: 7. 계절 심층 가이드 ────────────────── */}
+        {result.season_guidance && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.36 }}>
+            <SectionTitle>📖 계절별 심층 가이드</SectionTitle>
+            <PaywallOverlay>
+              <SeasonGuidance guidance={result.season_guidance} season={result.current_season} />
+            </PaywallOverlay>
+          </motion.section>
+        )}
 
         <SectionDivider />
 
-        {/* ── 7. 올해 분기별 전략 ──────────────────────── */}
-        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.4 }}>
+        {/* ── PREMIUM: 8. 올해 분기별 전략 ────────────────── */}
+        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.38 }}>
           <SectionTitle>📅 올해 분기별 전략</SectionTitle>
-          <YearlyStrategy data={result.yearly_strategy} />
+          <PaywallOverlay>
+            <YearlyStrategy data={result.yearly_strategy} />
+          </PaywallOverlay>
         </motion.section>
 
-        {/* ── 8. 성장 미션 3종 (Phase 2) ───────────────── */}
+        {/* ── PREMIUM: 9. 성장 미션 3종 ───────────────────── */}
         {result.growth_missions?.length > 0 && (
-          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.42 }}>
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.4 }}>
             <SectionTitle>🚀 성장 미션 3종</SectionTitle>
-            <GrowthMissions missions={result.growth_missions} />
+            <PaywallOverlay>
+              <GrowthMissions missions={result.growth_missions} />
+            </PaywallOverlay>
           </motion.section>
         )}
 
         <SectionDivider />
 
-        {/* ── 9. 네트워킹 가이드 (Phase 2) ─────────────── */}
+        {/* ── PREMIUM: 10. 네트워킹 가이드 ────────────────── */}
         {result.networking_guide && (
-          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.45 }}>
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.42 }}>
             <SectionTitle>🤝 지금 만나야 할 사람</SectionTitle>
-            <NetworkingGuide guide={result.networking_guide} season={result.current_season} />
+            <PaywallOverlay>
+              <NetworkingGuide guide={result.networking_guide} season={result.current_season} />
+            </PaywallOverlay>
           </motion.section>
         )}
 
-        {/* ── 10. MBTI 시너지 ───────────────────────────── */}
-        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.48 }}>
+        {/* ── PREMIUM: 11. MBTI 시너지 ─────────────────────── */}
+        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.44 }}>
           <SectionTitle>🧠 MBTI 시너지 분석</SectionTitle>
-          <MBTICard data={result.mbti_integration} />
+          <PaywallOverlay>
+            <MBTICard data={result.mbti_integration} />
+          </PaywallOverlay>
         </motion.section>
 
         <SectionDivider />
 
-        {/* ── 11. 덕 쌓기 챌린지 (Phase 3) ────────────── */}
-        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.5 }}>
+        {/* ── FREE: 12. 덕 쌓기 챌린지 ────────────────────── */}
+        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.48 }}>
           <SectionTitle>🌿 덕 쌓기 챌린지</SectionTitle>
           <VirtueChallenge />
         </motion.section>
 
-        {/* ── 12. 공유 카드 + 바이럴 (Phase 3) ─────────── */}
-        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.52 }}>
+        {/* ── FREE: 13. 공유 카드 ──────────────────────────── */}
+        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.5 }}>
           <SectionTitle>🔮 좋은 기운 나누기</SectionTitle>
           <ShareSection result={result} userInput={userInput} peakYear={peakYear} />
         </motion.section>
@@ -291,7 +372,7 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
         {/* ── Reset Button ──────────────────────────────── */}
         <motion.div
           {...fadeUp}
-          transition={{ duration: 0.5, delay: 0.55 }}
+          transition={{ duration: 0.5, delay: 0.52 }}
           style={{ paddingTop: '8px' }}
         >
           <button className="btn-secondary" onClick={onReset} style={{ width: '100%' }}>
@@ -299,7 +380,6 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
           </button>
         </motion.div>
 
-        {/* Disclaimer */}
         <p
           style={{
             fontSize: '12px',
