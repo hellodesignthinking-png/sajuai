@@ -1,6 +1,51 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+function extractJSON(text: string): string {
+  // 마크다운 코드블록 제거
+  let cleaned = text.replace(/```json\s*/g, '').replace(/```\s*/g, '');
+  cleaned = cleaned.trim();
+
+  // JSON 객체/배열 경계 추출 (앞뒤 불필요한 텍스트 제거)
+  const firstBrace = cleaned.indexOf('{');
+  const firstBracket = cleaned.indexOf('[');
+  let start = -1;
+  if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
+    start = firstBrace;
+  } else if (firstBracket !== -1) {
+    start = firstBracket;
+  }
+  if (start > 0) cleaned = cleaned.slice(start);
+
+  // 파싱 성공하면 그대로 반환
+  try {
+    JSON.parse(cleaned);
+    return cleaned;
+  } catch {
+    // 잘린 JSON 복구 시도
+    let fixed = cleaned;
+
+    // 마지막 완전한 필드까지만 잘라내기 (마지막 쉼표 이후 불완전한 부분 제거)
+    const lastComma = fixed.lastIndexOf(',');
+    const lastClose = Math.max(fixed.lastIndexOf('}'), fixed.lastIndexOf(']'));
+    if (lastComma > lastClose) {
+      fixed = fixed.slice(0, lastComma);
+    }
+
+    // 열린 따옴표 닫기
+    const quoteCount = (fixed.match(/(?<!\\)"/g) || []).length;
+    if (quoteCount % 2 !== 0) fixed += '"';
+
+    // 열린 배열/객체 닫기
+    const openBrackets = (fixed.match(/\[/g) || []).length - (fixed.match(/\]/g) || []).length;
+    const openBraces = (fixed.match(/\{/g) || []).length - (fixed.match(/\}/g) || []).length;
+    for (let i = 0; i < openBrackets; i++) fixed += ']';
+    for (let i = 0; i < openBraces; i++) fixed += '}';
+
+    return fixed;
+  }
+}
+
 export const config = {
   maxDuration: 60,
 };
@@ -261,11 +306,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       const currentYear = new Date().getFullYear();
       const prompt = buildPrompt(input, currentYear, lang);
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
-      // Strip markdown code fences if model wraps response
-      const clean = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
-      const parsed = JSON.parse(clean);
+
+      let parsed: any;
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        const result = await model.generateContent(prompt);
+        const text = result.response.text();
+        try {
+          parsed = JSON.parse(extractJSON(text));
+          break;
+        } catch (parseErr) {
+          if (attempt === 3) throw new Error(`JSON 파싱 실패 (3회 시도): ${(parseErr as Error).message}`);
+          console.warn(`[api/saju] JSON parse attempt ${attempt} failed, retrying...`);
+        }
+      }
 
       return res.status(200).json({
         ...parsed,
@@ -308,7 +361,7 @@ Independently recalculate if these values are valid per saju/astrology principle
       try {
         const result = await validationModel.generateContent(prompt);
         const text = result.response.text();
-        const parsed = JSON.parse(text);
+        const parsed = JSON.parse(extractJSON(text));
 
         const confidence = parsed.agreement_score ?? 80;
         const validated = parsed.top5_match && parsed.season_match;
