@@ -5,17 +5,8 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
-    },
-    {
       "source": "/((?!api).*)",
       "destination": "/index.html"
     }
-  ],
-
-  "env": {
-    "VITE_GEMINI_API_KEY": "AIzaSyCKbZeI380EP5T79Zxk8h54NNdw2mSoC8Q",
-    "GEMINI_API_KEY": "AIzaSyCKbZeI380EP5T79Zxk8h54NNdw2mSoC8Q"
-  }
+  ]
 }
