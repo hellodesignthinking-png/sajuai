@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import type { AnalysisResult, UserInput } from '../../types';
 import GoldenYearsChart from '../charts/GoldenYearsChart';
@@ -11,8 +10,8 @@ import SeasonCycle from './SeasonCycle';
 import SeasonGuidance from './SeasonGuidance';
 import NetworkingGuide from './NetworkingGuide';
 import GrowthMissions from './GrowthMissions';
-import VirtueChallenge from '../virtue/VirtueChallenge';
-import SharePanel from '../share/SharePanel';
+import VirtueChallenge from '../social/VirtueChallenge';
+import ShareSection from '../social/ShareSection';
 
 interface Props {
   result: AnalysisResult;
@@ -57,23 +56,12 @@ const fadeUp = {
 };
 
 export default function ResultDashboard({ result, userInput, onReset }: Props) {
-  const [copied, setCopied] = useState(false);
   const age = new Date().getFullYear() - userInput.birthYear;
   const peakYear = result.top5_golden_years?.length
     ? [...result.top5_golden_years].sort((a, b) => b.score - a.score)[0].year
     : new Date().getFullYear();
 
   const calLabel = userInput.calendarType === 'lunar' ? '음력' : '양력';
-
-  const handleShare = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // fallback: do nothing
-    }
-  };
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', padding: '0 0 80px' }}>
@@ -133,7 +121,7 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
           <SeasonCard season={result.current_season} details={result.season_details} />
         </motion.section>
 
-        {/* ── 3. 12년 계절 주기 ──────────────── */}
+        {/* ── 3. 12년 계절 주기 (Phase 2) ──────────────── */}
         {result.season_cycle?.length > 0 && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.2 }}>
             <SectionTitle>🔄 커리어 12년 주기</SectionTitle>
@@ -141,7 +129,7 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
           </motion.section>
         )}
 
-        {/* ── 4. 계절 심층 가이드 ────────────── */}
+        {/* ── 4. 계절 심층 가이드 (Phase 2) ────────────── */}
         {result.season_guidance && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.25 }}>
             <SectionTitle>📖 계절별 심층 가이드</SectionTitle>
@@ -169,7 +157,8 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
                         width: '24px',
                         height: '24px',
                         borderRadius: '50%',
-                        background: i === 0 ? '#D4AF37' : i === 1 ? '#C0C0C0' : i === 2 ? '#CD7F32' : 'var(--border)',
+                        background:
+                          i === 0 ? '#D4AF37' : i === 1 ? '#C0C0C0' : i === 2 ? '#CD7F32' : 'var(--border)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -183,13 +172,26 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
                       {i + 1}
                     </span>
                     <div style={{ flex: 1 }}>
-                      <span style={{ fontSize: '14px', fontWeight: 700, color: i === 0 ? 'var(--gold)' : 'var(--text)' }}>
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: 700,
+                          color: i === 0 ? 'var(--gold)' : 'var(--text)',
+                        }}
+                      >
                         {y.year}년
                       </span>
                       <span style={{ fontSize: '13px', color: 'var(--text-muted)', marginLeft: '8px' }}>
                         {y.score}점
                       </span>
-                      <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px', lineHeight: 1.5 }}>
+                      <p
+                        style={{
+                          fontSize: '13px',
+                          color: 'var(--text-muted)',
+                          marginTop: '2px',
+                          lineHeight: 1.5,
+                        }}
+                      >
                         {y.reason}
                       </p>
                     </div>
@@ -210,7 +212,15 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
             <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
               {result.life_cycle_scores.map((l) => (
                 <div key={l.age_range} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--gold)', minWidth: '40px', marginTop: '2px' }}>
+                  <span
+                    style={{
+                      fontSize: '13px',
+                      fontWeight: 700,
+                      color: 'var(--gold)',
+                      minWidth: '40px',
+                      marginTop: '2px',
+                    }}
+                  >
                     {l.age_range}
                   </span>
                   <div style={{ flex: 1 }}>
@@ -218,9 +228,13 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
                       <div className="score-bar" style={{ flex: 1 }}>
                         <div className="score-bar-fill" style={{ width: `${l.score}%` }} />
                       </div>
-                      <span style={{ fontSize: '12px', color: 'var(--text-muted)', minWidth: '30px' }}>{l.score}</span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)', minWidth: '30px' }}>
+                        {l.score}
+                      </span>
                     </div>
-                    <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>{l.description}</p>
+                    <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                      {l.description}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -236,7 +250,7 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
           <YearlyStrategy data={result.yearly_strategy} />
         </motion.section>
 
-        {/* ── 8. 성장 미션 3종 ───────────────── */}
+        {/* ── 8. 성장 미션 3종 (Phase 2) ───────────────── */}
         {result.growth_missions?.length > 0 && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.42 }}>
             <SectionTitle>🚀 성장 미션 3종</SectionTitle>
@@ -246,7 +260,7 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
 
         <SectionDivider />
 
-        {/* ── 9. 네트워킹 가이드 ─────────────── */}
+        {/* ── 9. 네트워킹 가이드 (Phase 2) ─────────────── */}
         {result.networking_guide && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.45 }}>
             <SectionTitle>🤝 지금 만나야 할 사람</SectionTitle>
@@ -264,41 +278,36 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
 
         {/* ── 11. 덕 쌓기 챌린지 (Phase 3) ────────────── */}
         <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.5 }}>
-          <SectionTitle>🌟 덕 쌓기 챌린지</SectionTitle>
+          <SectionTitle>🌿 덕 쌓기 챌린지</SectionTitle>
           <VirtueChallenge />
         </motion.section>
 
-        {/* ── 12. 바이럴 공유 (Phase 3) ────────────────── */}
+        {/* ── 12. 공유 카드 + 바이럴 (Phase 3) ─────────── */}
         <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.52 }}>
-          <SectionTitle>📤 결과 공유하기</SectionTitle>
-          <SharePanel
-            season={result.current_season}
-            peakYear={peakYear}
-            feedback={result.sharp_feedback}
-            birthYear={userInput.birthYear}
-          />
+          <SectionTitle>🔮 좋은 기운 나누기</SectionTitle>
+          <ShareSection result={result} userInput={userInput} peakYear={peakYear} />
         </motion.section>
 
-        {/* ── Action Buttons ────────────────────────────── */}
+        {/* ── Reset Button ──────────────────────────────── */}
         <motion.div
           {...fadeUp}
           transition={{ duration: 0.5, delay: 0.55 }}
-          style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingTop: '8px' }}
+          style={{ paddingTop: '8px' }}
         >
-          <button
-            className="btn-primary"
-            onClick={handleShare}
-            style={{ width: '100%', justifyContent: 'center' }}
-          >
-            {copied ? '✓ 링크가 복사되었습니다!' : '🔗 링크 복사하기'}
-          </button>
           <button className="btn-secondary" onClick={onReset} style={{ width: '100%' }}>
             ↩ 처음부터 다시 분석하기
           </button>
         </motion.div>
 
         {/* Disclaimer */}
-        <p style={{ fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.6 }}>
+        <p
+          style={{
+            fontSize: '12px',
+            color: 'var(--text-muted)',
+            textAlign: 'center',
+            lineHeight: 1.6,
+          }}
+        >
           본 분석은 AI가 사주·점성술·수비학을 기반으로 생성한 참고 자료입니다.
           <br />
           중요한 결정은 반드시 전문가와 상담하세요.
