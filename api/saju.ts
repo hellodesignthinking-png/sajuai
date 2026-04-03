@@ -254,7 +254,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         model: 'gemini-2.5-flash',
         generationConfig: {
           temperature: 0.8,
-          maxOutputTokens: 8192,
+          maxOutputTokens: 65536,
           responseMimeType: 'application/json',
         },
       });
@@ -263,7 +263,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const prompt = buildPrompt(input, currentYear, lang);
       const result = await model.generateContent(prompt);
       const text = result.response.text();
-      const parsed = JSON.parse(text);
+      // Strip markdown code fences if model wraps response
+      const clean = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
+      const parsed = JSON.parse(clean);
 
       return res.status(200).json({
         ...parsed,
@@ -283,7 +285,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         model: 'gemini-2.5-flash',
         generationConfig: {
           temperature: 0.2,
-          maxOutputTokens: 512,
+          maxOutputTokens: 1024,
           responseMimeType: 'application/json',
         },
       });
