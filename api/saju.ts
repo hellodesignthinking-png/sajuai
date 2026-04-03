@@ -251,7 +251,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (!input) return res.status(400).json({ error: 'input is required' });
 
       const model = genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash',
+        model: 'gemini-2.5-flash',
         generationConfig: {
           temperature: 0.8,
           maxOutputTokens: 8192,
@@ -280,7 +280,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       const validationModel = genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash',
+        model: 'gemini-2.5-flash',
         generationConfig: {
           temperature: 0.2,
           maxOutputTokens: 512,
