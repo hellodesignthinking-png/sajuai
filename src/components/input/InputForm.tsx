@@ -31,6 +31,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
     birthMonth: 1,
     birthDay: 1,
     birthHour: -1,
+    calendarType: 'solar',
     birthPlace: '',
     mbti: '모름',
     gender: 'male',
@@ -165,6 +166,37 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
+              {/* Calendar Type */}
+              <div style={rowStyle}>
+                <label style={labelStyle}>양력 / 음력 *</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  {[
+                    { value: 'solar', label: '☀️ 양력' },
+                    { value: 'lunar', label: '🌙 음력' },
+                  ].map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => set('calendarType', opt.value as 'solar' | 'lunar')}
+                      style={{
+                        padding: '14px',
+                        borderRadius: '10px',
+                        border: `1px solid ${form.calendarType === opt.value ? 'var(--gold)' : 'var(--border)'}`,
+                        background: form.calendarType === opt.value ? 'rgba(212,175,55,0.1)' : 'rgba(255,255,255,0.02)',
+                        color: form.calendarType === opt.value ? 'var(--gold)' : 'var(--text-muted)',
+                        cursor: 'pointer',
+                        fontSize: '15px',
+                        fontWeight: form.calendarType === opt.value ? 700 : 400,
+                        transition: 'all 0.2s',
+                        fontFamily: 'Noto Sans KR, sans-serif',
+                      }}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Birth Year */}
               <div style={rowStyle}>
                 <label style={labelStyle}>출생 연도 *</label>

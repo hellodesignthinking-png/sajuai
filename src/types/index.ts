@@ -3,6 +3,7 @@ export interface UserInput {
   birthMonth: number;
   birthDay: number;
   birthHour: number; // -1 = 모름
+  calendarType: 'solar' | 'lunar';
   birthPlace: string;
   mbti: string; // '모름' or one of 16 MBTI types
   gender: 'male' | 'female';
@@ -52,6 +53,44 @@ export interface MBTIIntegration {
   blind_spot: string;
 }
 
+// Phase 2 types
+export interface SeasonCycleItem {
+  season: CareerSeason;
+  start_year: number;
+  end_year: number;
+  label: string;
+  is_current: boolean;
+}
+
+export interface SeasonGuidance {
+  season_title: string;
+  core_message: string;
+  actions: string[];
+  warnings: string[];
+  transition_warning: string | null;
+  content_direction: string;
+  avoid_content: string;
+}
+
+export interface NetworkingPerson {
+  type: string;
+  reason: string;
+  how: string;
+}
+
+export interface NetworkingGuide {
+  current_season_tip: string;
+  people_to_meet: NetworkingPerson[];
+  avoid: string;
+}
+
+export interface GrowthMission {
+  type: 'crisis' | 'person' | 'skill';
+  label: string;
+  content: string;
+  action: string;
+}
+
 export interface AnalysisResult {
   top5_golden_years: GoldenYear[];
   life_cycle_scores: LifeCycleScore[];
@@ -60,4 +99,9 @@ export interface AnalysisResult {
   yearly_strategy: YearlyStrategy;
   mbti_integration: MBTIIntegration;
   sharp_feedback: string;
+  // Phase 2
+  season_cycle: SeasonCycleItem[];
+  season_guidance: SeasonGuidance;
+  networking_guide: NetworkingGuide;
+  growth_missions: GrowthMission[];
 }
