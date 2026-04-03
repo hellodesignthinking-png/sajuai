@@ -24,6 +24,38 @@ function genYears() {
   return years;
 }
 
+function ToggleButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        flex: 1,
+        padding: '10px 8px',
+        borderRadius: '8px',
+        border: `1px solid ${active ? 'var(--gold)' : 'var(--border)'}`,
+        background: active ? 'rgba(212,175,55,0.12)' : 'rgba(255,255,255,0.02)',
+        color: active ? 'var(--gold)' : 'var(--text-muted)',
+        cursor: 'pointer',
+        fontSize: '14px',
+        fontWeight: active ? 700 : 400,
+        transition: 'all 0.15s',
+        fontFamily: 'Noto Sans KR, sans-serif',
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
 export default function InputForm({ onSubmit, onBack }: InputFormProps) {
   const [step, setStep] = useState<1 | 2>(1);
   const [form, setForm] = useState<Partial<UserInput>>({
@@ -31,17 +63,14 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
     birthMonth: 1,
     birthDay: 1,
     birthHour: -1,
+    calendarType: 'solar',
     birthPlace: '',
     mbti: '모름',
     gender: 'male',
   });
 
-  const set = (key: keyof UserInput, value: UserInput[keyof UserInput]) => {
+  const set = <K extends keyof UserInput>(key: K, value: UserInput[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleNext = () => {
-    if (step === 1) setStep(2);
   };
 
   const handleSubmit = () => {
@@ -59,14 +88,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
     letterSpacing: '0.5px',
   };
 
-  const rowStyle: React.CSSProperties = {
-    marginBottom: '24px',
-  };
-
-  const gridStyle: React.CSSProperties = {
-    display: 'grid',
-    gap: '12px',
-  };
+  const rowStyle: React.CSSProperties = { marginBottom: '22px' };
 
   return (
     <div
@@ -80,24 +102,18 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
       }}
     >
       {/* Header */}
-      <div style={{ width: '100%', maxWidth: '560px', marginBottom: '40px' }}>
+      <div style={{ width: '100%', maxWidth: '560px', marginBottom: '36px' }}>
         <button
           onClick={onBack}
           className="btn-secondary"
-          style={{ marginBottom: '32px', padding: '8px 16px', fontSize: '13px' }}
+          style={{ marginBottom: '28px', padding: '8px 16px', fontSize: '13px' }}
         >
           ← 돌아가기
         </button>
 
         {/* Progress */}
-        <div style={{ marginBottom: '32px' }}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              marginBottom: '8px',
-            }}
-          >
+        <div style={{ marginBottom: '28px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
             {['생년월일시 입력', '추가 정보 입력'].map((label, i) => (
               <span
                 key={i}
@@ -122,20 +138,16 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
 
         <h1
           style={{
-            fontSize: 'clamp(22px, 5vw, 30px)',
+            fontSize: 'clamp(22px, 5vw, 28px)',
             fontWeight: 800,
             lineHeight: 1.3,
-            marginBottom: '8px',
+            marginBottom: '6px',
           }}
         >
           {step === 1 ? (
-            <>
-              <span className="gold-text">생년월일시</span>를 입력해주세요
-            </>
+            <><span className="gold-text">생년월일시</span>를 입력해주세요</>
           ) : (
-            <>
-              <span className="gold-text">추가 정보</span>를 입력해주세요
-            </>
+            <><span className="gold-text">추가 정보</span>를 입력해주세요</>
           )}
         </h1>
         <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
@@ -145,7 +157,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
         </p>
       </div>
 
-      {/* Form */}
+      {/* Form Card */}
       <div
         style={{
           width: '100%',
@@ -153,7 +165,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
           background: 'var(--card)',
           border: '1px solid var(--border)',
           borderRadius: '20px',
-          padding: '32px',
+          padding: '28px',
         }}
       >
         <AnimatePresence mode="wait">
@@ -165,7 +177,29 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
-              {/* Birth Year */}
+              {/* ── 양력 / 음력 Toggle ── */}
+              <div style={rowStyle}>
+                <label style={labelStyle}>달력 기준 *</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <ToggleButton
+                    active={form.calendarType === 'solar'}
+                    onClick={() => set('calendarType', 'solar')}
+                  >
+                    ☀️ 양력
+                  </ToggleButton>
+                  <ToggleButton
+                    active={form.calendarType === 'lunar'}
+                    onClick={() => set('calendarType', 'lunar')}
+                  >
+                    🌙 음력
+                  </ToggleButton>
+                </div>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '6px' }}>
+                  한국 사주에서 음력 생년월일이 분석 정확도에 중요합니다
+                </p>
+              </div>
+
+              {/* ── 출생 연도 ── */}
               <div style={rowStyle}>
                 <label style={labelStyle}>출생 연도 *</label>
                 <select
@@ -174,15 +208,13 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                   onChange={(e) => set('birthYear', parseInt(e.target.value))}
                 >
                   {genYears().map((y) => (
-                    <option key={y} value={y}>
-                      {y}년
-                    </option>
+                    <option key={y} value={y}>{y}년</option>
                   ))}
                 </select>
               </div>
 
-              {/* Month & Day */}
-              <div style={{ ...rowStyle, ...gridStyle, gridTemplateColumns: '1fr 1fr' }}>
+              {/* ── 월 / 일 ── */}
+              <div style={{ ...rowStyle, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
                   <label style={labelStyle}>월 *</label>
                   <select
@@ -191,9 +223,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                     onChange={(e) => set('birthMonth', parseInt(e.target.value))}
                   >
                     {MONTHS.map((m) => (
-                      <option key={m} value={m}>
-                        {m}월
-                      </option>
+                      <option key={m} value={m}>{m}월</option>
                     ))}
                   </select>
                 </div>
@@ -205,17 +235,15 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                     onChange={(e) => set('birthDay', parseInt(e.target.value))}
                   >
                     {DAYS.map((d) => (
-                      <option key={d} value={d}>
-                        {d}일
-                      </option>
+                      <option key={d} value={d}>{d}일</option>
                     ))}
                   </select>
                 </div>
               </div>
 
-              {/* Hour */}
+              {/* ── 출생 시각 ── */}
               <div style={rowStyle}>
-                <label style={labelStyle}>출생 시각 (모르면 "모름" 선택)</label>
+                <label style={labelStyle}>출생 시각</label>
                 <select
                   className="input-field"
                   value={form.birthHour}
@@ -241,7 +269,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
-              {/* Birth Place */}
+              {/* ── 출생지 ── */}
               <div style={rowStyle}>
                 <label style={labelStyle}>출생지</label>
                 <input
@@ -253,7 +281,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                 />
               </div>
 
-              {/* Gender */}
+              {/* ── 성별 ── */}
               <div style={rowStyle}>
                 <label style={labelStyle}>성별 *</label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
@@ -269,10 +297,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                         padding: '14px',
                         borderRadius: '10px',
                         border: `1px solid ${form.gender === opt.value ? 'var(--gold)' : 'var(--border)'}`,
-                        background:
-                          form.gender === opt.value
-                            ? 'rgba(212,175,55,0.1)'
-                            : 'rgba(255,255,255,0.02)',
+                        background: form.gender === opt.value ? 'rgba(212,175,55,0.1)' : 'rgba(255,255,255,0.02)',
                         color: form.gender === opt.value ? 'var(--gold)' : 'var(--text-muted)',
                         cursor: 'pointer',
                         fontSize: '15px',
@@ -287,14 +312,14 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                 </div>
               </div>
 
-              {/* MBTI */}
+              {/* ── MBTI ── */}
               <div style={rowStyle}>
                 <label style={labelStyle}>MBTI</label>
                 <div
                   style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(4, 1fr)',
-                    gap: '8px',
+                    gap: '6px',
                     marginBottom: '8px',
                   }}
                 >
@@ -307,10 +332,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                         padding: '8px 4px',
                         borderRadius: '8px',
                         border: `1px solid ${form.mbti === type ? 'var(--gold)' : 'var(--border)'}`,
-                        background:
-                          form.mbti === type
-                            ? 'rgba(212,175,55,0.12)'
-                            : 'rgba(255,255,255,0.02)',
+                        background: form.mbti === type ? 'rgba(212,175,55,0.12)' : 'rgba(255,255,255,0.02)',
                         color: form.mbti === type ? 'var(--gold)' : 'var(--text-muted)',
                         cursor: 'pointer',
                         fontSize: '12px',
@@ -331,10 +353,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                     padding: '10px',
                     borderRadius: '8px',
                     border: `1px solid ${form.mbti === '모름' ? 'var(--gold)' : 'var(--border)'}`,
-                    background:
-                      form.mbti === '모름'
-                        ? 'rgba(212,175,55,0.12)'
-                        : 'rgba(255,255,255,0.02)',
+                    background: form.mbti === '모름' ? 'rgba(212,175,55,0.12)' : 'rgba(255,255,255,0.02)',
                     color: form.mbti === '모름' ? 'var(--gold)' : 'var(--text-muted)',
                     cursor: 'pointer',
                     fontSize: '13px',
@@ -350,47 +369,32 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
         </AnimatePresence>
 
         {/* Buttons */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '12px',
-            marginTop: '8px',
-          }}
-        >
+        <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
           {step === 2 && (
-            <button
-              className="btn-secondary"
-              onClick={() => setStep(1)}
-              style={{ flex: 1 }}
-            >
+            <button className="btn-secondary" onClick={() => setStep(1)} style={{ flex: 1 }}>
               ← 이전
             </button>
           )}
           {step === 1 ? (
             <button
               className="btn-primary"
-              onClick={handleNext}
+              onClick={() => setStep(2)}
               disabled={!isStep1Valid}
               style={{ flex: 1 }}
             >
               다음 →
             </button>
           ) : (
-            <button
-              className="btn-primary"
-              onClick={handleSubmit}
-              style={{ flex: 2 }}
-            >
+            <button className="btn-primary" onClick={handleSubmit} style={{ flex: 2 }}>
               ⚔️ 분석 시작하기
             </button>
           )}
         </div>
       </div>
 
-      {/* Privacy note */}
       <p
         style={{
-          marginTop: '24px',
+          marginTop: '20px',
           fontSize: '12px',
           color: 'var(--text-muted)',
           textAlign: 'center',
