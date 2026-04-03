@@ -107,15 +107,7 @@ export default function SeasonGuidance({ guidance, season }: Props) {
           <div style={{ display: 'grid', gap: '10px' }}>
             {guidance.warnings.map((warning, i) => (
               <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                <span
-                  style={{
-                    fontSize: '14px',
-                    flexShrink: 0,
-                    marginTop: '1px',
-                  }}
-                >
-                  ✗
-                </span>
+                <span style={{ fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>✗</span>
                 <p style={{ fontSize: '13px', color: 'var(--text)', lineHeight: 1.6 }}>{warning}</p>
               </div>
             ))}
@@ -170,12 +162,7 @@ export default function SeasonGuidance({ guidance, season }: Props) {
             </p>
           </div>
         </div>
-        <div
-          style={{
-            height: '1px',
-            background: 'var(--border)',
-          }}
-        />
+        <div style={{ height: '1px', background: 'var(--border)' }} />
         <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
           <span style={{ fontSize: '18px', flexShrink: 0 }}>🚫</span>
           <div>

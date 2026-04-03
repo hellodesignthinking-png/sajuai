@@ -11,6 +11,8 @@ import SeasonCycle from './SeasonCycle';
 import SeasonGuidance from './SeasonGuidance';
 import NetworkingGuide from './NetworkingGuide';
 import GrowthMissions from './GrowthMissions';
+import VirtueChallenge from '../virtue/VirtueChallenge';
+import SharePanel from '../share/SharePanel';
 
 interface Props {
   result: AnalysisResult;
@@ -131,7 +133,7 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
           <SeasonCard season={result.current_season} details={result.season_details} />
         </motion.section>
 
-        {/* ── 3. 12년 계절 주기 (Phase 2) ──────────────── */}
+        {/* ── 3. 12년 계절 주기 ──────────────── */}
         {result.season_cycle?.length > 0 && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.2 }}>
             <SectionTitle>🔄 커리어 12년 주기</SectionTitle>
@@ -139,7 +141,7 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
           </motion.section>
         )}
 
-        {/* ── 4. 계절 심층 가이드 (Phase 2) ────────────── */}
+        {/* ── 4. 계절 심층 가이드 ────────────── */}
         {result.season_guidance && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.25 }}>
             <SectionTitle>📖 계절별 심층 가이드</SectionTitle>
@@ -234,7 +236,7 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
           <YearlyStrategy data={result.yearly_strategy} />
         </motion.section>
 
-        {/* ── 8. 성장 미션 3종 (Phase 2) ───────────────── */}
+        {/* ── 8. 성장 미션 3종 ───────────────── */}
         {result.growth_missions?.length > 0 && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.42 }}>
             <SectionTitle>🚀 성장 미션 3종</SectionTitle>
@@ -244,7 +246,7 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
 
         <SectionDivider />
 
-        {/* ── 9. 네트워킹 가이드 (Phase 2) ─────────────── */}
+        {/* ── 9. 네트워킹 가이드 ─────────────── */}
         {result.networking_guide && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.45 }}>
             <SectionTitle>🤝 지금 만나야 할 사람</SectionTitle>
@@ -258,10 +260,29 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
           <MBTICard data={result.mbti_integration} />
         </motion.section>
 
+        <SectionDivider />
+
+        {/* ── 11. 덕 쌓기 챌린지 (Phase 3) ────────────── */}
+        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.5 }}>
+          <SectionTitle>🌟 덕 쌓기 챌린지</SectionTitle>
+          <VirtueChallenge />
+        </motion.section>
+
+        {/* ── 12. 바이럴 공유 (Phase 3) ────────────────── */}
+        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.52 }}>
+          <SectionTitle>📤 결과 공유하기</SectionTitle>
+          <SharePanel
+            season={result.current_season}
+            peakYear={peakYear}
+            feedback={result.sharp_feedback}
+            birthYear={userInput.birthYear}
+          />
+        </motion.section>
+
         {/* ── Action Buttons ────────────────────────────── */}
         <motion.div
           {...fadeUp}
-          transition={{ duration: 0.5, delay: 0.5 }}
+          transition={{ duration: 0.5, delay: 0.55 }}
           style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingTop: '8px' }}
         >
           <button
@@ -269,7 +290,7 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
             onClick={handleShare}
             style={{ width: '100%', justifyContent: 'center' }}
           >
-            {copied ? '✓ 링크가 복사되었습니다!' : '🔗 결과 공유하기'}
+            {copied ? '✓ 링크가 복사되었습니다!' : '🔗 링크 복사하기'}
           </button>
           <button className="btn-secondary" onClick={onReset} style={{ width: '100%' }}>
             ↩ 처음부터 다시 분석하기

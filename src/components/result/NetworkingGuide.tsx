@@ -72,9 +72,7 @@ export default function NetworkingGuide({ guide, season }: Props) {
               >
                 {i + 1}
               </div>
-              <p style={{ fontSize: '15px', fontWeight: 700, color }}>
-                {person.type}
-              </p>
+              <p style={{ fontSize: '15px', fontWeight: 700, color }}>{person.type}</p>
             </div>
             <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', lineHeight: 1.6 }}>
               {person.reason}
