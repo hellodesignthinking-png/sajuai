@@ -4,11 +4,14 @@ import { AnimatePresence, motion } from 'framer-motion';
 import type { UserInput, AnalysisResult } from './types';
 import { useAnalysis } from './hooks/useAnalysis';
 import { PaymentProvider, usePayment } from './contexts/PaymentContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LandingPage from './components/landing/LandingPage';
 import InputForm from './components/input/InputForm';
 import LoadingScreen from './components/common/LoadingScreen';
 import ResultDashboard from './components/result/ResultDashboard';
 import PaymentModal from './components/payment/PaymentModal';
+import AuthModal from './components/auth/AuthModal';
+import MyResults from './components/auth/MyResults';
 import Admin from './pages/Admin';
 import { LangContext, translations } from './i18n';
 import type { Lang } from './i18n';
@@ -65,6 +68,98 @@ function logAnalysis(input: UserInput) {
 }
 
 // ──────────────────────────────────────────────
+// Auth button (top-right overlay)
+// ──────────────────────────────────────────────
+function AuthButton({
+  onOpenAuth,
+  onOpenMyResults,
+}: {
+  onOpenAuth: () => void;
+  onOpenMyResults: () => void;
+}) {
+  const { user, signOut, loading } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  if (loading) return null;
+
+  if (!user) {
+    return (
+      <button
+        onClick={onOpenAuth}
+        style={{
+          position: 'fixed', top: '16px', left: '16px', zIndex: 1000,
+          padding: '7px 14px', fontSize: '13px', fontWeight: 600,
+          background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.3)',
+          borderRadius: '20px', color: 'var(--gold)', cursor: 'pointer',
+          backdropFilter: 'blur(8px)',
+        }}
+      >
+        로그인
+      </button>
+    );
+  }
+
+  return (
+    <div style={{ position: 'fixed', top: '16px', left: '16px', zIndex: 1000 }}>
+      <button
+        onClick={() => setMenuOpen((v) => !v)}
+        style={{
+          padding: '6px 12px', fontSize: '13px', fontWeight: 600,
+          background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.3)',
+          borderRadius: '20px', color: 'var(--gold)', cursor: 'pointer',
+          backdropFilter: 'blur(8px)',
+          display: 'flex', alignItems: 'center', gap: '6px',
+        }}
+      >
+        <span style={{
+          width: '22px', height: '22px', borderRadius: '50%',
+          background: 'linear-gradient(135deg, var(--gold-dark), var(--gold))',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '11px', color: '#000', fontWeight: 800,
+        }}>
+          {(user.email?.[0] ?? '?').toUpperCase()}
+        </span>
+        {user.email?.split('@')[0]}
+      </button>
+
+      {menuOpen && (
+        <div
+          style={{
+            position: 'absolute', top: '40px', left: 0,
+            background: '#111', border: '1px solid var(--border)',
+            borderRadius: '10px', minWidth: '160px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+            overflow: 'hidden',
+          }}
+        >
+          <button
+            onClick={() => { setMenuOpen(false); onOpenMyResults(); }}
+            style={{
+              width: '100%', padding: '11px 16px', textAlign: 'left',
+              background: 'none', border: 'none', color: 'var(--text)',
+              fontSize: '13px', cursor: 'pointer',
+            }}
+          >
+            📁 내 분석 기록
+          </button>
+          <div style={{ height: '1px', background: 'var(--border)' }} />
+          <button
+            onClick={() => { setMenuOpen(false); signOut(); }}
+            style={{
+              width: '100%', padding: '11px 16px', textAlign: 'left',
+              background: 'none', border: 'none', color: 'var(--text-muted)',
+              fontSize: '13px', cursor: 'pointer',
+            }}
+          >
+            로그아웃
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────
 // Main app (inside providers)
 // ──────────────────────────────────────────────
 function AppInner() {
@@ -75,6 +170,8 @@ function AppInner() {
   const [lang, setLang] = useState<Lang>(() => {
     return (localStorage.getItem('sajuai_lang') as Lang) ?? 'ko';
   });
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [myResultsOpen, setMyResultsOpen] = useState(false);
 
   const { state, result, error, userInput, analyze, restore, retry, reset } = useAnalysis();
   const { markAsPaid, isModalOpen } = usePayment();
@@ -177,9 +274,19 @@ function AppInner() {
     setScreen('landing');
   };
 
+  const handleRestoreFromHistory = (restoredInput: UserInput, restoredResult: AnalysisResult) => {
+    restore(restoredResult, restoredInput);
+  };
+
   return (
     <LangContext.Provider value={{ lang, setLang, t }}>
       <>
+        {/* Auth button — always visible */}
+        <AuthButton
+          onOpenAuth={() => setAuthModalOpen(true)}
+          onOpenMyResults={() => setMyResultsOpen(true)}
+        />
+
         <AnimatePresence mode="wait">
           {view === 'landing' && (
             <motion.div key="landing" {...pageTransition}>
@@ -219,7 +326,12 @@ function AppInner() {
                   ) : null}
                 </div>
               )}
-              <ResultDashboard result={result} userInput={userInput} onReset={handleReset} />
+              <ResultDashboard
+                result={result}
+                userInput={userInput}
+                onReset={handleReset}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
             </motion.div>
           )}
 
@@ -268,6 +380,13 @@ function AppInner() {
         </AnimatePresence>
 
         {isModalOpen && <PaymentModal />}
+        {authModalOpen && <AuthModal onClose={() => setAuthModalOpen(false)} />}
+        {myResultsOpen && (
+          <MyResults
+            onClose={() => setMyResultsOpen(false)}
+            onRestore={handleRestoreFromHistory}
+          />
+        )}
       </>
     </LangContext.Provider>
   );
@@ -279,12 +398,14 @@ function AppInner() {
 export default function App() {
   return (
     <BrowserRouter>
-      <PaymentProvider>
-        <Routes>
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/*" element={<AppInner />} />
-        </Routes>
-      </PaymentProvider>
+      <AuthProvider>
+        <PaymentProvider>
+          <Routes>
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/*" element={<AppInner />} />
+          </Routes>
+        </PaymentProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

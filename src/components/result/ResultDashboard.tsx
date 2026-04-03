@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import type { AnalysisResult, UserInput } from '../../types';
 import GoldenYearsChart from '../charts/GoldenYearsChart';
@@ -15,11 +15,14 @@ import VirtueChallenge from '../social/VirtueChallenge';
 import ShareSection from '../social/ShareSection';
 import PaywallOverlay from '../payment/PaywallOverlay';
 import PricingCard from '../payment/PricingCard';
+import { useAuth } from '../../contexts/AuthContext';
+import { saveResult } from '../../services/storage';
 
 interface Props {
   result: AnalysisResult;
   userInput: UserInput;
   onReset: () => void;
+  onOpenAuth: () => void;
 }
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
@@ -58,12 +61,25 @@ const fadeUp = {
   transition: { duration: 0.5 },
 };
 
-export default function ResultDashboard({ result, userInput, onReset }: Props) {
+export default function ResultDashboard({ result, userInput, onReset, onOpenAuth }: Props) {
+  const { user } = useAuth();
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   const age = new Date().getFullYear() - userInput.birthYear;
   const sortedYears = [...result.top5_golden_years].sort((a, b) => b.score - a.score);
   const topYear = sortedYears[0];
   const peakYear = topYear?.year ?? new Date().getFullYear();
   const calLabel = userInput.calendarType === 'lunar' ? '음력' : '양력';
+
+  const handleSave = async () => {
+    if (!user) { onOpenAuth(); return; }
+    setSaveState('saving');
+    setSaveError(null);
+    const { error } = await saveResult(userInput, result);
+    if (error) { setSaveState('error'); setSaveError(error); }
+    else setSaveState('saved');
+  };
 
   // Save result to sessionStorage so it can be restored after Toss payment redirect
   useEffect(() => {
@@ -368,6 +384,47 @@ export default function ResultDashboard({ result, userInput, onReset }: Props) {
           <SectionTitle>🔮 좋은 기운 나누기</SectionTitle>
           <ShareSection result={result} userInput={userInput} peakYear={peakYear} />
         </motion.section>
+
+        {/* ── Save Result Button ─────────────────────────── */}
+        <motion.div
+          {...fadeUp}
+          transition={{ duration: 0.5, delay: 0.50 }}
+          style={{ paddingTop: '8px' }}
+        >
+          {saveState === 'saved' ? (
+            <div style={{
+              width: '100%', padding: '12px 0', textAlign: 'center',
+              background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)',
+              borderRadius: '12px', fontSize: '14px', color: '#4ade80',
+            }}>
+              ✓ 결과가 저장되었습니다 (1년 보관)
+            </div>
+          ) : (
+            <>
+              <button
+                onClick={handleSave}
+                disabled={saveState === 'saving'}
+                style={{
+                  width: '100%', padding: '12px 0',
+                  background: user
+                    ? 'linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.08))'
+                    : 'rgba(212,175,55,0.06)',
+                  border: '1px solid rgba(212,175,55,0.3)',
+                  borderRadius: '12px', fontSize: '14px', fontWeight: 600,
+                  color: 'var(--gold)', cursor: saveState === 'saving' ? 'not-allowed' : 'pointer',
+                  opacity: saveState === 'saving' ? 0.7 : 1,
+                }}
+              >
+                {saveState === 'saving' ? '저장 중...' : user ? '💾 결과 저장하기 (1년 보관)' : '🔐 로그인 후 결과 저장하기'}
+              </button>
+              {saveState === 'error' && saveError && (
+                <p style={{ fontSize: '12px', color: '#f87171', textAlign: 'center', marginTop: '6px' }}>
+                  {saveError}
+                </p>
+              )}
+            </>
+          )}
+        </motion.div>
 
         {/* ── Reset Button ──────────────────────────────── */}
         <motion.div
