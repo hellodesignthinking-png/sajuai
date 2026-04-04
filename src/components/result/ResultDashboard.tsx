@@ -67,7 +67,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
   const [saveError, setSaveError] = useState<string | null>(null);
 
   const age = new Date().getFullYear() - userInput.birthYear;
-  const sortedYears = [...result.top5_golden_years].sort((a, b) => b.score - a.score);
+  const sortedYears = [...(result.top5_golden_years ?? [])].sort((a, b) => b.score - a.score);
   const topYear = sortedYears[0];
   const peakYear = topYear?.year ?? new Date().getFullYear();
   const calLabel = userInput.calendarType === 'lunar' ? '음력' : '양력';
@@ -144,10 +144,12 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         <SectionDivider />
 
         {/* ── FREE: 2. 현재 커리어 계절 ───────────────────── */}
+        {result.current_season && (
         <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.15 }}>
           <SectionTitle>🌸 현재 커리어 계절</SectionTitle>
           <SeasonCard season={result.current_season} details={result.season_details} />
         </motion.section>
+        )}
 
         {/* ── FREE: 3. 전성기 #1 티저 ─────────────────────── */}
         {topYear && (
@@ -214,7 +216,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
                 커리어 정점이 될 연도 Top 5 (점수 기준 시각화)
               </p>
-              <GoldenYearsChart data={result.top5_golden_years} />
+              <GoldenYearsChart data={result.top5_golden_years ?? []} />
               <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
                 {sortedYears.map((y, i) => (
                   <div key={y.year} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
@@ -269,6 +271,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         </motion.section>
 
         {/* ── PREMIUM: 5. 생애 주기 그래프 ────────────────── */}
+        {(result.life_cycle_scores?.length ?? 0) > 0 && (
         <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.32 }}>
           <SectionTitle>📊 생애 주기 운 그래프</SectionTitle>
           <PaywallOverlay>
@@ -276,9 +279,9 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
                 10년 단위 커리어 기회/위기 점수
               </p>
-              <LifeCycleChart data={result.life_cycle_scores} currentAge={age} />
+              <LifeCycleChart data={result.life_cycle_scores ?? []} currentAge={age} />
               <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
-                {result.life_cycle_scores.map((l) => (
+                {(result.life_cycle_scores ?? []).map((l) => (
                   <div key={l.age_range} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                     <span
                       style={{
@@ -310,6 +313,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
             </div>
           </PaywallOverlay>
         </motion.section>
+        )}
 
         {/* ── PREMIUM: 6. 12년 계절 주기 ──────────────────── */}
         {result.season_cycle?.length > 0 && (

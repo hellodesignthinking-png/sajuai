@@ -1,7 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useLang } from '../../i18n';
 import LanguageToggle from '../common/LanguageToggle';
+import { useAuth } from '../../contexts/AuthContext';
+import AuthModal from '../auth/AuthModal';
 
 interface LandingPageProps {
   onStart: () => void;
@@ -9,6 +11,8 @@ interface LandingPageProps {
 
 export default function LandingPage({ onStart }: LandingPageProps) {
   const { t, lang } = useLang();
+  const { user, signOut } = useAuth();
+  const [showAuth, setShowAuth] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Subtle particle background
@@ -142,6 +146,42 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               {t.tagline}
             </span>
             <LanguageToggle />
+            {user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                  {user.email}
+                </span>
+                <button
+                  onClick={() => signOut()}
+                  style={{
+                    fontSize: '12px',
+                    padding: '6px 12px',
+                    background: 'transparent',
+                    border: '1px solid var(--border)',
+                    borderRadius: '8px',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  로그아웃
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowAuth(true)}
+                style={{
+                  fontSize: '12px',
+                  padding: '6px 14px',
+                  background: 'transparent',
+                  border: '1px solid var(--border-gold)',
+                  borderRadius: '8px',
+                  color: 'var(--gold)',
+                  cursor: 'pointer',
+                }}
+              >
+                로그인
+              </button>
+            )}
           </div>
         </motion.div>
 
@@ -351,6 +391,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
           </button>
         </motion.div>
       </div>
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
     </div>
   );
 }
