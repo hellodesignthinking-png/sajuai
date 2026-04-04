@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { calcSaju, extractChar, type SajuCalcResult } from './saju-calc.js';
 
 function extractJSON(text: string): string {
   // 마크다운 코드블록 제거
@@ -50,8 +51,90 @@ export const config = {
   maxDuration: 60,
 };
 
+// ── 계산 결과를 프롬프트 문자열로 변환 ─────────────────────
+
+function buildCalcDataBlock(calc: SajuCalcResult, birthYear: number, lang: 'ko' | 'en'): string {
+  const fp = calc.fourPillars;
+  const dm = calc.dayMaster;
+  const fe = calc.fiveElements;
+  const seasonKo = { spring: '봄(春)', summer: '여름(夏)', autumn: '가을(秋)', winter: '겨울(冬)' };
+  const seasonEn = { spring: 'Spring', summer: 'Summer', autumn: 'Autumn', winter: 'Winter' };
+
+  const hourStr = fp.hour
+    ? `${fp.hour.heavenly}${fp.hour.earthly}`
+    : (lang === 'ko' ? '시간 모름' : 'unknown');
+
+  const luckLines = calc.majorLucks.map(l => {
+    const isCurrent = calc.currentLuck && l.startAge === calc.currentLuck.startAge;
+    const mark = isCurrent ? (lang === 'ko' ? ' ← 현재 대운 ★' : ' ← CURRENT ★') : '';
+    return `  ${l.startAge}~${l.endAge}세 (${l.startYear}~${l.endYear}): ${l.heavenly}${l.earthly} [${l.stemElement}/${l.branchElement}]${mark}`;
+  }).join('\n');
+
+  const goldenLines = calc.goldenYears.map((g, i) =>
+    `  ${i + 1}위: ${g.year}년 (${g.score}점)`
+  ).join('\n');
+
+  if (lang === 'ko') {
+    return `
+★★★ 아래는 코드로 계산한 사주 원국 — 이 값을 반드시 그대로 사용하라 ★★★
+
+[사주 원국]
+- 년주: ${fp.year.heavenly} ${fp.year.earthly} (${extractChar(fp.year.heavenly)}${extractChar(fp.year.earthly)})
+- 월주: ${fp.month.heavenly} ${fp.month.earthly} (${extractChar(fp.month.heavenly)}${extractChar(fp.month.earthly)})
+- 일주: ${fp.day.heavenly} ${fp.day.earthly} (${extractChar(fp.day.heavenly)}${extractChar(fp.day.earthly)})  ← 일간
+- 시주: ${hourStr}
+- 일간: ${dm.heavenly} [${dm.element}(${dm.element === '목' ? '木' : dm.element === '화' ? '火' : dm.element === '토' ? '土' : dm.element === '금' ? '金' : '水'}), ${dm.yinYang}(${dm.yinYang === '양' ? '陽' : '陰'})]
+
+[오행 분포] (천간4 + 지지4 = 8자)
+- 목(木): ${fe.wood}개 | 화(火): ${fe.fire}개 | 토(土): ${fe.earth}개 | 금(金): ${fe.metal}개 | 수(水): ${fe.water}개
+
+[용신/기신]
+- 용신(有用之神): ${calc.favorableElement}(${calc.favorableElement === '목' ? '木' : calc.favorableElement === '화' ? '火' : calc.favorableElement === '토' ? '土' : calc.favorableElement === '금' ? '金' : '水'}) — 일간 균형에 필요한 오행
+- 기신(忌神): ${calc.unfavorableElement}(${calc.unfavorableElement === '목' ? '木' : calc.unfavorableElement === '화' ? '火' : calc.unfavorableElement === '토' ? '土' : calc.unfavorableElement === '금' ? '金' : '水'}) — 불균형을 심화하는 오행
+
+[대운(大運) 흐름]
+${luckLines}
+
+[코드 계산 커리어 계절]: ${seasonKo[calc.careerSeason]}
+- 근거: 현재 대운 천간 ${calc.currentLuck?.heavenly}(${calc.currentLuck?.stemElement})과 일간 ${dm.heavenly}(${dm.element})의 관계 = ${calc.seasonRelationship}
+※ current_season 값으로 반드시 "${calc.careerSeason}"을 사용하라. 절대 변경 금지.
+
+[코드 계산 전성기 Top 5]
+${goldenLines}
+※ top5_golden_years의 year 값은 반드시 위 연도를 사용하라. 절대 변경 금지.`;
+  } else {
+    return `
+★★★ Pre-calculated Four Pillars (code-computed) — use these values exactly ★★★
+
+[Four Pillars]
+- Year: ${fp.year.heavenly} ${fp.year.earthly} (${extractChar(fp.year.heavenly)}${extractChar(fp.year.earthly)})
+- Month: ${fp.month.heavenly} ${fp.month.earthly} (${extractChar(fp.month.heavenly)}${extractChar(fp.month.earthly)})
+- Day: ${fp.day.heavenly} ${fp.day.earthly} (${extractChar(fp.day.heavenly)}${extractChar(fp.day.earthly)})  ← Day Master
+- Hour: ${hourStr}
+- Day Master: ${dm.heavenly} [${dm.element} element, ${dm.yinYang}]
+
+[Five Elements] (8 characters total)
+- Wood: ${fe.wood} | Fire: ${fe.fire} | Earth: ${fe.earth} | Metal: ${fe.metal} | Water: ${fe.water}
+
+[Favorable / Unfavorable Elements]
+- Favorable (용신): ${calc.favorableElement} — needed to balance this chart
+- Unfavorable (기신): ${calc.unfavorableElement} — amplifies imbalance
+
+[Major Luck Cycles]
+${luckLines}
+
+[Code-calculated Career Season]: ${seasonEn[calc.careerSeason]}
+- Basis: Current luck stem ${calc.currentLuck?.heavenly}(${calc.currentLuck?.stemElement}) vs Day Master ${dm.heavenly}(${dm.element}) = ${calc.seasonRelationship}
+※ Use EXACTLY "${calc.careerSeason}" for current_season. Do NOT change it.
+
+[Code-calculated Top 5 Golden Years]
+${goldenLines}
+※ Use EXACTLY these years for top5_golden_years. Do NOT change them.`;
+  }
+}
+
 // 1단계: 기본 분석 (saju_detail, season_reasoning 제외)
-function buildBasicPrompt(input: any, currentYear: number, lang: 'ko' | 'en' = 'ko'): string {
+function buildBasicPrompt(input: any, calc: SajuCalcResult, currentYear: number, lang: 'ko' | 'en' = 'ko'): string {
   const age = currentYear - input.birthYear;
   const hourText = input.birthHour === -1
     ? (lang === 'en' ? 'unknown time' : '시간 모름')
@@ -77,9 +160,15 @@ User info:
 - MBTI: ${mbtiText}
 - Current year: ${currentYear}
 - Current age: ${age}
+${buildCalcDataBlock(calc, input.birthYear, 'en')}
 
-CRITICAL PERSONALIZATION RULES — READ BEFORE GENERATING ANY FIELD:
-Every single field below MUST be derived from THIS person's specific Four Pillars (사주 원국), current luck cycle (대운), and annual fortune (세운).
+YOUR ROLE: Interpret and explain the pre-calculated data above. Do NOT recalculate.
+The four pillars, career season, and golden years are FIXED by code. Your job is to explain WHY and provide actionable advice.
+
+CRITICAL RULES — READ BEFORE GENERATING ANY FIELD:
+1. current_season MUST be "${calc.careerSeason}" — do not change.
+2. top5_golden_years years MUST be [${calc.goldenYears.map(g => g.year).join(', ')}] — do not change.
+3. Every single field MUST reference the specific day master ${calc.dayMaster.heavenly}(${calc.dayMaster.element}), the favorable element ${calc.favorableElement}, and unfavorable element ${calc.unfavorableElement} explicitly.
 DO NOT output generic seasonal templates. DO NOT copy example values literally.
 
 Mandatory personalization per field:
@@ -106,20 +195,20 @@ Always specify dates, numbers, and durations as precisely as possible.
 Respond strictly in this JSON schema. All scores must be integers (0-100).
 
 {
-  "sharp_feedback": "5-7 sentences. First sentence: directly name this person's day master character (include the Chinese character) and its core tension. Second: identify the #1 career trap this saju structure creates repeatedly. Third: explain the five-element mechanism behind that trap. Fourth: give a concrete countermeasure with a specific action and deadline. Fifth: warn what accumulates if this is not addressed. Sixth: identify one genuine strength they can leverage right now. No flattery.",
-  "current_season": "spring",
+  "sharp_feedback": "5-7 sentences. First sentence: directly name this person's day master ${calc.dayMaster.heavenly}(${calc.dayMaster.element}) and its core tension. Second: identify the #1 career trap this saju structure creates repeatedly. Third: explain the five-element mechanism (reference ${calc.favorableElement} and ${calc.unfavorableElement}). Fourth: give a concrete countermeasure with a specific action and deadline. Fifth: warn what accumulates if this is not addressed. Sixth: identify one genuine strength they can leverage right now. No flattery.",
+  "current_season": "${calc.careerSeason}",
   "season_details": {
-    "season": "spring",
-    "year_range": "2024-2027",
-    "advice": "5-7 sentences. First: how this person's favorable element is activated right now. Second: first specific action that leverages this element (name the actual industry/field/platform). Third: second specific action (who to meet and where). Fourth: third specific action (what skill to build, by when, how). Fifth: what must be completed before this season ends (specific year). Sixth: the one key decision that maximizes this season's energy. No generic advice.",
-    "warning": "3-4 sentences. How this person's unfavorable element manifests right now (specific scenario in work/relationship/health). What specific loss occurs if they fall into this trap (opportunity/relationship/time/money). Which situations/decisions/people trigger the unfavorable element. Concrete method to avoid or manage it."
+    "season": "${calc.careerSeason}",
+    "year_range": "${calc.currentLuck ? calc.currentLuck.startYear + '-' + calc.currentLuck.endYear : currentYear + '-' + (currentYear + 9)}",
+    "advice": "5-7 sentences. First: how the favorable element ${calc.favorableElement} is activated in this ${calc.careerSeason} season (${calc.seasonRelationship} relationship with day master). Second: first specific action that leverages this element (name the actual industry/field/platform). Third: second specific action (who to meet and where). Fourth: third specific action (what skill to build, by when, how). Fifth: what must be completed before this luck cycle ends in ${calc.currentLuck?.endYear}. Sixth: the one key decision that maximizes this season's energy. No generic advice.",
+    "warning": "3-4 sentences. How the unfavorable element ${calc.unfavorableElement} manifests right now (specific scenario in work/relationship/health). What specific loss occurs if they fall into this trap. Which situations/decisions/people trigger ${calc.unfavorableElement}. Concrete method to avoid or manage it."
   },
   "top5_golden_years": [
-    {"year": 2028, "score": 95, "reason": "3-4 sentences. Which luck cycle element peaks or transitions in this year (include Chinese characters). How that element interacts with the day master (combine/clash/generate/control and the result). Which specific industry/field/decision type benefits most (name actual sectors). What must be prepared 2-3 years in advance to fully capitalize on this window."},
-    {"year": 2031, "score": 88, "reason": "3-4 sentences. How the annual pillar element combines with the luck cycle to affect this natal chart (element names). Which combination activates and its meaning. What career transition (job change/promotion/founding/expansion) becomes viable. What to build from the prior period to reach this."},
-    {"year": 2026, "score": 82, "reason": "3-4 sentences. Which elements are strengthened in this year and why they favor this chart. What specific opportunity window opens (sector/role/decision). The duration of this window (start month to end month or year). What action must be taken inside this window."},
-    {"year": 2035, "score": 78, "reason": "3-4 sentences. The new luck cycle element that begins around this year (Chinese characters). How this differs from the previous cycle and what it changes in this chart. What form of achievement/change this represents for the career. What foundation to lay in the late 30s to capture this."},
-    {"year": 2040, "score": 74, "reason": "3-4 sentences. The active luck cycle and annual element combination around this period. Which role or position is reinforced in this chart's later structure. What form of economic or social achievement is accessible (specific form). What must be built in the 40s to reach it."}
+    {"year": ${calc.goldenYears[0]?.year ?? currentYear + 3}, "score": ${calc.goldenYears[0]?.score ?? 90}, "reason": "3-4 sentences. Why ${calc.goldenYears[0]?.year ?? currentYear + 3} is a peak year: which luck cycle element and annual element combine favorably for this chart. How they interact with day master ${calc.dayMaster.heavenly}. Which specific industry/field/decision benefits most. What to prepare 2-3 years in advance."},
+    {"year": ${calc.goldenYears[1]?.year ?? currentYear + 5}, "score": ${calc.goldenYears[1]?.score ?? 85}, "reason": "3-4 sentences. Why ${calc.goldenYears[1]?.year ?? currentYear + 5} is favorable: annual pillar element interaction with the luck cycle and natal chart. What combination activates. What career transition becomes viable. What to build from the prior period."},
+    {"year": ${calc.goldenYears[2]?.year ?? currentYear + 8}, "score": ${calc.goldenYears[2]?.score ?? 80}, "reason": "3-4 sentences. Which elements strengthen in ${calc.goldenYears[2]?.year ?? currentYear + 8} and why they favor this chart. What specific opportunity window opens. The duration of this window. What action must be taken inside it."},
+    {"year": ${calc.goldenYears[3]?.year ?? currentYear + 12}, "score": ${calc.goldenYears[3]?.score ?? 75}, "reason": "3-4 sentences. The luck cycle element active around ${calc.goldenYears[3]?.year ?? currentYear + 12}. How it differs from the previous cycle. What form of career achievement this represents. What foundation to lay beforehand."},
+    {"year": ${calc.goldenYears[4]?.year ?? currentYear + 18}, "score": ${calc.goldenYears[4]?.score ?? 70}, "reason": "3-4 sentences. The active luck cycle and annual element combination. Which role/position is reinforced. What form of achievement is accessible. What must be built to reach it."}
   ],
   "life_cycle_scores": [
     {"age_range": "20s", "score": 65, "description": "Based on this person's luck cycle at that age — what element was active and what that meant"},
@@ -128,12 +217,7 @@ Respond strictly in this JSON schema. All scores must be integers (0-100).
     {"age_range": "50s", "score": 75, "description": "Luck cycle element shift and its career implications for this chart"},
     {"age_range": "60s", "score": 60, "description": "Final luck cycle element and legacy implications for this specific chart"}
   ],
-  "season_cycle": [
-    {"season": "winter", "start_year": 2021, "end_year": 2024, "label": "Preparation", "is_current": false},
-    {"season": "spring", "start_year": 2024, "end_year": 2027, "label": "Seeding", "is_current": true},
-    {"season": "summer", "start_year": 2027, "end_year": 2030, "label": "Growth", "is_current": false},
-    {"season": "autumn", "start_year": 2030, "end_year": 2033, "label": "Harvest", "is_current": false}
-  ],
+  "season_cycle": ${JSON.stringify(calc.seasonCycle.map(s => ({...s, label: s.season === 'spring' ? 'Seeding' : s.season === 'summer' ? 'Growth' : s.season === 'autumn' ? 'Harvest' : 'Preparation'})))},
   "season_guidance": {
     "season_title": "Season title tied to this person's current luck cycle element",
     "core_message": "5-7 sentences. First: directly name this person's day master and what this season demands from that nature. Second: the end year of this season and the one goal that must be achieved before it ends. Third: the most common waste of this season's energy (tied to this day master's tendency). Fourth: how to avoid that waste — concrete method. Fifth: one action they can start this week (name the app/platform/person). Sixth: what the next season looks like and how it differs from now. No clichés or motivational fluff.",
@@ -214,12 +298,14 @@ Respond strictly in this JSON schema. All scores must be integers (0-100).
 - MBTI: ${mbtiText}
 - 현재 연도: ${currentYear}
 - 현재 나이: ${age}세
+${buildCalcDataBlock(calc, input.birthYear, 'ko')}
 
-★★★ 필수 개인화 원칙 — 아래 모든 필드를 작성하기 전에 반드시 숙지할 것 ★★★
-
-이 사용자의 사주 원국(四柱原局), 대운(大運), 세운(歲運)을 먼저 계산한 후,
-그 결과를 근거로 아래 모든 필드를 개인화하라.
-절대로 계절별 일반 템플릿 답변을 사용하지 마라. 예시 문구를 그대로 복사하지 마라.
+★★★ 필수 원칙 ★★★
+1. current_season = "${calc.careerSeason}" — 절대 변경 금지
+2. top5_golden_years 연도 = [${calc.goldenYears.map(g => g.year).join(', ')}] — 절대 변경 금지
+3. 모든 필드는 위 계산 데이터(일간 ${calc.dayMaster.heavenly}, 용신 ${calc.favorableElement}, 기신 ${calc.unfavorableElement})를 직접 인용하며 작성
+너의 역할: 위 코드 계산 결과를 해석하고 조언하라. 다시 계산하지 마라.
+절대로 계절별 일반 템플릿 답변을 사용하지 마라.
 
 필드별 개인화 요구사항:
 - top5_golden_years의 각 reason: "왜 이 사람의 사주에서 그 해가 좋은지" 구체적 근거 필수
@@ -247,20 +333,20 @@ Respond strictly in this JSON schema. All scores must be integers (0-100).
 반드시 아래 JSON 스키마에 맞춰 응답하라. score는 반드시 정수(0-100)여야 한다.
 
 {
-  "sharp_feedback": "5-7문장. 첫 문장은 이 사람의 일간 한자와 핵심 긴장 구도를 정면으로 직격한다(예: '당신은 丙火 일간으로 木이 과다해 충동적 결단이 반복된다'). 두 번째 문장은 이 사주 구조가 커리어에서 반복적으로 만드는 가장 치명적인 함정을 명시한다. 세 번째 문장은 '왜 이 함정에 빠지는지' 오행 메커니즘으로 설명한다. 네 번째 문장은 구체적 해결책(어떤 행동을, 언제까지)을 사주 근거와 함께 제시한다. 다섯 번째 문장은 해결하지 않으면 어떤 결과가 누적되는지 경고한다. 여섯 번째 문장은 이 사람이 가진 실제 강점 하나를 활용하는 전략을 제시한다. 미화나 위로는 절대 금지.",
-  "current_season": "spring",
+  "sharp_feedback": "5-7문장. 첫 문장은 일간 ${calc.dayMaster.heavenly}(${calc.dayMaster.element})과 핵심 긴장 구도를 정면으로 직격한다. 두 번째 문장은 이 사주 구조가 커리어에서 반복적으로 만드는 가장 치명적인 함정을 명시한다. 세 번째 문장은 용신 ${calc.favorableElement}·기신 ${calc.unfavorableElement} 오행 메커니즘으로 설명한다. 네 번째 문장은 구체적 해결책(어떤 행동을, 언제까지)을 사주 근거와 함께 제시한다. 다섯 번째 문장은 해결하지 않으면 어떤 결과가 누적되는지 경고한다. 여섯 번째 문장은 이 사람이 가진 실제 강점 하나를 활용하는 전략을 제시한다. 미화나 위로는 절대 금지.",
+  "current_season": "${calc.careerSeason}",
   "season_details": {
-    "season": "spring",
-    "year_range": "2024-2027",
-    "advice": "5-7문장. 첫 문장: 이 사람의 용신 오행이 지금 이 시기에 어떻게 활성화되어 있는지 구체적으로. 둘째: 이 용신 에너지를 살리는 첫 번째 행동(직업·업종·분야를 실제 이름으로 명시). 셋째: 두 번째 행동(어떤 사람을 어디서 어떻게 만날지). 넷째: 세 번째 행동(어떤 역량을 언제까지 어떤 방법으로 쌓을지). 다섯째: 이 계절 기간이 끝나는 연도와 그 전에 반드시 완료해야 할 것. 여섯째: 이 계절의 에너지를 극대화하는 핵심 결정 하나. 일반론 완전 금지.",
-    "warning": "3-4문장. 이 사람의 기신 오행이 이 계절에 구체적으로 어떤 형태로 나타나는지(직업·관계·건강 중 하나를 구체적 시나리오로). 이 함정에 빠지면 어떤 구체적 손실이 오는지(기회·관계·시간·돈 중 명시). 어떤 상황·결정·사람을 만날 때 기신이 활성화되는지 명시. 기신을 피하거나 다루는 구체적 방법."
+    "season": "${calc.careerSeason}",
+    "year_range": "${calc.currentLuck ? calc.currentLuck.startYear + '-' + calc.currentLuck.endYear : currentYear + '-' + (currentYear + 9)}",
+    "advice": "5-7문장. 첫 문장: 용신 ${calc.favorableElement}이 현재 ${calc.seasonRelationship} 대운에서 어떻게 활성화되는지 구체적으로. 둘째: 이 용신 에너지를 살리는 첫 번째 행동(직업·업종·분야를 실제 이름으로 명시). 셋째: 두 번째 행동(어떤 사람을 어디서 어떻게 만날지). 넷째: 세 번째 행동(어떤 역량을 언제까지). 다섯째: 대운이 끝나는 ${calc.currentLuck?.endYear}년 전에 반드시 완료해야 할 것. 여섯째: 이 계절의 에너지를 극대화하는 핵심 결정 하나. 일반론 완전 금지.",
+    "warning": "3-4문장. 기신 ${calc.unfavorableElement}이 이 계절에 구체적으로 어떤 형태로 나타나는지(직업·관계·건강 중 하나를 구체적 시나리오로). 이 함정에 빠지면 어떤 구체적 손실이 오는지. 어떤 상황·결정·사람을 만날 때 기신이 활성화되는지 명시. 기신을 피하거나 다루는 구체적 방법."
   },
   "top5_golden_years": [
-    {"year": 2028, "score": 95, "reason": "3-4문장. 이 해에 대운이 어떤 오행으로 전환되거나 절정에 달하는지(천간·지지 한자 포함). 그 대운 오행이 일간과 만들어내는 합·충·생·극 관계 및 그 결과. 구체적으로 어떤 업종·분야·결정에서 기회가 오는지(IT·금융·예술 등 실제 분야 명시). 이 시기를 최대한 활용하려면 2-3년 전부터 무엇을 준비해야 하는지."},
-    {"year": 2031, "score": 88, "reason": "3-4문장. 이 해 세운 오행과 대운의 조합이 이 원국에 만드는 구체적 흐름(오행 이름 포함). 어떤 오행 합이 발동하는지. 커리어에서 어떤 전환(이직·승진·창업·사업 확장 등)이 가능한지. 이를 위해 몇 년 전부터 무엇을 쌓아야 하는지."},
-    {"year": 2026, "score": 82, "reason": "3-4문장. 이 해에 활성화되는 세운 오행과 대운 오행의 조합. 이 원국에서 어떤 오행이 강화되어 유리해지는지. 어떤 분야·결정·관계에서 기회의 창이 열리는지 구체적으로. 이 창이 열려 있는 기간(시작 월~끝 월 또는 연도)."},
-    {"year": 2035, "score": 78, "reason": "3-4문장. 이 시기에 새로 시작되는 대운 오행(천간·지지 한자). 이전 대운과의 차이가 이 원국에 어떤 구체적 변화를 가져오는지. 이 전환이 커리어에서 어떤 형태의 성취·변화를 의미하는지. 이 기회를 잡으려면 30대 후반부터 무엇을 준비해야 하는지."},
-    {"year": 2040, "score": 74, "reason": "3-4문장. 이 시기 활성화되는 대운·세운 오행 조합. 이 원국의 말년 구조에서 어떤 역할·포지션이 강화되는지. 경제적·사회적으로 어떤 형태의 성취가 가능한지(구체적 형태 명시). 그 성취를 위해 40대에 어떤 기반을 닦아야 하는지."}
+    {"year": ${calc.goldenYears[0]?.year ?? currentYear + 3}, "score": ${calc.goldenYears[0]?.score ?? 90}, "reason": "3-4문장. ${calc.goldenYears[0]?.year ?? currentYear + 3}년이 전성기인 이유: 대운·세운 오행이 원국과 어떻게 상호작용하는지(천간·지지 한자 포함). 일간 ${calc.dayMaster.heavenly}과의 관계 및 결과. 구체적으로 어떤 업종·분야에서 기회가 오는지. 2-3년 전부터 무엇을 준비해야 하는지."},
+    {"year": ${calc.goldenYears[1]?.year ?? currentYear + 5}, "score": ${calc.goldenYears[1]?.score ?? 85}, "reason": "3-4문장. ${calc.goldenYears[1]?.year ?? currentYear + 5}년 세운·대운 오행 조합이 이 원국에 만드는 흐름. 어떤 오행 합·충이 발동하는지. 커리어에서 어떤 전환이 가능한지. 이를 위해 미리 무엇을 쌓아야 하는지."},
+    {"year": ${calc.goldenYears[2]?.year ?? currentYear + 8}, "score": ${calc.goldenYears[2]?.score ?? 80}, "reason": "3-4문장. ${calc.goldenYears[2]?.year ?? currentYear + 8}년에 활성화되는 오행 조합과 원국에서 유리해지는 이유. 어떤 분야·결정에서 기회의 창이 열리는지. 그 창의 지속 기간. 그 안에 취해야 할 행동."},
+    {"year": ${calc.goldenYears[3]?.year ?? currentYear + 12}, "score": ${calc.goldenYears[3]?.score ?? 75}, "reason": "3-4문장. ${calc.goldenYears[3]?.year ?? currentYear + 12}년 대운 오행(천간·지지 한자). 이전 대운과의 차이가 이 원국에 가져오는 변화. 커리어에서 어떤 형태의 성취·전환을 의미하는지. 이를 위해 무엇을 미리 준비해야 하는지."},
+    {"year": ${calc.goldenYears[4]?.year ?? currentYear + 18}, "score": ${calc.goldenYears[4]?.score ?? 70}, "reason": "3-4문장. ${calc.goldenYears[4]?.year ?? currentYear + 18}년 대운·세운 오행 조합. 이 원국 구조에서 어떤 역할·포지션이 강화되는지. 경제적·사회적으로 어떤 형태의 성취가 가능한지. 그 성취를 위해 어떤 기반을 닦아야 하는지."}
   ],
   "life_cycle_scores": [
     {"age_range": "20대", "score": 65, "description": "당시 활성화된 대운 오행과 이 원국과의 상호작용 — 왜 이 점수인지 근거 포함"},
@@ -269,12 +355,7 @@ Respond strictly in this JSON schema. All scores must be integers (0-100).
     {"age_range": "50대", "score": 75, "description": "50대 대운 전환과 이 원국에서의 커리어 의미"},
     {"age_range": "60대", "score": 60, "description": "말년 대운 오행과 이 사람 원국의 마무리 구조"}
   ],
-  "season_cycle": [
-    {"season": "winter", "start_year": 2021, "end_year": 2024, "label": "준비기", "is_current": false},
-    {"season": "spring", "start_year": 2024, "end_year": 2027, "label": "씨앗기", "is_current": true},
-    {"season": "summer", "start_year": 2027, "end_year": 2030, "label": "성장기", "is_current": false},
-    {"season": "autumn", "start_year": 2030, "end_year": 2033, "label": "수확기", "is_current": false}
-  ],
+  "season_cycle": ${JSON.stringify(calc.seasonCycle)},
   "season_guidance": {
     "season_title": "이 사람의 현재 대운 오행과 연결된 계절 제목",
     "core_message": "5-7문장. 첫 문장: 이 사람의 일간 한자와 본성을 직접 호명하며 지금 이 계절이 그 본성에게 무엇을 요구하는지. 둘째: 이 계절이 끝나는 연도와 그 전에 반드시 이루어야 할 핵심 목표 하나. 셋째: 이 계절의 에너지를 낭비하는 가장 흔한 실수(이 일간 특성과 연결하여 구체적으로). 넷째: 그 실수를 피하는 구체적인 방법. 다섯째: 지금 당장 이번 주부터 시작할 수 있는 한 가지 행동(앱·플랫폼·사람 이름까지). 여섯째: 이 계절이 지나면 찾아오는 다음 계절의 특성과 지금과의 차이. 일반론·격언·미화 완전 금지.",
@@ -347,46 +428,47 @@ Respond strictly in this JSON schema. All scores must be integers (0-100).
 // 2단계: 사주 상세 + 계절 근거 (1단계 결과 참조)
 function buildSajuDetailPrompt(
   input: any,
+  calc: SajuCalcResult,
   currentYear: number,
   lang: 'ko' | 'en',
   currentSeason: string,
   top5GoldenYears: any[]
 ): string {
   const age = currentYear - input.birthYear;
-  const hourText = input.birthHour === -1
-    ? (lang === 'en' ? 'unknown time' : '시간 모름')
-    : `${input.birthHour}${lang === 'en' ? ':00' : '시'}`;
   const genderText = lang === 'en'
     ? (input.gender === 'male' ? 'Male' : 'Female')
     : (input.gender === 'male' ? '남성' : '여성');
-  const calText = lang === 'en'
-    ? (input.calendarType === 'lunar' ? 'Lunar' : 'Solar')
-    : (input.calendarType === 'lunar' ? '음력' : '양력');
-  const top5Summary = top5GoldenYears
-    .map((g: any) => `${g.year}년(${g.score}점)`)
-    .join(', ');
+
+  const fp = calc.fourPillars;
+  const yH = extractChar(fp.year.heavenly);
+  const yE = extractChar(fp.year.earthly);
+  const mH = extractChar(fp.month.heavenly);
+  const mE = extractChar(fp.month.earthly);
+  const dH = extractChar(fp.day.heavenly);
+  const dE = extractChar(fp.day.earthly);
+  const hH = fp.hour ? extractChar(fp.hour.heavenly) : (lang === 'en' ? 'unknown' : '모름');
+  const hE = fp.hour ? extractChar(fp.hour.earthly) : (lang === 'en' ? 'unknown' : '모름');
+  const top5Summary = top5GoldenYears.map((g: any) => `${g.year}(${g.score}점)`).join(', ');
 
   if (lang === 'en') {
     return `You are Zhuge Liang, a saju expert and career strategist.
-Analyze this person's four pillars in detail.
+Interpret this person's pre-calculated four pillars in detail. Do NOT recalculate — the pillars are fixed.
 
 User info:
-- Date of birth: ${input.birthYear}-${input.birthMonth}-${input.birthDay} at ${hourText} (${calText} calendar)
-- Birthplace: ${input.birthPlace || 'Korea'}
-- Gender: ${genderText}
-- Current year: ${currentYear}, age: ${age}
+- Birth: ${input.birthYear}-${input.birthMonth}-${input.birthDay}, Gender: ${genderText}, Age: ${age}
+${buildCalcDataBlock(calc, input.birthYear, 'en')}
 
-Already analyzed career season: ${currentSeason}
-Already analyzed golden years: ${top5Summary}
+Career season (fixed): ${currentSeason}
+Golden years (fixed): ${top5Summary}
 
 Respond ONLY with the following JSON (no other text):
 {
   "saju_detail": {
     "four_pillars": {
-      "year": {"heavenly": "actual heavenly stem character (e.g. 甲)", "earthly": "actual earthly branch character (e.g. 子)", "meaning": "3-4 sentences. The element and yin/yang of this year pillar's stem and branch. How this year pillar combines/clashes/generates/controls the day pillar. Its specific influence on ancestry, roots, and early life fortune. Key interactions with other pillars (month/hour)."},
-      "month": {"heavenly": "actual heavenly stem character", "earthly": "actual earthly branch character", "meaning": "3-4 sentences. The element and yin/yang of this month pillar. How this month pillar interacts with the day master (combine/clash/generate/control). Its specific influence on social skills, career, and parental relationships. How it contributes to or undermines the favorable element structure."},
-      "day": {"heavenly": "actual heavenly stem character", "earthly": "actual earthly branch character", "meaning": "3-4 sentences. The element, yin/yang, and strength of the day master. How the day branch supports or restrains the day stem. The core personality traits this pillar creates (strengths and shadow side, honestly). Key combines/clashes this day pillar forms with other pillars and their career implications."},
-      "hour": {"heavenly": "actual heavenly stem character or unknown", "earthly": "actual earthly branch character or unknown", "meaning": "3-4 sentences. The element/yin/yang of this hour pillar (if unknown: describe the analytical uncertainty and its implications). Its specific influence on desires, offspring, and later-life fortune. The combine/clash relationship with the day master. Its role in the favorable/unfavorable element structure."}
+      "year": {"heavenly": "${yH}", "earthly": "${yE}", "meaning": "3-4 sentences. The element and yin/yang of ${yH}${yE}. How this year pillar combines/clashes/generates/controls the day pillar ${dH}${dE}. Its specific influence on ancestry, roots, and early life fortune. Key interactions with other pillars."},
+      "month": {"heavenly": "${mH}", "earthly": "${mE}", "meaning": "3-4 sentences. The element and yin/yang of ${mH}${mE}. How this month pillar interacts with day master ${dH}. Its specific influence on social skills, career, and parental relationships. How it contributes to or undermines the favorable element ${calc.favorableElement}."},
+      "day": {"heavenly": "${dH}", "earthly": "${dE}", "meaning": "3-4 sentences. The element, yin/yang, and strength of day master ${dH}. How the day branch ${dE} supports or restrains the day stem. The core personality traits this pillar creates (strengths and shadow side, honestly). Key combines/clashes this day pillar forms and their career implications."},
+      "hour": {"heavenly": "${hH}", "earthly": "${hE}", "meaning": "3-4 sentences. The element/yin/yang of this hour pillar${fp.hour ? '' : ' (unknown hour — describe the analytical uncertainty and its implications)'}. Its specific influence on desires and later-life fortune. The combine/clash relationship with the day master. Its role in the favorable/unfavorable element structure."}
     },
     "day_master": {
       "element": "e.g. 丙火 (Bing Fire)",
@@ -413,39 +495,38 @@ Respond ONLY with the following JSON (no other text):
   }
 
   return `너는 사주 전문가이자 커리어 전략가 제갈량이다.
-이 사람의 사주 원국을 상세히 분석하라.
+아래 코드로 계산된 사주 원국을 해석하라. 다시 계산하지 마라.
 
 사용자 정보:
-- 생년월일시: ${input.birthYear}년 ${input.birthMonth}월 ${input.birthDay}일 ${hourText} (${calText})
-- 출생지: ${input.birthPlace || '한국'}
-- 성별: ${genderText}
-- 현재 연도: ${currentYear}, 나이: ${age}세
+- 생년월일: ${input.birthYear}년 ${input.birthMonth}월 ${input.birthDay}일
+- 성별: ${genderText}, 나이: ${age}세
+${buildCalcDataBlock(calc, input.birthYear, 'ko')}
 
-이미 분석된 커리어 계절: ${currentSeason}
-이미 분석된 전성기 연도: ${top5Summary}
+커리어 계절(고정): ${currentSeason}
+전성기 연도(고정): ${top5Summary}
 
 반드시 아래 JSON만 응답하라 (다른 텍스트 금지):
 {
   "saju_detail": {
     "four_pillars": {
-      "year": {"heavenly": "실제 년주 천간 한자 1글자(예: 甲)", "earthly": "실제 년주 지지 한자 1글자(예: 子)", "meaning": "3-4문장. 이 년주 천간·지지의 오행과 음양. 이 년주가 일주(일간)와 어떤 합·충·생·극 관계에 있는지. 이 년주가 이 사람의 조상·뿌리·초년 운에 미치는 구체적 영향. 다른 주(월주·시주)와의 주요 오행 상호작용."},
-      "month": {"heavenly": "실제 월주 천간 한자 1글자", "earthly": "실제 월주 지지 한자 1글자", "meaning": "3-4문장. 이 월주 천간·지지의 오행과 음양. 이 월주가 일주와 어떤 합·충·생·극 관계에 있는지. 이 월주가 사회성·직업운·부모운에 미치는 구체적 영향. 이 월주가 전체 원국에서 용신/기신에 어떻게 기여하는지."},
-      "day": {"heavenly": "실제 일주 천간 한자 1글자", "earthly": "실제 일주 지지 한자 1글자", "meaning": "3-4문장. 일간의 오행·음양·강약. 일지(日支)가 일간을 어떻게 보좌하거나 제약하는지. 이 일주가 만드는 핵심 성격 특성(강점·그림자 면을 솔직하게). 이 일주가 다른 주와 만드는 주요 합·충·형·파와 그 커리어 함의."},
-      "hour": {"heavenly": "실제 시주 천간 1글자 또는 모름", "earthly": "실제 시주 지지 1글자 또는 모름", "meaning": "3-4문장. 시주 오행·음양(모를 경우: 시간 미상이 사주 분석에 미치는 영향과 그 불확실성). 이 시주가 자녀운·욕망·말년 운에 미치는 구체적 영향. 이 시주와 일주의 합·충 관계. 이 시주가 용신/기신 구조에서 어떤 역할을 하는지."}
+      "year": {"heavenly": "${yH}", "earthly": "${yE}", "meaning": "3-4문장. ${yH}${yE} 년주의 오행과 음양. 이 년주가 일주 ${dH}${dE}와 어떤 합·충·생·극 관계인지. 조상·초년 운에 미치는 구체적 영향. 다른 주와의 주요 오행 상호작용."},
+      "month": {"heavenly": "${mH}", "earthly": "${mE}", "meaning": "3-4문장. ${mH}${mE} 월주의 오행과 음양. 일주와의 합·충·생·극 관계. 사회성·직업운·부모운에 미치는 영향. 용신 ${calc.favorableElement}/기신 ${calc.unfavorableElement} 구조에서의 역할."},
+      "day": {"heavenly": "${dH}", "earthly": "${dE}", "meaning": "3-4문장. 일간 ${dH}의 오행·음양·강약. 일지 ${dE}가 일간을 어떻게 보좌하거나 제약하는지. 이 일주가 만드는 핵심 성격 특성(강점·그림자 면 솔직하게). 다른 주와의 주요 합·충·형·파와 커리어 함의."},
+      "hour": {"heavenly": "${hH}", "earthly": "${hE}", "meaning": "3-4문장. 시주${fp.hour ? ' ' + hH + hE : ''}의 오행·음양${fp.hour ? '' : '(시간 미상: 분석 불확실성과 영향 설명)'}. 자녀운·욕망·말년 운에 미치는 영향. 일주와의 합·충 관계. 용신/기신 구조에서의 역할."}
     },
     "day_master": {
-      "element": "예: 병화(丙火)",
-      "character": "예: 태양의 불 — 밝고 강렬하지만 멈춤을 모른다",
-      "description": "5-7문장. 첫 문장: 이 일간의 오행·음양·강약을 직접 명시하며 핵심 본성을 규정. 둘째: 이 일간이 가진 가장 두드러진 성격 강점(구체적 직업·상황과 연결). 셋째: 이 일간의 대인관계 패턴(어떻게 상대를 대하고 어떻게 상대에게 인식되는지). 넷째: 이 일간의 가장 뚜렷한 그림자 면(미화 없이 솔직하게). 다섯째: 이 일간이 직업 선택에서 반복적으로 저지르는 실수. 여섯째: 이 일간에게 가장 적합한 직업군과 그 이유. 일곱 번째: 이 일간이 가장 빛나는 환경과 조건."
+      "element": "${calc.dayMaster.heavenly.replace(/[가-힣]/g, '')}",
+      "character": "${dH}${calc.dayMaster.element} — 이 일간의 본질적 성격을 한 문장으로",
+      "description": "5-7문장. 첫 문장: 일간 ${dH}(${calc.dayMaster.element}) ${calc.dayMaster.yinYang}의 오행·강약을 직접 명시하며 핵심 본성을 규정. 둘째: 이 일간이 가진 가장 두드러진 성격 강점(구체적 직업·상황과 연결). 셋째: 이 일간의 대인관계 패턴. 넷째: 이 일간의 가장 뚜렷한 그림자 면(미화 없이 솔직하게). 다섯째: 이 일간이 직업 선택에서 반복적으로 저지르는 실수. 여섯째: 이 일간에게 가장 적합한 직업군. 일곱 번째: 이 일간이 가장 빛나는 환경과 조건."
     },
-    "five_elements": {"wood": 20, "fire": 30, "earth": 15, "water": 25, "metal": 10},
-    "favorable_element": "구체적 오행 + 왜 이 원국에서 용신이 되는지 (예: 수(水) — 과다한 화를 제어하고 이 일간이 부족한 냉철한 판단력을 보완)",
-    "unfavorable_element": "구체적 오행 + 왜 이 원국에서 기신이 되는지 (예: 목(木) — 이미 과다한 화를 더 키워 충동적 결정을 증폭시킴)",
+    "five_elements": {"wood": ${calc.fiveElements.wood}, "fire": ${calc.fiveElements.fire}, "earth": ${calc.fiveElements.earth}, "water": ${calc.fiveElements.water}, "metal": ${calc.fiveElements.metal}},
+    "favorable_element": "${calc.favorableElement} — 왜 이 원국에서 용신인지 설명(오행 균형 논리 포함)",
+    "unfavorable_element": "${calc.unfavorableElement} — 왜 이 원국에서 기신인지 설명(오행 불균형 심화 논리 포함)",
     "personality_summary": "5-7문장. 첫 문장: '당신은 ~한 사람입니다'로 시작하며 이 원국의 핵심 특성을 직격. 둘째: 이 사람이 가장 빛나는 상황·환경·조건. 셋째: 이 사람이 반복적으로 겪는 관계 패턴(직장·연애·우정 중 하나). 넷째: 이 사람의 결정 방식(어떻게 선택하고 왜 그 선택이 때로 문제가 되는지). 다섯째: 이 사람이 스트레스를 받을 때 나타나는 특유의 행동 패턴. 여섯째: 이 사람이 평생 반복할 가능성이 높은 핵심 과제. 일반론·미화 절대 금지, 사주 원국 근거로만 작성.",
     "current_luck_period": {
-      "period": "예: 2022-2031",
-      "element": "예: 임수(壬水) 대운",
-      "influence": "5-7문장. 첫 문장: 현재 대운 천간과 지지의 오행이 일간과 만드는 관계(합·충·생·극 — 한자 포함). 둘째: 이 대운 오행이 원국의 어느 기둥과 어떻게 상호작용하는지. 셋째: 이 상호작용이 커리어에 실제로 어떻게 나타나는지(승진·갈등·기회·위기 등 구체적 형태). 넷째: 이 대운이 용신 또는 기신 방향으로 작용하는지와 그 강도. 다섯째: 이 대운이 끝나는 연도와 그 전까지 반드시 이루어야 할 것. 여섯째: 다음 대운으로의 전환이 이 원국에서 어떤 변화를 가져올지."
+      "period": "${calc.currentLuck ? calc.currentLuck.startYear + '-' + calc.currentLuck.endYear : ''}",
+      "element": "${calc.currentLuck ? calc.currentLuck.heavenly + calc.currentLuck.earthly + ' 대운 (' + calc.currentLuck.stemElement + '/' + calc.currentLuck.branchElement + ')' : ''}",
+      "influence": "5-7문장. 첫 문장: 현재 대운 ${calc.currentLuck?.heavenly ?? ''}${calc.currentLuck?.earthly ?? ''}(${calc.currentLuck?.stemElement ?? ''}/${calc.currentLuck?.branchElement ?? ''})이 일간 ${dH}(${calc.dayMaster.element})과 만드는 관계(${calc.seasonRelationship}). 둘째: 이 대운 오행이 원국의 어느 기둥과 어떻게 상호작용하는지. 셋째: 이 상호작용이 커리어에 실제로 어떻게 나타나는지(승진·갈등·기회·위기 등 구체적 형태). 넷째: 이 대운이 용신 ${calc.favorableElement} 또는 기신 ${calc.unfavorableElement} 방향으로 작용하는지. 다섯째: 이 대운이 끝나는 ${calc.currentLuck?.endYear ?? ''}년 전까지 반드시 이루어야 할 것. 여섯째: 다음 대운으로의 전환이 이 원국에서 어떤 변화를 가져올지."
     }
   },
   "season_reasoning": {
@@ -488,8 +569,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       const currentYear = new Date().getFullYear();
 
+      // 사주 코드 계산 (Gemini 호출 전)
+      const calcResult = calcSaju({
+        birthYear: input.birthYear,
+        birthMonth: input.birthMonth,
+        birthDay: input.birthDay,
+        birthHour: input.birthHour ?? -1,
+        gender: input.gender ?? 'male',
+        calendarType: input.calendarType ?? 'solar',
+        currentYear,
+      });
+      console.log(`[api/saju] Calc: ${calcResult.fourPillars.year.heavenly}${calcResult.fourPillars.month.heavenly}${calcResult.fourPillars.day.heavenly} | season=${calcResult.careerSeason} | golden=${calcResult.goldenYears.map(g=>g.year).join(',')}`);
+
       // 1단계: 기본 분석
-      const basicPrompt = buildBasicPrompt(input, currentYear, lang);
+      const basicPrompt = buildBasicPrompt(input, calcResult, currentYear, lang);
       let basicParsed: any;
       for (let attempt = 1; attempt <= 3; attempt++) {
         const result = await model.generateContent(basicPrompt);
@@ -503,15 +596,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
       }
 
+      // 코드 계산값으로 강제 덮어쓰기 (Gemini가 변경한 경우 방어)
+      basicParsed.current_season = calcResult.careerSeason;
+      basicParsed.season_cycle = calcResult.seasonCycle;
+      if (basicParsed.top5_golden_years && calcResult.goldenYears.length === 5) {
+        basicParsed.top5_golden_years = basicParsed.top5_golden_years.map((g: any, i: number) => ({
+          ...g,
+          year: calcResult.goldenYears[i].year,
+          score: calcResult.goldenYears[i].score,
+        }));
+      }
+
       // 2단계: 사주 상세 + 계절 근거 (1단계 결과 참조)
       let sajuDetail: any = null;
       let seasonReasoning: any = null;
       try {
         const sajuPrompt = buildSajuDetailPrompt(
           input,
+          calcResult,
           currentYear,
           lang,
-          basicParsed.current_season ?? 'spring',
+          calcResult.careerSeason,
           basicParsed.top5_golden_years ?? []
         );
         let sajuParsed: any;
@@ -544,8 +649,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         season_guidance: basicParsed.season_guidance ?? null,
         networking_guide: basicParsed.networking_guide ?? null,
         growth_missions: basicParsed.growth_missions ?? [],
-        saju_detail: sajuDetail,
+        saju_detail: sajuDetail ? {
+          ...sajuDetail,
+          // 오행 분포는 코드 계산값으로 강제 덮어쓰기
+          five_elements: calcResult.fiveElements,
+          favorable_element: sajuDetail.favorable_element ?? calcResult.favorableElement,
+          unfavorable_element: sajuDetail.unfavorable_element ?? calcResult.unfavorableElement,
+        } : null,
         season_reasoning: seasonReasoning,
+        // 계산 메타데이터 (디버깅용)
+        _calc_meta: {
+          four_pillars_raw: {
+            year: calcResult.fourPillars.year.heavenly + calcResult.fourPillars.year.earthly,
+            month: calcResult.fourPillars.month.heavenly + calcResult.fourPillars.month.earthly,
+            day: calcResult.fourPillars.day.heavenly + calcResult.fourPillars.day.earthly,
+            hour: calcResult.fourPillars.hour
+              ? calcResult.fourPillars.hour.heavenly + calcResult.fourPillars.hour.earthly
+              : null,
+          },
+          solar_birth_date: calcResult.solarBirthDate,
+          career_season: calcResult.careerSeason,
+          season_relationship: calcResult.seasonRelationship,
+        },
       });
     }
 
