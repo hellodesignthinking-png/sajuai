@@ -11,7 +11,7 @@ interface LandingPageProps {
 
 export default function LandingPage({ onStart, onOpenAuth }: LandingPageProps) {
   const { t, lang } = useLang();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Subtle particle background
@@ -145,7 +145,28 @@ export default function LandingPage({ onStart, onOpenAuth }: LandingPageProps) {
               {t.tagline}
             </span>
             <LanguageToggle />
-            {!user && (
+            {user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {user.email}
+                </span>
+                <button
+                  onClick={() => signOut()}
+                  style={{
+                    padding: '6px 12px',
+                    background: 'transparent',
+                    border: '1px solid var(--border)',
+                    borderRadius: '20px',
+                    color: 'var(--text-muted)',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {lang === 'ko' ? '로그아웃' : 'Sign out'}
+                </button>
+              </div>
+            ) : (
               <button
                 onClick={onOpenAuth}
                 style={{
