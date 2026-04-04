@@ -91,6 +91,48 @@ export interface GrowthMission {
   action: string;
 }
 
+export interface FourPillar {
+  heavenly: string;
+  earthly: string;
+  meaning: string;
+}
+
+export interface SajuDetail {
+  four_pillars: {
+    year: FourPillar;
+    month: FourPillar;
+    day: FourPillar;
+    hour: FourPillar;
+  };
+  day_master: {
+    element: string;
+    character: string;
+    description: string;
+  };
+  five_elements: {
+    wood: number;
+    fire: number;
+    earth: number;
+    water: number;
+    metal: number;
+  };
+  favorable_element: string;
+  unfavorable_element: string;
+  personality_summary: string;
+  current_luck_period: {
+    period: string;
+    element: string;
+    influence: string;
+  };
+}
+
+export interface SeasonReasoning {
+  saju_basis: string;
+  astrology_basis: string;
+  numerology_basis: string;
+  overall_reasoning: string;
+}
+
 export interface AnalysisResult {
   top5_golden_years: GoldenYear[];
   life_cycle_scores: LifeCycleScore[];
@@ -104,4 +146,7 @@ export interface AnalysisResult {
   season_guidance: SeasonGuidance;
   networking_guide: NetworkingGuide;
   growth_missions: GrowthMission[];
+  // Phase 3
+  saju_detail?: SajuDetail;
+  season_reasoning?: SeasonReasoning;
 }

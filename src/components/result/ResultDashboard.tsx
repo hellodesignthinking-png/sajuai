@@ -11,6 +11,8 @@ import SeasonCycle from './SeasonCycle';
 import SeasonGuidance from './SeasonGuidance';
 import NetworkingGuide from './NetworkingGuide';
 import GrowthMissions from './GrowthMissions';
+import SajuDetail from './SajuDetail';
+import SeasonReasoning from './SeasonReasoning';
 import VirtueChallenge from '../social/VirtueChallenge';
 import ShareSection from '../social/ShareSection';
 import PaywallOverlay from '../payment/PaywallOverlay';
@@ -209,6 +211,26 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.25 }}>
           <PricingCard />
         </motion.section>
+
+        {/* ── PREMIUM: P1. 사주 팔자 상세 분석 ───────────── */}
+        {result.saju_detail && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.28 }}>
+            <SectionTitle>☯ 사주 팔자 상세 분석</SectionTitle>
+            <PaywallOverlay>
+              <SajuDetail data={result.saju_detail} />
+            </PaywallOverlay>
+          </motion.section>
+        )}
+
+        {/* ── PREMIUM: P2. 커리어 계절의 근거 ─────────────── */}
+        {result.season_reasoning && result.current_season && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.29 }}>
+            <SectionTitle>🔍 왜 지금이 이 계절인가</SectionTitle>
+            <PaywallOverlay>
+              <SeasonReasoning data={result.season_reasoning} season={result.current_season} />
+            </PaywallOverlay>
+          </motion.section>
+        )}
 
         {/* ── PREMIUM: 4. 전성기 Top 5 전체 ───────────────── */}
         {sortedYears.length > 0 && (

@@ -166,6 +166,34 @@ Respond strictly in this JSON schema. All scores must be integers (0-100).
     "career_synergy": "2-3 sentences on how saju characteristics synergize with MBTI strengths",
     "blind_spot": "2 honest sentences on how MBTI weaknesses clash with saju aspects"
   },
+  "saju_detail": {
+    "four_pillars": {
+      "year": {"heavenly": "actual heavenly stem character (e.g. 甲)", "earthly": "actual earthly branch character (e.g. 子)", "meaning": "meaning and influence of this year pillar"},
+      "month": {"heavenly": "actual heavenly stem character", "earthly": "actual earthly branch character", "meaning": "meaning and influence of this month pillar"},
+      "day": {"heavenly": "actual heavenly stem character", "earthly": "actual earthly branch character", "meaning": "meaning and influence of this day pillar — day master's nature"},
+      "hour": {"heavenly": "actual heavenly stem character or 모름 if unknown", "earthly": "actual earthly branch character or 모름 if unknown", "meaning": "meaning of hour pillar, or explain implications of unknown birth hour"}
+    },
+    "day_master": {
+      "element": "e.g. 丙火 (Bing Fire)",
+      "character": "e.g. Sun Fire — bright, expansive, leadership",
+      "description": "2-3 sentences: this person's core nature based on day master. Strengths, tendencies, shadow side."
+    },
+    "five_elements": {"wood": 20, "fire": 30, "earth": 15, "water": 25, "metal": 10},
+    "favorable_element": "e.g. Water — controls excess fire, brings balance and strategic thinking",
+    "unfavorable_element": "e.g. Fire — already dominant, adding more creates imbalance",
+    "personality_summary": "2-3 sentences on this person's core traits based on the four pillars. Be specific and honest, not generic.",
+    "current_luck_period": {
+      "period": "e.g. 2022-2031",
+      "element": "e.g. Water (壬水)",
+      "influence": "How this luck period's element interacts with the natal chart. Why this creates the current career season."
+    }
+  },
+  "season_reasoning": {
+    "saju_basis": "Saju perspective: Which luck period (대운) is active, what element it carries, how that element interacts with the day master and natal chart to produce this career season. Mention specific years and elements.",
+    "astrology_basis": "Astrology perspective: Jupiter, Saturn, or Solar Arc positions relative to natal chart. Which transits or progressions point to this career season right now.",
+    "numerology_basis": "Numerology perspective: Personal Year Number, Life Path Number, and current cycle calculation showing why this is a [season] year.",
+    "overall_reasoning": "2 sharp sentences combining all three frameworks. State the career season and its end year. Be specific with numbers."
+  },
   "sharp_feedback": "Two or three sharp, honest sentences. Real advice, not flattery. Directly state this person's biggest problem and solution."
 }`;
   }
@@ -271,6 +299,34 @@ Respond strictly in this JSON schema. All scores must be integers (0-100).
     "career_synergy": "사주의 특성과 MBTI의 강점이 어떻게 시너지를 내는지 2-3문장으로 분석",
     "blind_spot": "MBTI의 약점이 사주의 어떤 면과 충돌하는지 솔직하게 2문장으로 지적"
   },
+  "saju_detail": {
+    "four_pillars": {
+      "year": {"heavenly": "실제 년주 천간 한자 1글자(예: 甲)", "earthly": "실제 년주 지지 한자 1글자(예: 子)", "meaning": "이 년주가 삶에 미치는 의미와 영향"},
+      "month": {"heavenly": "실제 월주 천간 한자 1글자", "earthly": "실제 월주 지지 한자 1글자", "meaning": "이 월주가 사회성·직업운에 미치는 의미"},
+      "day": {"heavenly": "실제 일주 천간 한자 1글자", "earthly": "실제 일주 지지 한자 1글자", "meaning": "일주의 의미 — 일간의 본성과 내면을 설명"},
+      "hour": {"heavenly": "실제 시주 천간 1글자 또는 모름", "earthly": "실제 시주 지지 1글자 또는 모름", "meaning": "시주 의미, 모를 경우 시간 미상 시의 해석 방향"}
+    },
+    "day_master": {
+      "element": "예: 병화(丙火)",
+      "character": "예: 태양의 불 — 밝고 강렬하며 리더십이 강함",
+      "description": "일간을 바탕으로 이 사람의 핵심 본성을 2-3문장으로. 강점, 성향, 그림자 면을 솔직하게."
+    },
+    "five_elements": {"wood": 20, "fire": 30, "earth": 15, "water": 25, "metal": 10},
+    "favorable_element": "예: 수(水) — 과다한 화를 제어하고 냉철한 판단력을 보완",
+    "unfavorable_element": "예: 화(火) — 이미 과다하여 더 강화되면 충동적 결정 증가",
+    "personality_summary": "사주 원국을 바탕으로 이 사람의 핵심 성격을 2-3문장으로. 구체적이고 솔직하게, 일반론 금지.",
+    "current_luck_period": {
+      "period": "예: 2022-2031",
+      "element": "예: 임수(壬水) 대운",
+      "influence": "현재 대운의 오행이 원국과 어떻게 상호작용하는지. 왜 이 시기에 이런 커리어 흐름이 나타나는지 구체적으로."
+    }
+  },
+  "season_reasoning": {
+    "saju_basis": "사주 관점: 현재 어떤 대운이 언제 시작되었고, 그 오행이 일간·원국과 어떻게 상호작용하여 지금 이 커리어 계절이 되었는지. 구체적인 대운명과 연도를 언급할 것.",
+    "astrology_basis": "점성술 관점: 목성·토성의 현재 위치와 출생 차트의 어떤 하우스·행성과 조응하는지. 어떤 트랜짓 또는 프로그레션이 지금 이 시기를 이 계절로 만드는지.",
+    "numerology_basis": "수비학 관점: 생년월일로 계산한 생명수(Life Path)와 올해의 개인년수(Personal Year Number)를 근거로 왜 지금이 이 계절인지. 실제 숫자를 언급할 것.",
+    "overall_reasoning": "세 관점을 종합한 핵심 2문장. 현재 계절과 종료 연도를 명시하고, 구체적인 근거 수치를 포함할 것."
+  },
   "sharp_feedback": "날카롭고 솔직한 두세 문장. 듣기 좋은 말이 아닌 진짜 조언. 이 사람의 가장 큰 문제점과 해결책을 직설적으로."
 }`;
 }
@@ -332,6 +388,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         season_guidance: parsed.season_guidance ?? null,
         networking_guide: parsed.networking_guide ?? null,
         growth_missions: parsed.growth_missions ?? [],
+        saju_detail: parsed.saju_detail ?? null,
+        season_reasoning: parsed.season_reasoning ?? null,
       });
     }
 
