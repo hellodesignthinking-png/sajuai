@@ -288,7 +288,7 @@ function AppInner() {
         <AnimatePresence mode="wait">
           {view === 'landing' && (
             <motion.div key="landing" {...pageTransition}>
-              <LandingPage onStart={handleStart} onOpenAuth={() => setAuthModalOpen(true)} />
+              <LandingPage onStart={handleStart} />
             </motion.div>
           )}
 

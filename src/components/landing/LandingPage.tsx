@@ -1,17 +1,18 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useLang } from '../../i18n';
 import LanguageToggle from '../common/LanguageToggle';
 import { useAuth } from '../../contexts/AuthContext';
+import AuthModal from '../auth/AuthModal';
 
 interface LandingPageProps {
   onStart: () => void;
-  onOpenAuth: () => void;
 }
 
-export default function LandingPage({ onStart, onOpenAuth }: LandingPageProps) {
+export default function LandingPage({ onStart }: LandingPageProps) {
   const { t, lang } = useLang();
   const { user, signOut } = useAuth();
+  const [showAuth, setShowAuth] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Subtle particle background
@@ -168,7 +169,7 @@ export default function LandingPage({ onStart, onOpenAuth }: LandingPageProps) {
               </div>
             ) : (
               <button
-                onClick={onOpenAuth}
+                onClick={() => setShowAuth(true)}
                 style={{
                   padding: '7px 16px',
                   background: 'rgba(212,175,55,0.1)',
@@ -393,6 +394,8 @@ export default function LandingPage({ onStart, onOpenAuth }: LandingPageProps) {
           </button>
         </motion.div>
       </div>
+
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
     </div>
   );
 }
