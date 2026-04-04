@@ -50,7 +50,8 @@ export const config = {
   maxDuration: 60,
 };
 
-function buildPrompt(input: any, currentYear: number, lang: 'ko' | 'en' = 'ko'): string {
+// 1단계: 기본 분석 (saju_detail, season_reasoning 제외)
+function buildBasicPrompt(input: any, currentYear: number, lang: 'ko' | 'en' = 'ko'): string {
   const age = currentYear - input.birthYear;
   const hourText = input.birthHour === -1
     ? (lang === 'en' ? 'unknown time' : '시간 모름')
@@ -97,37 +98,8 @@ Each reason/strategy/advice field MUST include phrases like:
 "Your day master [X] means...", "With the current [Y] luck cycle...", "Because [Z element] clashes with your natal chart this year..."
 
 Respond strictly in this JSON schema. All scores must be integers (0-100).
-IMPORTANT: Fill in saju_detail and season_reasoning FIRST — these are the foundation for all other fields.
 
 {
-  "saju_detail": {
-    "four_pillars": {
-      "year": {"heavenly": "actual heavenly stem character (e.g. 甲)", "earthly": "actual earthly branch character (e.g. 子)", "meaning": "specific meaning of this year pillar for this person's chart"},
-      "month": {"heavenly": "actual heavenly stem character", "earthly": "actual earthly branch character", "meaning": "how this month pillar shapes social interaction and career tendencies"},
-      "day": {"heavenly": "actual heavenly stem character", "earthly": "actual earthly branch character", "meaning": "day master's core nature — strengths, drives, shadow side"},
-      "hour": {"heavenly": "actual heavenly stem character or unknown if unknown", "earthly": "actual earthly branch character or unknown if unknown", "meaning": "hour pillar influence on ambitions and later life, or implications of unknown birth hour"}
-    },
-    "day_master": {
-      "element": "e.g. 丙火 (Bing Fire)",
-      "character": "e.g. Sun Fire — radiates outward, commands attention, struggles with stillness",
-      "description": "2-3 sentences: this person's core nature based on day master. Name the specific strengths AND the specific shadow side honestly."
-    },
-    "five_elements": {"wood": 20, "fire": 30, "earth": 15, "water": 25, "metal": 10},
-    "favorable_element": "specific element and WHY it balances this chart (e.g. Water — dampens excess Fire, brings strategic patience this person lacks)",
-    "unfavorable_element": "specific element and WHY it destabilizes this chart (e.g. Wood — feeds already excessive Fire, amplifies impulsiveness)",
-    "personality_summary": "2-3 sentences on this person's core traits based on the four pillars. Be specific and honest — name actual tendencies, not generic virtues.",
-    "current_luck_period": {
-      "period": "e.g. 2022-2031",
-      "element": "e.g. Water (壬水)",
-      "influence": "Precisely how this luck cycle element interacts with the natal chart's balance. Why this creates the observed career season — cite specific stem/branch interactions."
-    }
-  },
-  "season_reasoning": {
-    "saju_basis": "Saju: Name the active luck cycle (대운), its start year, its element, and exactly how that element interacts with the day master and natal chart to produce this specific career season. Include specific stem/branch names and years.",
-    "astrology_basis": "Astrology: State Jupiter/Saturn's current transit house, and which natal planet they aspect right now. Explain how this transit creates the current career season. Use specific degree or house numbers.",
-    "numerology_basis": "Numerology: Calculate Life Path Number from birth date, Personal Year Number for ${currentYear}, and state the cycle phase (1-9). Show the arithmetic and explain what it means for career right now.",
-    "overall_reasoning": "2 sharp sentences integrating all three frameworks. State the exact career season, the end year, and the single most important number or element driving it."
-  },
   "sharp_feedback": "2-3 sharp sentences naming this person's day master and its core tension. Identify the #1 career mistake this saju structure makes people fall into. Give a direct countermeasure — no flattery.",
   "current_season": "spring",
   "season_details": {
@@ -261,37 +233,8 @@ IMPORTANT: Fill in saju_detail and season_reasoning FIRST — these are the foun
 "당신의 일간 X이므로...", "현재 Y 대운이라...", "올해 세운이 원국 Z오행과 충(沖)/합(合)하므로..."
 
 반드시 아래 JSON 스키마에 맞춰 응답하라. score는 반드시 정수(0-100)여야 한다.
-중요: saju_detail과 season_reasoning을 가장 먼저 채워라 — 이 두 필드는 이후 모든 필드의 근거가 되며 절대 생략하지 마라.
 
 {
-  "saju_detail": {
-    "four_pillars": {
-      "year": {"heavenly": "실제 년주 천간 한자 1글자(예: 甲)", "earthly": "실제 년주 지지 한자 1글자(예: 子)", "meaning": "이 년주가 이 사람의 원국 전체에서 어떤 역할을 하는지 구체적으로"},
-      "month": {"heavenly": "실제 월주 천간 한자 1글자", "earthly": "실제 월주 지지 한자 1글자", "meaning": "이 월주가 사회성·직업운에 미치는 구체적 영향 — 일반론 금지"},
-      "day": {"heavenly": "실제 일주 천간 한자 1글자", "earthly": "실제 일주 지지 한자 1글자", "meaning": "일간의 본성, 강점, 그림자 면을 솔직하게 — 이 사람만의 특징을 서술"},
-      "hour": {"heavenly": "실제 시주 천간 1글자 또는 모름", "earthly": "실제 시주 지지 1글자 또는 모름", "meaning": "시주가 욕망·말년에 미치는 영향, 모를 경우 시간 미상이 분석에 미치는 의미"}
-    },
-    "day_master": {
-      "element": "예: 병화(丙火)",
-      "character": "예: 태양의 불 — 밝고 강렬하지만 멈춤을 모른다",
-      "description": "일간을 바탕으로 이 사람의 핵심 본성을 2-3문장으로. 강점·성향·그림자 면을 구체적이고 솔직하게 — 미화 금지."
-    },
-    "five_elements": {"wood": 20, "fire": 30, "earth": 15, "water": 25, "metal": 10},
-    "favorable_element": "구체적 오행 + 왜 이 원국에서 용신이 되는지 (예: 수(水) — 과다한 화를 제어하고 이 일간이 부족한 냉철한 판단력을 보완)",
-    "unfavorable_element": "구체적 오행 + 왜 이 원국에서 기신이 되는지 (예: 목(木) — 이미 과다한 화를 더 키워 충동적 결정을 증폭시킴)",
-    "personality_summary": "사주 원국을 바탕으로 이 사람의 핵심 성격을 2-3문장으로. 구체적이고 솔직하게, 일반론·미화 절대 금지.",
-    "current_luck_period": {
-      "period": "예: 2022-2031",
-      "element": "예: 임수(壬水) 대운",
-      "influence": "현재 대운의 오행이 이 원국의 어느 요소와 어떻게 상호작용하는지 구체적으로. 왜 이 상호작용이 지금 이런 커리어 흐름을 만드는지 — 천간·지지 이름 포함."
-    }
-  },
-  "season_reasoning": {
-    "saju_basis": "사주: 현재 대운명(예: 壬水 대운)이 몇 년에 시작되었고, 그 오행이 일간·원국과 구체적으로 어떻게 상호작용하여 지금 이 커리어 계절이 형성되었는지. 천간·지지 이름과 연도를 반드시 명시.",
-    "astrology_basis": "점성술: 현재 목성·토성이 어느 하우스를 통과 중이며, 출생 차트의 어느 행성을 어떤 각도로 조응하는지. 이 트랜짓이 왜 지금 이 계절을 만드는지 하우스 번호 또는 각도 포함.",
-    "numerology_basis": "수비학: 생년월일로 계산한 생명수(Life Path Number)와 ${currentYear}년의 개인년수(Personal Year Number)를 실제 계산식과 함께 제시. 이 숫자들이 왜 지금 이 계절을 가리키는지 명확히.",
-    "overall_reasoning": "세 관점을 종합한 핵심 2문장. 현재 계절명과 종료 연도를 명시하고, 가장 결정적인 수치 또는 오행 하나를 반드시 포함할 것."
-  },
   "sharp_feedback": "날카롭고 솔직한 두세 문장. 이 사람의 일간과 핵심 사주 긴장 구도를 직접 언급하며, 이 구조가 만드는 커리어 최대 함정을 지적하라. 해결책도 사주 근거로 제시할 것.",
   "current_season": "spring",
   "season_details": {
@@ -389,6 +332,119 @@ IMPORTANT: Fill in saju_detail and season_reasoning FIRST — these are the foun
 }`;
 }
 
+// 2단계: 사주 상세 + 계절 근거 (1단계 결과 참조)
+function buildSajuDetailPrompt(
+  input: any,
+  currentYear: number,
+  lang: 'ko' | 'en',
+  currentSeason: string,
+  top5GoldenYears: any[]
+): string {
+  const age = currentYear - input.birthYear;
+  const hourText = input.birthHour === -1
+    ? (lang === 'en' ? 'unknown time' : '시간 모름')
+    : `${input.birthHour}${lang === 'en' ? ':00' : '시'}`;
+  const genderText = lang === 'en'
+    ? (input.gender === 'male' ? 'Male' : 'Female')
+    : (input.gender === 'male' ? '남성' : '여성');
+  const calText = lang === 'en'
+    ? (input.calendarType === 'lunar' ? 'Lunar' : 'Solar')
+    : (input.calendarType === 'lunar' ? '음력' : '양력');
+  const top5Summary = top5GoldenYears
+    .map((g: any) => `${g.year}년(${g.score}점)`)
+    .join(', ');
+
+  if (lang === 'en') {
+    return `You are Zhuge Liang, a saju expert and career strategist.
+Analyze this person's four pillars in detail.
+
+User info:
+- Date of birth: ${input.birthYear}-${input.birthMonth}-${input.birthDay} at ${hourText} (${calText} calendar)
+- Birthplace: ${input.birthPlace || 'Korea'}
+- Gender: ${genderText}
+- Current year: ${currentYear}, age: ${age}
+
+Already analyzed career season: ${currentSeason}
+Already analyzed golden years: ${top5Summary}
+
+Respond ONLY with the following JSON (no other text):
+{
+  "saju_detail": {
+    "four_pillars": {
+      "year": {"heavenly": "actual heavenly stem character (e.g. 甲)", "earthly": "actual earthly branch character (e.g. 子)", "meaning": "specific meaning of this year pillar for this person's chart"},
+      "month": {"heavenly": "actual heavenly stem character", "earthly": "actual earthly branch character", "meaning": "how this month pillar shapes social interaction and career tendencies"},
+      "day": {"heavenly": "actual heavenly stem character", "earthly": "actual earthly branch character", "meaning": "day master's core nature — strengths, drives, shadow side"},
+      "hour": {"heavenly": "actual heavenly stem character or unknown", "earthly": "actual earthly branch character or unknown", "meaning": "hour pillar influence on ambitions and later life, or implications of unknown birth hour"}
+    },
+    "day_master": {
+      "element": "e.g. 丙火 (Bing Fire)",
+      "character": "e.g. Sun Fire — radiates outward, commands attention, struggles with stillness",
+      "description": "2-3 sentences: this person's core nature based on day master. Name the specific strengths AND the specific shadow side honestly."
+    },
+    "five_elements": {"wood": 20, "fire": 30, "earth": 15, "water": 25, "metal": 10},
+    "favorable_element": "specific element and WHY it balances this chart (e.g. Water — dampens excess Fire, brings strategic patience this person lacks)",
+    "unfavorable_element": "specific element and WHY it destabilizes this chart (e.g. Wood — feeds already excessive Fire, amplifies impulsiveness)",
+    "personality_summary": "2-3 sentences on this person's core traits based on the four pillars. Be specific and honest — name actual tendencies, not generic virtues.",
+    "current_luck_period": {
+      "period": "e.g. 2022-2031",
+      "element": "e.g. Water (壬水)",
+      "influence": "Precisely how this luck cycle element interacts with the natal chart's balance. Why this creates the observed career season — cite specific stem/branch interactions."
+    }
+  },
+  "season_reasoning": {
+    "saju_basis": "Saju: Name the active luck cycle (대운), its start year, its element, and exactly how that element interacts with the day master and natal chart to produce this specific career season (${currentSeason}). Include specific stem/branch names and years.",
+    "astrology_basis": "Astrology: State Jupiter/Saturn's current transit house, and which natal planet they aspect right now. Explain how this transit creates the current career season. Use specific degree or house numbers.",
+    "numerology_basis": "Numerology: Calculate Life Path Number from birth date, Personal Year Number for ${currentYear}, and state the cycle phase (1-9). Show the arithmetic and explain what it means for career right now.",
+    "overall_reasoning": "2 sharp sentences integrating all three frameworks. State the exact career season, the end year, and the single most important number or element driving it."
+  }
+}`;
+  }
+
+  return `너는 사주 전문가이자 커리어 전략가 제갈량이다.
+이 사람의 사주 원국을 상세히 분석하라.
+
+사용자 정보:
+- 생년월일시: ${input.birthYear}년 ${input.birthMonth}월 ${input.birthDay}일 ${hourText} (${calText})
+- 출생지: ${input.birthPlace || '한국'}
+- 성별: ${genderText}
+- 현재 연도: ${currentYear}, 나이: ${age}세
+
+이미 분석된 커리어 계절: ${currentSeason}
+이미 분석된 전성기 연도: ${top5Summary}
+
+반드시 아래 JSON만 응답하라 (다른 텍스트 금지):
+{
+  "saju_detail": {
+    "four_pillars": {
+      "year": {"heavenly": "실제 년주 천간 한자 1글자(예: 甲)", "earthly": "실제 년주 지지 한자 1글자(예: 子)", "meaning": "이 년주가 이 사람의 원국 전체에서 어떤 역할을 하는지 구체적으로"},
+      "month": {"heavenly": "실제 월주 천간 한자 1글자", "earthly": "실제 월주 지지 한자 1글자", "meaning": "이 월주가 사회성·직업운에 미치는 구체적 영향 — 일반론 금지"},
+      "day": {"heavenly": "실제 일주 천간 한자 1글자", "earthly": "실제 일주 지지 한자 1글자", "meaning": "일간의 본성, 강점, 그림자 면을 솔직하게 — 이 사람만의 특징을 서술"},
+      "hour": {"heavenly": "실제 시주 천간 1글자 또는 모름", "earthly": "실제 시주 지지 1글자 또는 모름", "meaning": "시주가 욕망·말년에 미치는 영향, 모를 경우 시간 미상이 분석에 미치는 의미"}
+    },
+    "day_master": {
+      "element": "예: 병화(丙火)",
+      "character": "예: 태양의 불 — 밝고 강렬하지만 멈춤을 모른다",
+      "description": "일간을 바탕으로 이 사람의 핵심 본성을 2-3문장으로. 강점·성향·그림자 면을 구체적이고 솔직하게 — 미화 금지."
+    },
+    "five_elements": {"wood": 20, "fire": 30, "earth": 15, "water": 25, "metal": 10},
+    "favorable_element": "구체적 오행 + 왜 이 원국에서 용신이 되는지 (예: 수(水) — 과다한 화를 제어하고 이 일간이 부족한 냉철한 판단력을 보완)",
+    "unfavorable_element": "구체적 오행 + 왜 이 원국에서 기신이 되는지 (예: 목(木) — 이미 과다한 화를 더 키워 충동적 결정을 증폭시킴)",
+    "personality_summary": "사주 원국을 바탕으로 이 사람의 핵심 성격을 2-3문장으로. 구체적이고 솔직하게, 일반론·미화 절대 금지.",
+    "current_luck_period": {
+      "period": "예: 2022-2031",
+      "element": "예: 임수(壬水) 대운",
+      "influence": "현재 대운의 오행이 이 원국의 어느 요소와 어떻게 상호작용하는지 구체적으로. 왜 이 상호작용이 지금 이런 커리어 흐름을 만드는지 — 천간·지지 이름 포함."
+    }
+  },
+  "season_reasoning": {
+    "saju_basis": "사주: 현재 대운명(예: 壬水 대운)이 몇 년에 시작되었고, 그 오행이 일간·원국과 구체적으로 어떻게 상호작용하여 지금 이 커리어 계절(${currentSeason})이 형성되었는지. 천간·지지 이름과 연도를 반드시 명시.",
+    "astrology_basis": "점성술: 현재 목성·토성이 어느 하우스를 통과 중이며, 출생 차트의 어느 행성을 어떤 각도로 조응하는지. 이 트랜짓이 왜 지금 이 계절을 만드는지 하우스 번호 또는 각도 포함.",
+    "numerology_basis": "수비학: 생년월일로 계산한 생명수(Life Path Number)와 ${currentYear}년의 개인년수(Personal Year Number)를 실제 계산식과 함께 제시. 이 숫자들이 왜 지금 이 계절을 가리키는지 명확히.",
+    "overall_reasoning": "세 관점을 종합한 핵심 2문장. 현재 계절명과 종료 연도를 명시하고, 가장 결정적인 수치 또는 오행 하나를 반드시 포함할 것."
+  }
+}`;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -419,35 +475,65 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
 
       const currentYear = new Date().getFullYear();
-      const prompt = buildPrompt(input, currentYear, lang);
 
-      let parsed: any;
+      // 1단계: 기본 분석
+      const basicPrompt = buildBasicPrompt(input, currentYear, lang);
+      let basicParsed: any;
       for (let attempt = 1; attempt <= 3; attempt++) {
-        const result = await model.generateContent(prompt);
+        const result = await model.generateContent(basicPrompt);
         const text = result.response.text();
         try {
-          parsed = JSON.parse(extractJSON(text));
+          basicParsed = JSON.parse(extractJSON(text));
           break;
         } catch (parseErr) {
           if (attempt === 3) throw new Error(`JSON 파싱 실패 (3회 시도): ${(parseErr as Error).message}`);
-          console.warn(`[api/saju] JSON parse attempt ${attempt} failed, retrying...`);
+          console.warn(`[api/saju] Basic prompt parse attempt ${attempt} failed, retrying...`);
         }
       }
 
+      // 2단계: 사주 상세 + 계절 근거 (1단계 결과 참조)
+      let sajuDetail: any = null;
+      let seasonReasoning: any = null;
+      try {
+        const sajuPrompt = buildSajuDetailPrompt(
+          input,
+          currentYear,
+          lang,
+          basicParsed.current_season ?? 'spring',
+          basicParsed.top5_golden_years ?? []
+        );
+        let sajuParsed: any;
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          const result = await model.generateContent(sajuPrompt);
+          const text = result.response.text();
+          try {
+            sajuParsed = JSON.parse(extractJSON(text));
+            break;
+          } catch (parseErr) {
+            if (attempt === 3) throw parseErr;
+            console.warn(`[api/saju] Saju detail parse attempt ${attempt} failed, retrying...`);
+          }
+        }
+        sajuDetail = sajuParsed.saju_detail ?? null;
+        seasonReasoning = sajuParsed.season_reasoning ?? null;
+      } catch (sajuErr) {
+        console.warn('[api/saju] Saju detail step failed, returning basic result only:', sajuErr);
+      }
+
       return res.status(200).json({
-        sharp_feedback: parsed.sharp_feedback ?? '분석이 완료되었습니다.',
-        top5_golden_years: parsed.top5_golden_years ?? [],
-        life_cycle_scores: parsed.life_cycle_scores ?? [],
-        current_season: parsed.current_season ?? 'spring',
-        season_details: parsed.season_details ?? { season: 'spring', year_range: '', advice: '', warning: '' },
-        yearly_strategy: parsed.yearly_strategy ?? { quarter_scores: [], d_day: { date: '', description: '' }, missions: [] },
-        mbti_integration: parsed.mbti_integration ?? { type: '', career_synergy: '', blind_spot: '' },
-        season_cycle: parsed.season_cycle ?? [],
-        season_guidance: parsed.season_guidance ?? null,
-        networking_guide: parsed.networking_guide ?? null,
-        growth_missions: parsed.growth_missions ?? [],
-        saju_detail: parsed.saju_detail ?? null,
-        season_reasoning: parsed.season_reasoning ?? null,
+        sharp_feedback: basicParsed.sharp_feedback ?? '분석이 완료되었습니다.',
+        top5_golden_years: basicParsed.top5_golden_years ?? [],
+        life_cycle_scores: basicParsed.life_cycle_scores ?? [],
+        current_season: basicParsed.current_season ?? 'spring',
+        season_details: basicParsed.season_details ?? { season: 'spring', year_range: '', advice: '', warning: '' },
+        yearly_strategy: basicParsed.yearly_strategy ?? { quarter_scores: [], d_day: { date: '', description: '' }, missions: [] },
+        mbti_integration: basicParsed.mbti_integration ?? { type: '', career_synergy: '', blind_spot: '' },
+        season_cycle: basicParsed.season_cycle ?? [],
+        season_guidance: basicParsed.season_guidance ?? null,
+        networking_guide: basicParsed.networking_guide ?? null,
+        growth_missions: basicParsed.growth_missions ?? [],
+        saju_detail: sajuDetail,
+        season_reasoning: seasonReasoning,
       });
     }
 
