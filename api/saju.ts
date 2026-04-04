@@ -97,23 +97,29 @@ Mandatory personalization per field:
 Each reason/strategy/advice field MUST include phrases like:
 "Your day master [X] means...", "With the current [Y] luck cycle...", "Because [Z element] clashes with your natal chart this year..."
 
+IMPORTANT OUTPUT QUALITY STANDARD — applies to ALL text fields:
+All text fields must be at least 3 sentences. One-liner answers are strictly forbidden.
+Provide advice so specific and actionable that the user feels "I know exactly what to do."
+Instead of abstract advice (e.g. "strengthen your network"), give specific advice (e.g. "Send coffee chat requests to 3 senior engineers with 7-10 yrs experience on LinkedIn. Include 2 specific questions in your message about their career transitions.").
+Always specify dates, numbers, and durations as precisely as possible.
+
 Respond strictly in this JSON schema. All scores must be integers (0-100).
 
 {
-  "sharp_feedback": "2-3 sharp sentences naming this person's day master and its core tension. Identify the #1 career mistake this saju structure makes people fall into. Give a direct countermeasure — no flattery.",
+  "sharp_feedback": "5-7 sentences. First sentence: directly name this person's day master character (include the Chinese character) and its core tension. Second: identify the #1 career trap this saju structure creates repeatedly. Third: explain the five-element mechanism behind that trap. Fourth: give a concrete countermeasure with a specific action and deadline. Fifth: warn what accumulates if this is not addressed. Sixth: identify one genuine strength they can leverage right now. No flattery.",
   "current_season": "spring",
   "season_details": {
     "season": "spring",
     "year_range": "2024-2027",
-    "advice": "Advice grounded in this person's favorable element — what specific actions align with their 용신 energy right now",
-    "warning": "Warning grounded in this person's unfavorable element — what specific patterns their 기신 creates and how to counter them"
+    "advice": "5-7 sentences. First: how this person's favorable element is activated right now. Second: first specific action that leverages this element (name the actual industry/field/platform). Third: second specific action (who to meet and where). Fourth: third specific action (what skill to build, by when, how). Fifth: what must be completed before this season ends (specific year). Sixth: the one key decision that maximizes this season's energy. No generic advice.",
+    "warning": "3-4 sentences. How this person's unfavorable element manifests right now (specific scenario in work/relationship/health). What specific loss occurs if they fall into this trap (opportunity/relationship/time/money). Which situations/decisions/people trigger the unfavorable element. Concrete method to avoid or manage it."
   },
   "top5_golden_years": [
-    {"year": 2028, "score": 95, "reason": "Must explain WHY based on this chart: e.g. '壬水 luck cycle peaks + 세운 子水 — Water dominance finally controls excess Fire, creating the strategic clarity this day master needs for executive-level decisions'"},
-    {"year": 2031, "score": 88, "reason": "Saju-specific reason with element interactions and why this year specifically"},
-    {"year": 2026, "score": 82, "reason": "Saju-specific reason — name which element alignment makes this year favorable"},
-    {"year": 2035, "score": 78, "reason": "Explain the chart-level mechanism — new luck cycle, what changes"},
-    {"year": 2040, "score": 74, "reason": "Chart-specific reasoning for this transition year"}
+    {"year": 2028, "score": 95, "reason": "3-4 sentences. Which luck cycle element peaks or transitions in this year (include Chinese characters). How that element interacts with the day master (combine/clash/generate/control and the result). Which specific industry/field/decision type benefits most (name actual sectors). What must be prepared 2-3 years in advance to fully capitalize on this window."},
+    {"year": 2031, "score": 88, "reason": "3-4 sentences. How the annual pillar element combines with the luck cycle to affect this natal chart (element names). Which combination activates and its meaning. What career transition (job change/promotion/founding/expansion) becomes viable. What to build from the prior period to reach this."},
+    {"year": 2026, "score": 82, "reason": "3-4 sentences. Which elements are strengthened in this year and why they favor this chart. What specific opportunity window opens (sector/role/decision). The duration of this window (start month to end month or year). What action must be taken inside this window."},
+    {"year": 2035, "score": 78, "reason": "3-4 sentences. The new luck cycle element that begins around this year (Chinese characters). How this differs from the previous cycle and what it changes in this chart. What form of achievement/change this represents for the career. What foundation to lay in the late 30s to capture this."},
+    {"year": 2040, "score": 74, "reason": "3-4 sentences. The active luck cycle and annual element combination around this period. Which role or position is reinforced in this chart's later structure. What form of economic or social achievement is accessible (specific form). What must be built in the 40s to reach it."}
   ],
   "life_cycle_scores": [
     {"age_range": "20s", "score": 65, "description": "Based on this person's luck cycle at that age — what element was active and what that meant"},
@@ -130,15 +136,15 @@ Respond strictly in this JSON schema. All scores must be integers (0-100).
   ],
   "season_guidance": {
     "season_title": "Season title tied to this person's current luck cycle element",
-    "core_message": "Core message that references this person's day master nature and what this career season demands from someone with that chart structure",
+    "core_message": "5-7 sentences. First: directly name this person's day master and what this season demands from that nature. Second: the end year of this season and the one goal that must be achieved before it ends. Third: the most common waste of this season's energy (tied to this day master's tendency). Fourth: how to avoid that waste — concrete method. Fifth: one action they can start this week (name the app/platform/person). Sixth: what the next season looks like and how it differs from now. No clichés or motivational fluff.",
     "actions": [
-      "Action 1 that specifically leverages this person's favorable element (용신)",
-      "Action 2 that addresses the specific gap in this person's five elements balance",
-      "Action 3 derived from the current luck cycle's element strength"
+      "2-3 sentences. Favorable element leverage: WHY this action (element basis) + HOW exactly (specific platform/person/timing) + WHAT result to expect and by when.",
+      "2-3 sentences. Gap element compensation: why this element is currently deficient + which specific action compensates (job/learning/relationship — name the platform or method) + how often and until when.",
+      "2-3 sentences. Luck cycle strength activation: how long this luck cycle lasts (end year) + what this specific action achieves within that window + the first executable step this week."
     ],
     "warnings": [
-      "Warning 1 about the specific clash pattern in this chart during this season",
-      "Warning 2 about the unfavorable element trigger this person is prone to"
+      "2-3 sentences. How the unfavorable element manifests this season + which specific situations/decisions/people trigger it + the immediate action to take when you notice this pattern.",
+      "2-3 sentences. The core trap of this season for this day master: what looks like an opportunity but is actually a trap + how to distinguish the two + the concrete avoidance method."
     ],
     "transition_warning": "When the next luck cycle begins (specific year), what specific element shift occurs and what preparation THIS chart needs",
     "content_direction": "Content strategy that plays to this person's day master strengths",
@@ -146,26 +152,26 @@ Respond strictly in this JSON schema. All scores must be integers (0-100).
   },
   "yearly_strategy": {
     "quarter_scores": [
-      {"q": "Q1 (Jan-Mar)", "score": 72, "strategy": "Strategy citing this year's 세운 element and how it interacts with this natal chart in Q1"},
-      {"q": "Q2 (Apr-Jun)", "score": 85, "strategy": "Strategy citing specific stem/branch influence in Q2 for this chart"},
-      {"q": "Q3 (Jul-Sep)", "score": 68, "strategy": "Strategy explaining the specific elemental tension in Q3 for this day master"},
-      {"q": "Q4 (Oct-Dec)", "score": 90, "strategy": "Strategy citing the end-of-year element cycle and its effect on this chart"}
+      {"q": "Q1 (Jan-Mar)", "score": 72, "strategy": "3-4 sentences. The dominant element this quarter and its relationship with the natal chart (combine/clash/generate/control). Specifically what to do (which action, with whom, where). What to avoid (which decision/person/environment and why). The one concrete goal to reach by end of March."},
+      {"q": "Q2 (Apr-Jun)", "score": 85, "strategy": "3-4 sentences. Which monthly branch element creates a combine or clash with this natal chart (element names). If this quarter is favorable, which specific sector/decision benefits and how. Month-by-month actions (April: X, May: Y, June: Z). When the next similar window opens if this one is missed."},
+      {"q": "Q3 (Jul-Sep)", "score": 68, "strategy": "3-4 sentences. The elemental tension in this quarter and how it manifests in this natal chart (element names). The specific form it could take (conflict/loss/health/accident — the most relevant). Concrete defense strategy to minimize this tension. The internal work that should take priority this quarter."},
+      {"q": "Q4 (Oct-Dec)", "score": 90, "strategy": "3-4 sentences. The year-end element flow and its specific impact on this chart (element names). The single most important decision to make this quarter (name what type of decision). What to prepare in Q3 to be ready for this. The positioning action that bridges into the following year."}
     ],
     "d_day": {
       "date": "${currentYear}-06-21",
-      "description": "Why this specific date matters for THIS chart — which element peaks or which natal aspect is activated"
+      "description": "3-4 sentences. Which element is activated on this date and why it is special for this natal chart (stem/branch basis). Exactly what to do on this day (which action/decision/contact/start — be specific). What to prepare in the 2 weeks leading up to this date. What flow follows after this date."
     },
     "missions": [
-      {"type": "Immediate", "content": "Mission targeting the specific weakness in this saju structure — name it directly"},
-      {"type": "Short-term", "content": "3-month mission that builds the lacking element this chart needs"},
-      {"type": "Long-term", "content": "1-year mission that addresses the core shadow side of this day master"}
+      {"type": "Immediate", "content": "3-4 sentences. A mission executable this week (which app/platform/place/person). Which specific saju weakness this targets (element basis). How exactly to execute it (where/how/how often/by when). The specific change to expect when this mission is complete."},
+      {"type": "Short-term", "content": "3-4 sentences. A mission completable within 3 months (name the specific date range). Which lacking element in the natal chart this compensates and how. Month-by-month execution plan (Month 1: X, Month 2: Y, Month 3: Z). The specific state achieved at completion (what is measurably different)."},
+      {"type": "Long-term", "content": "3-4 sentences. A 12-month core project (specific start and end dates). How this project overcomes the shadow side of this day master (name the mechanism). Quarterly milestones (Q1: X, Q2: Y, Q3: Z, Q4: W). The career position that changes upon completing this project."}
     ]
   },
   "networking_guide": {
-    "current_season_tip": "Networking tip grounded in this person's current luck cycle element and what human energy they need to complement their chart",
+    "current_season_tip": "3-4 sentences. The human energy type this chart needs most right now (element basis). Which fields/jobs/environments these people typically occupy (name 2-3 specific professions). The most effective channel to connect with them (specific platform/event/community name). One or two specific opening questions to use in the first conversation.",
     "people_to_meet": [
-      {"type": "Person type that embodies the lacking element in this chart", "reason": "Explain which element they're missing and why this person type provides it", "how": "Specific approach tailored to this person's day master communication style"},
-      {"type": "Second person type based on the chart's secondary gap", "reason": "Chart-based explanation", "how": "Method matching this person's saju social tendencies"}
+      {"type": "Person type embodying the primary lacking element (specific job/role)", "reason": "3 sentences. How deficient this element is in the natal chart (quantify if possible). How this person type provides that element. What specific career change this relationship enables (short/long term).", "how": "2-3 sentences. First contact approach matching this day master's communication style (what to say). Where to find these people (specific platform/community/event). What value to offer in the first meeting to start the relationship naturally."},
+      {"type": "Person type addressing the secondary chart gap (specific job/role)", "reason": "3 sentences. The saju basis for the second lacking element and its meaning in this chart. Why this type embodies that element. What specific short-term and long-term opportunity this relationship creates.", "how": "2-3 sentences. Connection strategy (how to initiate contact). Access channel (where to find them). The first concrete action to advance the relationship."}
     ],
     "avoid": "Describe the specific energy type that amplifies this person's unfavorable element — and why it's dangerous for this chart structure"
   },
@@ -173,26 +179,26 @@ Respond strictly in this JSON schema. All scores must be integers (0-100).
     {
       "type": "crisis",
       "label": "Crisis to Overcome",
-      "content": "The specific crisis pattern that THIS day master type falls into — name the saju mechanism",
-      "action": "Countermeasure that directly addresses the chart-level root cause"
+      "content": "3-4 sentences. The most lethal career trap this day master + natal chart combination creates (name the element mechanism). Which specific scenario triggers this trap (job/business/relationship — specific scenario). What accumulates if this repeats (3yr/5yr/10yr consequences). Why this day master typically can't self-detect this trap.",
+      "action": "2-3 sentences. The specific action that breaks this pattern (what/when/how — name the tool or method). How to sustain this action (reminder system or measurement method). The first visible change after 30 days of consistent execution."
     },
     {
       "type": "person",
       "label": "Person to Meet",
-      "content": "Person type whose element structure complements the gap in this chart — explain the elemental logic",
-      "action": "Specific outreach action matching this person's communication style (derived from day master)"
+      "content": "3-4 sentences. The specific job/field/traits of the person type embodying the primary lacking element (2-3 examples). How this person balances the natal chart's elemental deficit (mechanism). The career change this relationship enables (6-month vs 3-year outcomes). A check question to see if this person type exists in the current network.",
+      "action": "2-3 sentences. The immediate first contact action for this person type (message on which platform). Where to find these people (specific community/event/platform names). What value to offer in the first meeting to establish the relationship."
     },
     {
       "type": "skill",
       "label": "Skill to Acquire",
-      "content": "Skill that compensates for the weakest element in this chart — explain the connection",
-      "action": "Concrete first step that matches the current luck cycle energy"
+      "content": "3-4 sentences. The specific competency (technical skill/knowledge/habit) tied to the weakest element in this chart. Why this skill is the most urgent for this chart's balance (element logic). Which career opportunities are repeatedly missed without this skill (name opportunity types). What opens up when this skill is acquired (industry/role/income).",
+      "action": "2-3 sentences. The first concrete learning action using the current luck cycle energy (course/book/person/project — use a real name). Target completion date (specific date). The specific metric that confirms this skill is acquired (what must be true to call it done)."
     }
   ],
   "mbti_integration": {
     "type": "${mbtiText}",
-    "career_synergy": "2-3 sentences on how THIS day master's specific traits amplify specific MBTI strengths — be concrete, not generic",
-    "blind_spot": "2 honest sentences on how THIS day master's shadow side collides with specific MBTI weaknesses — name the exact collision"
+    "career_synergy": "4-5 sentences. How this day master's specific nature resonates with this MBTI's strengths (include Chinese character and MBTI trait names together). In which job types/environments this synergy is maximized (name specific roles/industries). A concrete career strategy that intentionally exploits this synergy. The unique competitive edge this combination creates that most people lack. A specific situation/role/task where this strength shines brightest (with example).",
+    "blind_spot": "3-4 sentences. How this day master's shadow side amplifies this MBTI's weakness (name both). Which workplace situation/relationship/decision triggers this collision (specific scenario). What career loss accumulates when this collision repeats (what is lost). A concrete habit or checklist to manage this collision consciously."
   }
 }`;
   }
@@ -232,23 +238,29 @@ Respond strictly in this JSON schema. All scores must be integers (0-100).
 각 reason/strategy/advice 필드에는 반드시 다음과 같은 사주 근거 표현을 포함할 것:
 "당신의 일간 X이므로...", "현재 Y 대운이라...", "올해 세운이 원국 Z오행과 충(沖)/합(合)하므로..."
 
+★★★ 출력 품질 기준 — 모든 텍스트 필드에 적용 ★★★
+중요: 모든 텍스트 필드는 최소 3문장 이상이어야 합니다. 1줄짜리 답변은 절대 금지.
+사용자가 '이대로 따라하면 되겠다'고 느낄 만큼 구체적이고 실행 가능한 조언을 제공하라.
+추상적인 조언(예: '네트워킹을 강화하세요') 대신 구체적 조언(예: '링크드인에서 IT 분야 5-10년차 시니어 3명에게 커피챗을 요청하라. 메시지에는 구체적 질문 2개를 포함시켜라.')을 제공하라.
+날짜, 숫자, 기간을 최대한 구체적으로 명시하라.
+
 반드시 아래 JSON 스키마에 맞춰 응답하라. score는 반드시 정수(0-100)여야 한다.
 
 {
-  "sharp_feedback": "날카롭고 솔직한 두세 문장. 이 사람의 일간과 핵심 사주 긴장 구도를 직접 언급하며, 이 구조가 만드는 커리어 최대 함정을 지적하라. 해결책도 사주 근거로 제시할 것.",
+  "sharp_feedback": "5-7문장. 첫 문장은 이 사람의 일간 한자와 핵심 긴장 구도를 정면으로 직격한다(예: '당신은 丙火 일간으로 木이 과다해 충동적 결단이 반복된다'). 두 번째 문장은 이 사주 구조가 커리어에서 반복적으로 만드는 가장 치명적인 함정을 명시한다. 세 번째 문장은 '왜 이 함정에 빠지는지' 오행 메커니즘으로 설명한다. 네 번째 문장은 구체적 해결책(어떤 행동을, 언제까지)을 사주 근거와 함께 제시한다. 다섯 번째 문장은 해결하지 않으면 어떤 결과가 누적되는지 경고한다. 여섯 번째 문장은 이 사람이 가진 실제 강점 하나를 활용하는 전략을 제시한다. 미화나 위로는 절대 금지.",
   "current_season": "spring",
   "season_details": {
     "season": "spring",
     "year_range": "2024-2027",
-    "advice": "이 사람의 용신 오행을 직접 활용하는 조언 — '봄이니까 이렇게 하세요' 식의 일반론 금지",
-    "warning": "이 사람의 기신 오행이 이 계절에 유발하는 구체적 함정 — 일간 특성과 연결하여 경고"
+    "advice": "5-7문장. 첫 문장: 이 사람의 용신 오행이 지금 이 시기에 어떻게 활성화되어 있는지 구체적으로. 둘째: 이 용신 에너지를 살리는 첫 번째 행동(직업·업종·분야를 실제 이름으로 명시). 셋째: 두 번째 행동(어떤 사람을 어디서 어떻게 만날지). 넷째: 세 번째 행동(어떤 역량을 언제까지 어떤 방법으로 쌓을지). 다섯째: 이 계절 기간이 끝나는 연도와 그 전에 반드시 완료해야 할 것. 여섯째: 이 계절의 에너지를 극대화하는 핵심 결정 하나. 일반론 완전 금지.",
+    "warning": "3-4문장. 이 사람의 기신 오행이 이 계절에 구체적으로 어떤 형태로 나타나는지(직업·관계·건강 중 하나를 구체적 시나리오로). 이 함정에 빠지면 어떤 구체적 손실이 오는지(기회·관계·시간·돈 중 명시). 어떤 상황·결정·사람을 만날 때 기신이 활성화되는지 명시. 기신을 피하거나 다루는 구체적 방법."
   },
   "top5_golden_years": [
-    {"year": 2028, "score": 95, "reason": "반드시 이 사람 사주 근거 포함: 예) 壬水 대운 절정 + 세운 子水 가세로 일간 丙火 과열 제어 — 전략적 판단력이 극대화되는 승진·사업 결단의 해"},
-    {"year": 2031, "score": 88, "reason": "이 사람 원국에서 왜 이 해가 좋은지 — 오행 상호작용과 대운 변화 근거 포함"},
-    {"year": 2026, "score": 82, "reason": "이 사람 사주 구조에서 이 해에 어떤 오행 조합이 유리하게 작동하는지"},
-    {"year": 2035, "score": 78, "reason": "대운 전환 시점의 원국 변화와 그 의미 — 구체적 오행 언급"},
-    {"year": 2040, "score": 74, "reason": "이 사람 원국에서 이 시기에 활성화되는 오행 조합과 그 커리어 함의"}
+    {"year": 2028, "score": 95, "reason": "3-4문장. 이 해에 대운이 어떤 오행으로 전환되거나 절정에 달하는지(천간·지지 한자 포함). 그 대운 오행이 일간과 만들어내는 합·충·생·극 관계 및 그 결과. 구체적으로 어떤 업종·분야·결정에서 기회가 오는지(IT·금융·예술 등 실제 분야 명시). 이 시기를 최대한 활용하려면 2-3년 전부터 무엇을 준비해야 하는지."},
+    {"year": 2031, "score": 88, "reason": "3-4문장. 이 해 세운 오행과 대운의 조합이 이 원국에 만드는 구체적 흐름(오행 이름 포함). 어떤 오행 합이 발동하는지. 커리어에서 어떤 전환(이직·승진·창업·사업 확장 등)이 가능한지. 이를 위해 몇 년 전부터 무엇을 쌓아야 하는지."},
+    {"year": 2026, "score": 82, "reason": "3-4문장. 이 해에 활성화되는 세운 오행과 대운 오행의 조합. 이 원국에서 어떤 오행이 강화되어 유리해지는지. 어떤 분야·결정·관계에서 기회의 창이 열리는지 구체적으로. 이 창이 열려 있는 기간(시작 월~끝 월 또는 연도)."},
+    {"year": 2035, "score": 78, "reason": "3-4문장. 이 시기에 새로 시작되는 대운 오행(천간·지지 한자). 이전 대운과의 차이가 이 원국에 어떤 구체적 변화를 가져오는지. 이 전환이 커리어에서 어떤 형태의 성취·변화를 의미하는지. 이 기회를 잡으려면 30대 후반부터 무엇을 준비해야 하는지."},
+    {"year": 2040, "score": 74, "reason": "3-4문장. 이 시기 활성화되는 대운·세운 오행 조합. 이 원국의 말년 구조에서 어떤 역할·포지션이 강화되는지. 경제적·사회적으로 어떤 형태의 성취가 가능한지(구체적 형태 명시). 그 성취를 위해 40대에 어떤 기반을 닦아야 하는지."}
   ],
   "life_cycle_scores": [
     {"age_range": "20대", "score": 65, "description": "당시 활성화된 대운 오행과 이 원국과의 상호작용 — 왜 이 점수인지 근거 포함"},
@@ -265,15 +277,15 @@ Respond strictly in this JSON schema. All scores must be integers (0-100).
   ],
   "season_guidance": {
     "season_title": "이 사람의 현재 대운 오행과 연결된 계절 제목",
-    "core_message": "이 사람의 일간 본성과 현재 대운이 요구하는 것을 결합한 핵심 메시지 — 일반적인 '씨앗 뿌리기' 식 문구 금지",
+    "core_message": "5-7문장. 첫 문장: 이 사람의 일간 한자와 본성을 직접 호명하며 지금 이 계절이 그 본성에게 무엇을 요구하는지. 둘째: 이 계절이 끝나는 연도와 그 전에 반드시 이루어야 할 핵심 목표 하나. 셋째: 이 계절의 에너지를 낭비하는 가장 흔한 실수(이 일간 특성과 연결하여 구체적으로). 넷째: 그 실수를 피하는 구체적인 방법. 다섯째: 지금 당장 이번 주부터 시작할 수 있는 한 가지 행동(앱·플랫폼·사람 이름까지). 여섯째: 이 계절이 지나면 찾아오는 다음 계절의 특성과 지금과의 차이. 일반론·격언·미화 완전 금지.",
     "actions": [
-      "이 사람의 용신 오행을 직접 활용하는 구체적 행동 1",
-      "이 원국에서 부족한 오행을 보충하는 구체적 행동 2",
-      "현재 대운 오행의 강점을 살리는 구체적 행동 3"
+      "2-3문장. 용신 오행을 직접 활용하는 행동: 왜 이 행동인지(오행 근거) + 어떻게 하는지(구체적 플랫폼·사람·타이밍 포함) + 어떤 결과를 언제까지 기대할 수 있는지.",
+      "2-3문장. 부족한 오행을 보충하는 행동: 왜 이 오행이 지금 부족한지 + 어떤 구체적 행동으로 보충하는지(직업·학습·인간관계 중 택1, 플랫폼·방법 명시) + 얼마나 자주/언제까지 해야 하는지.",
+      "2-3문장. 현재 대운 오행의 강점을 살리는 행동: 이 대운이 어느 연도까지 지속되는지 + 이 기간 내 이 행동으로 무엇을 달성할 수 있는지 + 첫 번째 실행 단계(이번 주 내 할 수 있는 것)."
     ],
     "warnings": [
-      "이 사람의 기신 오행이 이 계절에 만드는 구체적 충돌 패턴",
-      "이 일간 특성이 이 계절에 빠지기 쉬운 구체적 함정"
+      "2-3문장. 기신 오행이 이 계절에 구체적으로 어떤 형태로 나타나는지 + 어떤 상황·결정·관계에서 이 패턴이 촉발되는지 + 이를 감지했을 때 즉시 취할 행동.",
+      "2-3문장. 이 일간 특성이 만드는 이 계절의 핵심 함정: 어떤 기회처럼 보이지만 사실 함정인지 + 판단 기준(어떻게 구별하는지) + 피하는 구체적 방법."
     ],
     "transition_warning": "다음 대운 또는 계절 전환 시점(구체적 연도)에 이 원국에서 어떤 오행 변화가 발생하며 어떻게 대비해야 하는지",
     "content_direction": "이 일간의 강점을 살리는 콘텐츠 방향 — 일간 특성과 연결하여",
@@ -281,26 +293,26 @@ Respond strictly in this JSON schema. All scores must be integers (0-100).
   },
   "yearly_strategy": {
     "quarter_scores": [
-      {"q": "Q1 (1-3월)", "score": 72, "strategy": "이 해 세운 오행이 이 원국과 Q1에 만드는 구체적 흐름과 그에 맞는 전략"},
-      {"q": "Q2 (4-6월)", "score": 85, "strategy": "Q2의 월지 오행과 이 원국의 상호작용 — 유리한 이유와 전략"},
-      {"q": "Q3 (7-9월)", "score": 68, "strategy": "Q3에서 이 원국이 직면하는 오행 긴장과 대응 전략"},
-      {"q": "Q4 (10-12월)", "score": 90, "strategy": "연말 오행 흐름이 이 원국에 미치는 영향과 그에 맞는 결단"}
+      {"q": "Q1 (1-3월)", "score": 72, "strategy": "3-4문장. 이 분기에 지배적인 오행과 원국과의 관계(합·충·생·극). 이 분기에 구체적으로 해야 하는 것(어떤 행동을, 누구와, 어디서). 피해야 하는 것(어떤 결정·사람·환경, 이유 포함). 이 분기가 끝날 때 달성해야 하는 하나의 구체적 목표."},
+      {"q": "Q2 (4-6월)", "score": 85, "strategy": "3-4문장. Q2 월지 오행이 이 원국과 어떤 합·충을 만드는지(오행 이름 명시). 이 분기가 유리하다면 어떤 분야·결정에서 유리한지 구체적으로. 이 창을 활용하는 월별 행동(4월은 X, 5월은 Y, 6월은 Z). 이 기회를 놓치면 다음 유사한 창이 언제 오는지."},
+      {"q": "Q3 (7-9월)", "score": 68, "strategy": "3-4문장. Q3의 오행 긴장이 이 원국에서 어떻게 발현되는지(구체적 오행 이름). 이 긴장이 어떤 구체적 형태로 나타날 수 있는지(갈등·손실·건강·사고 중 해당 항목). 이 긴장을 최소화하는 구체적 방어 전략. 이 분기에 오히려 집중해야 하는 내부 작업."},
+      {"q": "Q4 (10-12월)", "score": 90, "strategy": "3-4문장. 연말 오행 흐름이 이 원국에 미치는 구체적 영향(오행 이름 포함). 이 분기에 내려야 하는 가장 중요한 결단 하나(무엇을 결단할지 명시). 그 결단을 내리기 위해 Q3에서부터 준비할 것. 이 해를 마무리하며 다음 해로 연결되는 핵심 포지셔닝."}
     ],
     "d_day": {
       "date": "${currentYear}-06-21",
-      "description": "이 날짜가 이 사람의 원국에서 갖는 구체적 의미 — 어떤 오행이 활성화되며 왜 이 시점이 중요한지"
+      "description": "3-4문장. 이 날짜에 어떤 오행이 활성화되며 왜 이 시점이 이 원국에 특별한지(천간·지지 기준 설명). 이 날 정확히 무엇을 해야 하는지(어떤 행동·결정·연락·시작 — 구체적 행동 명시). 이 날을 준비하기 위해 2주 전부터 해야 할 것. 이 날 이후에 어떤 흐름이 이어지는지."
     },
     "missions": [
-      {"type": "즉시", "content": "이 사람 사주의 가장 급한 약점을 겨냥한 즉시 실행 미션 — 약점의 사주 근거 포함"},
-      {"type": "단기", "content": "3개월 내 이 원국에서 부족한 오행 에너지를 채우는 미션"},
-      {"type": "장기", "content": "1년 내 이 일간의 그림자 면을 극복하는 핵심 프로젝트 — 일간 특성과 연결"}
+      {"type": "즉시", "content": "3-4문장. 이번 주 안에 실행할 수 있는 미션(어떤 앱·플랫폼·장소에서 무엇을 할지). 이 미션이 이 사람의 사주 어떤 약점을 겨냥하는지(오행 근거 포함). 구체적 실행 방법(어디서·어떻게·얼마나·언제까지). 이 미션을 완료했을 때 기대되는 구체적 변화."},
+      {"type": "단기", "content": "3-4문장. 3개월(구체적 날짜 범위 명시) 내 완료할 미션. 이 미션이 원국의 어떤 부족한 오행을 보완하는지(오행 이름 포함). 월별 세부 실행 계획(1개월차: X, 2개월차: Y, 3개월차: Z). 3개월 후 달성되는 구체적 상태(무엇이 어떻게 달라져 있는지)."},
+      {"type": "장기", "content": "3-4문장. 향후 12개월(구체적 시작~종료 날짜) 동안 추진할 핵심 프로젝트. 이 프로젝트가 이 일간의 어떤 그림자 면을 어떻게 극복하게 하는지. 분기별 마일스톤(Q1: X, Q2: Y, Q3: Z, Q4: W). 1년 후 이 프로젝트를 완수했을 때 달라지는 커리어 포지션."}
     ]
   },
   "networking_guide": {
-    "current_season_tip": "현재 대운 오행과 이 사람 원국을 고려할 때 이 시기에 어떤 에너지의 사람이 필요한지 — 오행 근거 포함",
+    "current_season_tip": "3-4문장. 이 시기에 이 원국이 가장 필요로 하는 인간 에너지 유형(오행 근거 포함). 그 에너지를 가진 사람들이 주로 어떤 분야·직업·환경에 있는지(구체적 직업 2-3개 명시). 그 사람들과 연결되는 가장 효과적인 채널(구체적 플랫폼·행사·커뮤니티 이름). 연결 시 첫 대화에서 해야 할 구체적 질문 1-2개.",
     "people_to_meet": [
-      {"type": "이 원국에서 부족한 오행을 체현한 사람 유형", "reason": "어떤 오행이 부족하며 이 유형이 왜 그것을 보완하는지 설명", "how": "이 사람의 일간 소통 스타일에 맞는 접근법"},
-      {"type": "이 원국의 두 번째 부족 오행을 보완하는 사람 유형", "reason": "사주 근거와 함께 왜 이 유형이 필요한지", "how": "이 일간 특성을 고려한 구체적 연결 방법"}
+      {"type": "이 원국에서 부족한 오행을 체현한 사람 유형(구체적 직업·역할 명시)", "reason": "3문장. 이 원국에서 어떤 오행이 얼마나 부족한지(수치나 비율로). 이 유형의 사람이 그 오행을 어떻게 제공하는지. 이 사람과의 관계가 커리어에 구체적으로 어떤 변화를 가져오는지.", "how": "2-3문장. 이 사람의 일간 소통 스타일에 맞는 첫 접근법(어떤 말로 시작할지). 어떤 플랫폼·이벤트·커뮤니티에서 만날 수 있는지. 첫 대화에서 어떤 주제로 시작하면 자연스럽게 연결되는지."},
+      {"type": "이 원국의 두 번째 부족 오행을 보완하는 사람 유형(구체적 직업·역할 명시)", "reason": "3문장. 두 번째 부족 오행의 사주 근거와 이 원국에서의 의미. 이 유형이 그 오행을 왜 체현하는지. 이 관계가 단기/장기적으로 어떤 구체적 기회를 만드는지.", "how": "2-3문장. 연결 전략(어떻게 첫 접촉을 시작할지). 접근 채널(어디서 만날지). 관계를 발전시키는 구체적 첫 번째 액션."}
     ],
     "avoid": "이 사람의 기신 오행을 증폭시키는 에너지 유형 — 어떤 오행을 자극하며 왜 이 원국에 해로운지 설명"
   },
@@ -308,26 +320,26 @@ Respond strictly in this JSON schema. All scores must be integers (0-100).
     {
       "type": "crisis",
       "label": "극복할 위기",
-      "content": "이 일간과 원국 구조가 만드는 구체적 커리어 함정 — 사주 메커니즘을 직접 언급",
-      "action": "이 함정의 사주적 뿌리를 겨냥한 구체적 대응 행동"
+      "content": "3-4문장. 이 일간 + 원국 구조가 만드는 가장 치명적인 커리어 함정의 정체(오행 이름 포함). 이 함정이 어떤 구체적 상황에서 나타나는지(직장·사업·관계 중 구체적 시나리오). 이 함정이 반복되면 어떤 결과가 3년·5년·10년 단위로 축적되는지. 왜 이 일간은 이 함정을 스스로 알아채기 어려운지.",
+      "action": "2-3문장. 이 함정을 끊어내는 구체적 행동(무엇을, 언제부터, 어떻게 — 도구·방법 명시). 이 행동을 지속하기 위한 리마인더 또는 측정 방법(어떻게 진행을 확인할지). 이 행동을 30일 실행했을 때 기대되는 첫 번째 눈에 띄는 변화."
     },
     {
       "type": "person",
       "label": "만나야 할 사람",
-      "content": "이 원국에서 부족한 오행을 체현한 사람 유형과 그 이유 — 오행 균형 논리로 설명",
-      "action": "이 사람의 일간 소통 방식을 고려한 구체적 접촉 행동"
+      "content": "3-4문장. 이 원국에서 부족한 오행을 체현한 사람 유형의 구체적 직업·분야·특성(2-3개 예시). 이 사람이 어떻게 이 원국의 오행 균형을 보완하는지 원리 설명. 이 사람과의 관계에서 기대되는 커리어 변화(단기 6개월·장기 3년). 이런 유형의 사람이 현재 이 사람의 네트워크에 있는지 확인하는 질문.",
+      "action": "2-3문장. 지금 당장 이 유형의 사람에게 연락하거나 만나는 구체적 첫 행동(어떤 메시지를 어떤 플랫폼에서). 이런 사람을 찾을 수 있는 커뮤니티·이벤트·플랫폼(구체적 이름). 첫 만남에서 어떤 가치를 제공하며 관계를 시작할지."
     },
     {
       "type": "skill",
       "label": "배워야 할 것",
-      "content": "이 원국에서 가장 약한 오행과 연결된 역량 — 왜 이 스킬이 사주 균형에 필요한지",
-      "action": "현재 대운 오행의 에너지를 활용해 배울 수 있는 첫 번째 구체적 행동"
+      "content": "3-4문장. 이 원국에서 가장 약한 오행과 연결된 구체적 역량(기술·지식·습관 중 하나를 구체적으로). 왜 이 역량이 이 사람의 사주 균형에 가장 시급한지 오행 논리로 설명. 이 역량이 없으면 어떤 커리어 기회를 계속 놓치게 되는지(구체적 기회 유형). 이 역량을 갖추었을 때 열리는 구체적 기회(업종·직무·수입 등).",
+      "action": "2-3문장. 현재 대운 오행을 활용해 이 역량을 익히는 첫 번째 구체적 행동(강의·책·사람·프로젝트 중 하나를 실제 이름으로). 목표 완료 시점(구체적 날짜). 역량 달성 여부를 확인하는 구체적 지표(무엇이 되어야 '완료'인지)."
     }
   ],
   "mbti_integration": {
     "type": "${mbtiText}",
-    "career_synergy": "이 사람의 일간 특성이 이 MBTI의 어떤 구체적 강점을 증폭시키는지 2-3문장 — 추상적 일반론 금지",
-    "blind_spot": "이 일간의 그림자 면이 이 MBTI의 어떤 약점과 충돌하는지 솔직하게 2문장 — 구체적 상황을 언급"
+    "career_synergy": "4-5문장. 이 일간의 구체적 특성이 이 MBTI의 어떤 강점과 어떻게 공명하는지(일간 한자와 MBTI 특성 이름을 함께 언급). 이 시너지가 어떤 직업군·환경에서 가장 극대화되는지(구체적 직무·업종 명시). 이 시너지를 의도적으로 활용하는 구체적 커리어 전략. 이 조합이 만드는 독특한 강점 — 대부분의 사람에게는 없는 이 사람만의 경쟁력. 이 강점이 빛나는 구체적 상황·역할·직무(예시 포함).",
+    "blind_spot": "3-4문장. 이 일간의 그림자 면이 이 MBTI의 어떤 약점을 어떻게 증폭시키는지(일간 한자와 MBTI 특성 이름 함께). 이 충돌이 어떤 직장 상황·관계·결정에서 구체적으로 나타나는지(시나리오로). 이 충돌이 반복될 때 쌓이는 커리어 손실(무엇을 잃는지). 이 충돌을 의식적으로 관리하는 방법(구체적 습관·체크리스트)."
   }
 }`;
 }
@@ -371,31 +383,31 @@ Respond ONLY with the following JSON (no other text):
 {
   "saju_detail": {
     "four_pillars": {
-      "year": {"heavenly": "actual heavenly stem character (e.g. 甲)", "earthly": "actual earthly branch character (e.g. 子)", "meaning": "specific meaning of this year pillar for this person's chart"},
-      "month": {"heavenly": "actual heavenly stem character", "earthly": "actual earthly branch character", "meaning": "how this month pillar shapes social interaction and career tendencies"},
-      "day": {"heavenly": "actual heavenly stem character", "earthly": "actual earthly branch character", "meaning": "day master's core nature — strengths, drives, shadow side"},
-      "hour": {"heavenly": "actual heavenly stem character or unknown", "earthly": "actual earthly branch character or unknown", "meaning": "hour pillar influence on ambitions and later life, or implications of unknown birth hour"}
+      "year": {"heavenly": "actual heavenly stem character (e.g. 甲)", "earthly": "actual earthly branch character (e.g. 子)", "meaning": "3-4 sentences. The element and yin/yang of this year pillar's stem and branch. How this year pillar combines/clashes/generates/controls the day pillar. Its specific influence on ancestry, roots, and early life fortune. Key interactions with other pillars (month/hour)."},
+      "month": {"heavenly": "actual heavenly stem character", "earthly": "actual earthly branch character", "meaning": "3-4 sentences. The element and yin/yang of this month pillar. How this month pillar interacts with the day master (combine/clash/generate/control). Its specific influence on social skills, career, and parental relationships. How it contributes to or undermines the favorable element structure."},
+      "day": {"heavenly": "actual heavenly stem character", "earthly": "actual earthly branch character", "meaning": "3-4 sentences. The element, yin/yang, and strength of the day master. How the day branch supports or restrains the day stem. The core personality traits this pillar creates (strengths and shadow side, honestly). Key combines/clashes this day pillar forms with other pillars and their career implications."},
+      "hour": {"heavenly": "actual heavenly stem character or unknown", "earthly": "actual earthly branch character or unknown", "meaning": "3-4 sentences. The element/yin/yang of this hour pillar (if unknown: describe the analytical uncertainty and its implications). Its specific influence on desires, offspring, and later-life fortune. The combine/clash relationship with the day master. Its role in the favorable/unfavorable element structure."}
     },
     "day_master": {
       "element": "e.g. 丙火 (Bing Fire)",
       "character": "e.g. Sun Fire — radiates outward, commands attention, struggles with stillness",
-      "description": "2-3 sentences: this person's core nature based on day master. Name the specific strengths AND the specific shadow side honestly."
+      "description": "5-7 sentences. First: state this day master's element/yin-yang/strength and define its core nature directly. Second: the most prominent personality strength (tied to specific career situations). Third: the interpersonal pattern (how they treat others and how others perceive them). Fourth: the clearest shadow side — honestly, without softening. Fifth: the career mistake this day master type repeatedly makes. Sixth: the most suitable career environments and why. Seventh: the conditions under which this day master type shines most."
     },
     "five_elements": {"wood": 20, "fire": 30, "earth": 15, "water": 25, "metal": 10},
     "favorable_element": "specific element and WHY it balances this chart (e.g. Water — dampens excess Fire, brings strategic patience this person lacks)",
     "unfavorable_element": "specific element and WHY it destabilizes this chart (e.g. Wood — feeds already excessive Fire, amplifies impulsiveness)",
-    "personality_summary": "2-3 sentences on this person's core traits based on the four pillars. Be specific and honest — name actual tendencies, not generic virtues.",
+    "personality_summary": "5-7 sentences. First: start with 'You are the type of person who...' and define the core nature directly from the natal chart. Second: the situation/environment where this person shines brightest. Third: the relationship pattern they repeatedly encounter (workplace/romantic/friendship — pick one). Fourth: how this person makes decisions and why those decisions sometimes create problems. Fifth: the behavioral pattern that emerges under stress. Sixth: the core life challenge this person will likely face repeatedly. No generic virtues, no flattery — natal chart basis only.",
     "current_luck_period": {
       "period": "e.g. 2022-2031",
       "element": "e.g. Water (壬水)",
-      "influence": "Precisely how this luck cycle element interacts with the natal chart's balance. Why this creates the observed career season — cite specific stem/branch interactions."
+      "influence": "5-7 sentences. First: the combine/clash/generate/control relationship between this luck cycle's heavenly stem and the day master (Chinese characters included). Second: how this luck cycle's earthly branch interacts with the natal chart's branches. Third: how these interactions manifest in the career concretely (promotion/conflict/opportunity/crisis — specific forms). Fourth: whether this luck cycle acts as favorable or unfavorable element and its intensity. Fifth: what must be accomplished before this luck cycle ends (specific year). Sixth: what elemental shift the next luck cycle brings to this chart."
     }
   },
   "season_reasoning": {
-    "saju_basis": "Saju: Name the active luck cycle (대운), its start year, its element, and exactly how that element interacts with the day master and natal chart to produce this specific career season (${currentSeason}). Include specific stem/branch names and years.",
-    "astrology_basis": "Astrology: State Jupiter/Saturn's current transit house, and which natal planet they aspect right now. Explain how this transit creates the current career season. Use specific degree or house numbers.",
-    "numerology_basis": "Numerology: Calculate Life Path Number from birth date, Personal Year Number for ${currentYear}, and state the cycle phase (1-9). Show the arithmetic and explain what it means for career right now.",
-    "overall_reasoning": "2 sharp sentences integrating all three frameworks. State the exact career season, the end year, and the single most important number or element driving it."
+    "saju_basis": "5-7 sentences. First: name the current luck cycle (stem/branch Chinese characters) and its start year. Second: how this luck cycle's heavenly stem combines/clashes with the day master and the result. Third: how this luck cycle's earthly branch interacts with the natal chart's branches (triple combination/directional combination/clash/harm). Fourth: why these interactions produce this specific career season (${currentSeason}) — causal chain. Fifth: what the annual pillar of ${currentYear} adds to the luck cycle and natal chart. Sixth: the year this season ends and the basis for that. Must include Chinese characters and years.",
+    "astrology_basis": "5-7 sentences. First: the house Jupiter is currently transiting and the life domain it governs. Second: the house Saturn is currently transiting and its meaning. Third: which natal planets Jupiter and Saturn aspect and at what angle (conjunction/trine/square etc.). Fourth: why this transit combination produces the current career season (${currentSeason}). Fifth: when these transits end (approximate year) and what changes after. Sixth: how this astrological analysis aligns with the saju analysis.",
+    "numerology_basis": "5-7 sentences. First: Life Path Number from birth date with arithmetic shown (e.g. 1990+1+15=2006, 2+0+0+6=8). Second: Personal Year Number for ${currentYear} with arithmetic shown. Third: where this Personal Year Number sits in the 1-9 cycle. Fourth: why this number combination points to this career season (${currentSeason}). Fifth: when this Personal Year cycle transitions (specific year). Sixth: how the numerology reading resonates with the saju and astrology findings.",
+    "overall_reasoning": "5-7 sentences. The shared conclusion all three analytical frameworks point to. The precise name of the current career season and its end year. The single most decisive factor driving this season (number/element/planet). What this season concretely means for this person (opportunity/challenge/turning point). The most important action to take right now. The key positioning step to prepare for what comes after this season."
   }
 }`;
   }
@@ -416,31 +428,31 @@ Respond ONLY with the following JSON (no other text):
 {
   "saju_detail": {
     "four_pillars": {
-      "year": {"heavenly": "실제 년주 천간 한자 1글자(예: 甲)", "earthly": "실제 년주 지지 한자 1글자(예: 子)", "meaning": "이 년주가 이 사람의 원국 전체에서 어떤 역할을 하는지 구체적으로"},
-      "month": {"heavenly": "실제 월주 천간 한자 1글자", "earthly": "실제 월주 지지 한자 1글자", "meaning": "이 월주가 사회성·직업운에 미치는 구체적 영향 — 일반론 금지"},
-      "day": {"heavenly": "실제 일주 천간 한자 1글자", "earthly": "실제 일주 지지 한자 1글자", "meaning": "일간의 본성, 강점, 그림자 면을 솔직하게 — 이 사람만의 특징을 서술"},
-      "hour": {"heavenly": "실제 시주 천간 1글자 또는 모름", "earthly": "실제 시주 지지 1글자 또는 모름", "meaning": "시주가 욕망·말년에 미치는 영향, 모를 경우 시간 미상이 분석에 미치는 의미"}
+      "year": {"heavenly": "실제 년주 천간 한자 1글자(예: 甲)", "earthly": "실제 년주 지지 한자 1글자(예: 子)", "meaning": "3-4문장. 이 년주 천간·지지의 오행과 음양. 이 년주가 일주(일간)와 어떤 합·충·생·극 관계에 있는지. 이 년주가 이 사람의 조상·뿌리·초년 운에 미치는 구체적 영향. 다른 주(월주·시주)와의 주요 오행 상호작용."},
+      "month": {"heavenly": "실제 월주 천간 한자 1글자", "earthly": "실제 월주 지지 한자 1글자", "meaning": "3-4문장. 이 월주 천간·지지의 오행과 음양. 이 월주가 일주와 어떤 합·충·생·극 관계에 있는지. 이 월주가 사회성·직업운·부모운에 미치는 구체적 영향. 이 월주가 전체 원국에서 용신/기신에 어떻게 기여하는지."},
+      "day": {"heavenly": "실제 일주 천간 한자 1글자", "earthly": "실제 일주 지지 한자 1글자", "meaning": "3-4문장. 일간의 오행·음양·강약. 일지(日支)가 일간을 어떻게 보좌하거나 제약하는지. 이 일주가 만드는 핵심 성격 특성(강점·그림자 면을 솔직하게). 이 일주가 다른 주와 만드는 주요 합·충·형·파와 그 커리어 함의."},
+      "hour": {"heavenly": "실제 시주 천간 1글자 또는 모름", "earthly": "실제 시주 지지 1글자 또는 모름", "meaning": "3-4문장. 시주 오행·음양(모를 경우: 시간 미상이 사주 분석에 미치는 영향과 그 불확실성). 이 시주가 자녀운·욕망·말년 운에 미치는 구체적 영향. 이 시주와 일주의 합·충 관계. 이 시주가 용신/기신 구조에서 어떤 역할을 하는지."}
     },
     "day_master": {
       "element": "예: 병화(丙火)",
       "character": "예: 태양의 불 — 밝고 강렬하지만 멈춤을 모른다",
-      "description": "일간을 바탕으로 이 사람의 핵심 본성을 2-3문장으로. 강점·성향·그림자 면을 구체적이고 솔직하게 — 미화 금지."
+      "description": "5-7문장. 첫 문장: 이 일간의 오행·음양·강약을 직접 명시하며 핵심 본성을 규정. 둘째: 이 일간이 가진 가장 두드러진 성격 강점(구체적 직업·상황과 연결). 셋째: 이 일간의 대인관계 패턴(어떻게 상대를 대하고 어떻게 상대에게 인식되는지). 넷째: 이 일간의 가장 뚜렷한 그림자 면(미화 없이 솔직하게). 다섯째: 이 일간이 직업 선택에서 반복적으로 저지르는 실수. 여섯째: 이 일간에게 가장 적합한 직업군과 그 이유. 일곱 번째: 이 일간이 가장 빛나는 환경과 조건."
     },
     "five_elements": {"wood": 20, "fire": 30, "earth": 15, "water": 25, "metal": 10},
     "favorable_element": "구체적 오행 + 왜 이 원국에서 용신이 되는지 (예: 수(水) — 과다한 화를 제어하고 이 일간이 부족한 냉철한 판단력을 보완)",
     "unfavorable_element": "구체적 오행 + 왜 이 원국에서 기신이 되는지 (예: 목(木) — 이미 과다한 화를 더 키워 충동적 결정을 증폭시킴)",
-    "personality_summary": "사주 원국을 바탕으로 이 사람의 핵심 성격을 2-3문장으로. 구체적이고 솔직하게, 일반론·미화 절대 금지.",
+    "personality_summary": "5-7문장. 첫 문장: '당신은 ~한 사람입니다'로 시작하며 이 원국의 핵심 특성을 직격. 둘째: 이 사람이 가장 빛나는 상황·환경·조건. 셋째: 이 사람이 반복적으로 겪는 관계 패턴(직장·연애·우정 중 하나). 넷째: 이 사람의 결정 방식(어떻게 선택하고 왜 그 선택이 때로 문제가 되는지). 다섯째: 이 사람이 스트레스를 받을 때 나타나는 특유의 행동 패턴. 여섯째: 이 사람이 평생 반복할 가능성이 높은 핵심 과제. 일반론·미화 절대 금지, 사주 원국 근거로만 작성.",
     "current_luck_period": {
       "period": "예: 2022-2031",
       "element": "예: 임수(壬水) 대운",
-      "influence": "현재 대운의 오행이 이 원국의 어느 요소와 어떻게 상호작용하는지 구체적으로. 왜 이 상호작용이 지금 이런 커리어 흐름을 만드는지 — 천간·지지 이름 포함."
+      "influence": "5-7문장. 첫 문장: 현재 대운 천간과 지지의 오행이 일간과 만드는 관계(합·충·생·극 — 한자 포함). 둘째: 이 대운 오행이 원국의 어느 기둥과 어떻게 상호작용하는지. 셋째: 이 상호작용이 커리어에 실제로 어떻게 나타나는지(승진·갈등·기회·위기 등 구체적 형태). 넷째: 이 대운이 용신 또는 기신 방향으로 작용하는지와 그 강도. 다섯째: 이 대운이 끝나는 연도와 그 전까지 반드시 이루어야 할 것. 여섯째: 다음 대운으로의 전환이 이 원국에서 어떤 변화를 가져올지."
     }
   },
   "season_reasoning": {
-    "saju_basis": "사주: 현재 대운명(예: 壬水 대운)이 몇 년에 시작되었고, 그 오행이 일간·원국과 구체적으로 어떻게 상호작용하여 지금 이 커리어 계절(${currentSeason})이 형성되었는지. 천간·지지 이름과 연도를 반드시 명시.",
-    "astrology_basis": "점성술: 현재 목성·토성이 어느 하우스를 통과 중이며, 출생 차트의 어느 행성을 어떤 각도로 조응하는지. 이 트랜짓이 왜 지금 이 계절을 만드는지 하우스 번호 또는 각도 포함.",
-    "numerology_basis": "수비학: 생년월일로 계산한 생명수(Life Path Number)와 ${currentYear}년의 개인년수(Personal Year Number)를 실제 계산식과 함께 제시. 이 숫자들이 왜 지금 이 계절을 가리키는지 명확히.",
-    "overall_reasoning": "세 관점을 종합한 핵심 2문장. 현재 계절명과 종료 연도를 명시하고, 가장 결정적인 수치 또는 오행 하나를 반드시 포함할 것."
+    "saju_basis": "5-7문장. 첫 문장: 현재 대운의 이름(천간·지지 한자)과 시작 연도. 둘째: 이 대운 천간이 일간과 만드는 구체적 합·충·생·극 관계와 그 의미. 셋째: 이 대운 지지가 원국 지지와 만드는 삼합·방합·충·형 관계. 넷째: 이 상호작용이 왜 지금 이 커리어 계절(${currentSeason})을 만드는지 인과관계로. 다섯째: 세운(${currentYear}년)의 천간·지지가 이 대운과 원국에 더하는 영향. 여섯째: 이 계절이 끝나는 연도와 그 근거. 천간·지지 한자와 연도를 반드시 포함.",
+    "astrology_basis": "5-7문장. 첫 문장: 현재 목성이 통과 중인 하우스와 그 하우스가 상징하는 삶의 영역. 둘째: 현재 토성이 통과 중인 하우스와 그 하우스의 의미. 셋째: 목성·토성이 출생 차트의 어느 행성을 어떤 각도(컨정션·트라인·스퀘어 등)로 조응하는지. 넷째: 이 트랜짓 조합이 왜 지금 이 커리어 계절(${currentSeason})을 만드는지. 다섯째: 이 트랜짓이 끝나는 대략적 시점과 그 이후 변화. 여섯째: 이 점성술 분석이 사주 분석과 어떻게 일치하는지.",
+    "numerology_basis": "5-7문장. 첫 문장: 생년월일로 계산한 생명수(Life Path Number) — 계산식 포함(예: 1990+1+15 = 2006, 2+0+0+6=8). 둘째: ${currentYear}년의 개인년수(Personal Year Number) — 계산식 포함. 셋째: 이 개인년수가 1-9 사이클에서 어떤 위치에 있는지. 넷째: 이 숫자 조합이 왜 지금 이 커리어 계절(${currentSeason})을 가리키는지. 다섯째: 개인년수 사이클이 언제 전환되는지(연도 명시). 여섯째: 수비학 분석이 사주·점성술과 어떻게 공명하는지.",
+    "overall_reasoning": "5-7문장. 세 분석 체계가 모두 가리키는 공통 결론. 현재 커리어 계절의 정확한 이름과 종료 연도. 이 계절을 만드는 가장 결정적인 단일 요소(수치·오행·행성 중 하나). 이 계절이 이 사람에게 구체적으로 의미하는 것(기회·도전·전환점). 지금 당장 취해야 하는 가장 중요한 행동. 이 계절 이후를 준비하기 위한 핵심 포지셔닝."
   }
 }`;
 }
