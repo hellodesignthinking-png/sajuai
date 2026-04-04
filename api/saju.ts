@@ -321,7 +321,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       return res.status(200).json({
-        ...parsed,
+        sharp_feedback: parsed.sharp_feedback ?? '분석이 완료되었습니다.',
+        top5_golden_years: parsed.top5_golden_years ?? [],
+        life_cycle_scores: parsed.life_cycle_scores ?? [],
+        current_season: parsed.current_season ?? 'spring',
+        season_details: parsed.season_details ?? { season: 'spring', year_range: '', advice: '', warning: '' },
+        yearly_strategy: parsed.yearly_strategy ?? { quarter_scores: [], d_day: { date: '', description: '' }, missions: [] },
+        mbti_integration: parsed.mbti_integration ?? { type: '', career_synergy: '', blind_spot: '' },
         season_cycle: parsed.season_cycle ?? [],
         season_guidance: parsed.season_guidance ?? null,
         networking_guide: parsed.networking_guide ?? null,

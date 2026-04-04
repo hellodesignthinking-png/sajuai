@@ -77,10 +77,8 @@ function AuthButton({
   onOpenAuth: () => void;
   onOpenMyResults: () => void;
 }) {
-  const { user, signOut, loading } = useAuth();
+  const { user, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-
-  if (loading) return null;
 
   if (!user) {
     return (
@@ -290,7 +288,7 @@ function AppInner() {
         <AnimatePresence mode="wait">
           {view === 'landing' && (
             <motion.div key="landing" {...pageTransition}>
-              <LandingPage onStart={handleStart} />
+              <LandingPage onStart={handleStart} onOpenAuth={() => setAuthModalOpen(true)} />
             </motion.div>
           )}
 

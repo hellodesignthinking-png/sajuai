@@ -67,7 +67,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
   const [saveError, setSaveError] = useState<string | null>(null);
 
   const age = new Date().getFullYear() - userInput.birthYear;
-  const sortedYears = [...result.top5_golden_years].sort((a, b) => b.score - a.score);
+  const sortedYears = [...(result.top5_golden_years ?? [])].sort((a, b) => b.score - a.score);
   const topYear = sortedYears[0];
   const peakYear = topYear?.year ?? new Date().getFullYear();
   const calLabel = userInput.calendarType === 'lunar' ? '음력' : '양력';
@@ -137,17 +137,21 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         }}
       >
         {/* ── FREE: 1. 책사의 한마디 ─────────────────────── */}
-        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.1 }}>
-          <SharpFeedback feedback={result.sharp_feedback} />
-        </motion.section>
+        {result.sharp_feedback && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.1 }}>
+            <SharpFeedback feedback={result.sharp_feedback} />
+          </motion.section>
+        )}
 
         <SectionDivider />
 
         {/* ── FREE: 2. 현재 커리어 계절 ───────────────────── */}
-        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.15 }}>
-          <SectionTitle>🌸 현재 커리어 계절</SectionTitle>
-          <SeasonCard season={result.current_season} details={result.season_details} />
-        </motion.section>
+        {result.current_season && result.season_details && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.15 }}>
+            <SectionTitle>🌸 현재 커리어 계절</SectionTitle>
+            <SeasonCard season={result.current_season} details={result.season_details} />
+          </motion.section>
+        )}
 
         {/* ── FREE: 3. 전성기 #1 티저 ─────────────────────── */}
         {topYear && (
@@ -207,109 +211,113 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         </motion.section>
 
         {/* ── PREMIUM: 4. 전성기 Top 5 전체 ───────────────── */}
-        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.3 }}>
-          <SectionTitle>🏆 전성기 Top 5 상세 분석</SectionTitle>
-          <PaywallOverlay>
-            <div className="card">
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
-                커리어 정점이 될 연도 Top 5 (점수 기준 시각화)
-              </p>
-              <GoldenYearsChart data={result.top5_golden_years} />
-              <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
-                {sortedYears.map((y, i) => (
-                  <div key={y.year} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                    <span
-                      style={{
-                        width: '24px',
-                        height: '24px',
-                        borderRadius: '50%',
-                        background:
-                          i === 0 ? '#D4AF37' : i === 1 ? '#C0C0C0' : i === 2 ? '#CD7F32' : 'var(--border)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '11px',
-                        fontWeight: 700,
-                        color: i < 3 ? '#000' : 'var(--text-muted)',
-                        flexShrink: 0,
-                        marginTop: '2px',
-                      }}
-                    >
-                      {i + 1}
-                    </span>
-                    <div style={{ flex: 1 }}>
+        {sortedYears.length > 0 && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.3 }}>
+            <SectionTitle>🏆 전성기 Top 5 상세 분석</SectionTitle>
+            <PaywallOverlay>
+              <div className="card">
+                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
+                  커리어 정점이 될 연도 Top 5 (점수 기준 시각화)
+                </p>
+                <GoldenYearsChart data={result.top5_golden_years} />
+                <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
+                  {sortedYears.map((y, i) => (
+                    <div key={y.year} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                       <span
                         style={{
-                          fontSize: '14px',
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '50%',
+                          background:
+                            i === 0 ? '#D4AF37' : i === 1 ? '#C0C0C0' : i === 2 ? '#CD7F32' : 'var(--border)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '11px',
                           fontWeight: 700,
-                          color: i === 0 ? 'var(--gold)' : 'var(--text)',
-                        }}
-                      >
-                        {y.year}년
-                      </span>
-                      <span style={{ fontSize: '13px', color: 'var(--text-muted)', marginLeft: '8px' }}>
-                        {y.score}점
-                      </span>
-                      <p
-                        style={{
-                          fontSize: '13px',
-                          color: 'var(--text-muted)',
+                          color: i < 3 ? '#000' : 'var(--text-muted)',
+                          flexShrink: 0,
                           marginTop: '2px',
-                          lineHeight: 1.5,
                         }}
                       >
-                        {y.reason}
-                      </p>
+                        {i + 1}
+                      </span>
+                      <div style={{ flex: 1 }}>
+                        <span
+                          style={{
+                            fontSize: '14px',
+                            fontWeight: 700,
+                            color: i === 0 ? 'var(--gold)' : 'var(--text)',
+                          }}
+                        >
+                          {y.year}년
+                        </span>
+                        <span style={{ fontSize: '13px', color: 'var(--text-muted)', marginLeft: '8px' }}>
+                          {y.score}점
+                        </span>
+                        <p
+                          style={{
+                            fontSize: '13px',
+                            color: 'var(--text-muted)',
+                            marginTop: '2px',
+                            lineHeight: 1.5,
+                          }}
+                        >
+                          {y.reason}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          </PaywallOverlay>
-        </motion.section>
+            </PaywallOverlay>
+          </motion.section>
+        )}
 
         {/* ── PREMIUM: 5. 생애 주기 그래프 ────────────────── */}
-        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.32 }}>
-          <SectionTitle>📊 생애 주기 운 그래프</SectionTitle>
-          <PaywallOverlay>
-            <div className="card">
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
-                10년 단위 커리어 기회/위기 점수
-              </p>
-              <LifeCycleChart data={result.life_cycle_scores} currentAge={age} />
-              <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
-                {result.life_cycle_scores.map((l) => (
-                  <div key={l.age_range} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                    <span
-                      style={{
-                        fontSize: '13px',
-                        fontWeight: 700,
-                        color: 'var(--gold)',
-                        minWidth: '40px',
-                        marginTop: '2px',
-                      }}
-                    >
-                      {l.age_range}
-                    </span>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                        <div className="score-bar" style={{ flex: 1 }}>
-                          <div className="score-bar-fill" style={{ width: `${l.score}%` }} />
+        {(result.life_cycle_scores ?? []).length > 0 && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.32 }}>
+            <SectionTitle>📊 생애 주기 운 그래프</SectionTitle>
+            <PaywallOverlay>
+              <div className="card">
+                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
+                  10년 단위 커리어 기회/위기 점수
+                </p>
+                <LifeCycleChart data={result.life_cycle_scores} currentAge={age} />
+                <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
+                  {(result.life_cycle_scores ?? []).map((l) => (
+                    <div key={l.age_range} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                      <span
+                        style={{
+                          fontSize: '13px',
+                          fontWeight: 700,
+                          color: 'var(--gold)',
+                          minWidth: '40px',
+                          marginTop: '2px',
+                        }}
+                      >
+                        {l.age_range}
+                      </span>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                          <div className="score-bar" style={{ flex: 1 }}>
+                            <div className="score-bar-fill" style={{ width: `${l.score}%` }} />
+                          </div>
+                          <span style={{ fontSize: '12px', color: 'var(--text-muted)', minWidth: '30px' }}>
+                            {l.score}
+                          </span>
                         </div>
-                        <span style={{ fontSize: '12px', color: 'var(--text-muted)', minWidth: '30px' }}>
-                          {l.score}
-                        </span>
+                        <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                          {l.description}
+                        </p>
                       </div>
-                      <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-                        {l.description}
-                      </p>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          </PaywallOverlay>
-        </motion.section>
+            </PaywallOverlay>
+          </motion.section>
+        )}
 
         {/* ── PREMIUM: 6. 12년 계절 주기 ──────────────────── */}
         {result.season_cycle?.length > 0 && (
@@ -334,12 +342,14 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         <SectionDivider />
 
         {/* ── PREMIUM: 8. 올해 분기별 전략 ────────────────── */}
-        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.38 }}>
-          <SectionTitle>📅 올해 분기별 전략</SectionTitle>
-          <PaywallOverlay>
-            <YearlyStrategy data={result.yearly_strategy} />
-          </PaywallOverlay>
-        </motion.section>
+        {result.yearly_strategy && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.38 }}>
+            <SectionTitle>📅 올해 분기별 전략</SectionTitle>
+            <PaywallOverlay>
+              <YearlyStrategy data={result.yearly_strategy} />
+            </PaywallOverlay>
+          </motion.section>
+        )}
 
         {/* ── PREMIUM: 9. 성장 미션 3종 ───────────────────── */}
         {result.growth_missions?.length > 0 && (
@@ -364,12 +374,14 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         )}
 
         {/* ── PREMIUM: 11. MBTI 시너지 ─────────────────────── */}
-        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.44 }}>
-          <SectionTitle>🧠 MBTI 시너지 분석</SectionTitle>
-          <PaywallOverlay>
-            <MBTICard data={result.mbti_integration} />
-          </PaywallOverlay>
-        </motion.section>
+        {result.mbti_integration && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.44 }}>
+            <SectionTitle>🧠 MBTI 시너지 분석</SectionTitle>
+            <PaywallOverlay>
+              <MBTICard data={result.mbti_integration} />
+            </PaywallOverlay>
+          </motion.section>
+        )}
 
         <SectionDivider />
 
