@@ -64,7 +64,7 @@ export default function PricingCard() {
       </div>
 
       <div style={{ marginBottom: '16px' }}>
-        <span style={{ fontSize: '30px', fontWeight: 900, color: 'var(--gold)' }}>9,900</span>
+        <span style={{ fontSize: '30px', fontWeight: 900, color: 'var(--gold)' }}>990</span>
         <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--gold)' }}>원</span>
         <span style={{ fontSize: '13px', color: 'var(--text-muted)', marginLeft: '8px' }}>
           1회 결제 · 평생 열람

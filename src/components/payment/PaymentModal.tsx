@@ -8,7 +8,7 @@ const CLIENT_KEY =
   (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_TOSS_CLIENT_KEY) ||
   'test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm';
 
-const AMOUNT = 9900;
+const AMOUNT = 990;
 const ORDER_NAME = '사주AI 프리미엄 분석 리포트';
 
 type Step = 'pricing' | 'widget' | 'processing';
@@ -198,7 +198,7 @@ export default function PaymentModal() {
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <div style={{ textAlign: 'center', marginBottom: '24px' }}>
                   <div style={{ fontSize: '36px', fontWeight: 900, color: 'var(--gold)' }}>
-                    9,900<span style={{ fontSize: '20px' }}>원</span>
+                    990<span style={{ fontSize: '20px' }}>원</span>
                   </div>
                   <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
                     1회 결제 · 평생 열람 · 토스페이먼츠 안전 결제
@@ -326,7 +326,7 @@ export default function PaymentModal() {
                   cursor: widgetReady ? 'pointer' : 'not-allowed',
                 }}
               >
-                9,900원 결제하기
+                990원 결제하기
               </button>
             </div>
           )}

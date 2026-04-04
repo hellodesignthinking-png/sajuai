@@ -88,7 +88,7 @@ export default function PaywallOverlay({ children }: Props) {
           🔓 잠금 해제하기
         </button>
         <p style={{ color: 'var(--text-muted)', fontSize: '11px', margin: 0 }}>
-          9,900원 · 1회 결제 · 평생 열람
+          990원 · 1회 결제 · 평생 열람
         </p>
       </motion.div>
     </div>
