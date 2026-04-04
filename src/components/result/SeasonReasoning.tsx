@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { SeasonReasoning as SeasonReasoningType, CareerSeason } from '../../types';
 
 interface Props {
@@ -7,18 +8,18 @@ interface Props {
 }
 
 const SEASON_LABELS: Record<CareerSeason, { label: string; emoji: string; color: string }> = {
-  spring: { label: '봄', emoji: '🌸', color: '#86efac' },
-  summer: { label: '여름', emoji: '☀️', color: '#fbbf24' },
-  autumn: { label: '가을', emoji: '🍂', color: '#fb923c' },
-  winter: { label: '겨울', emoji: '❄️', color: '#93c5fd' },
+  spring: { label: '봄', emoji: '🌱', color: '#4ade80' },
+  summer: { label: '여름', emoji: '🔥', color: '#f97316' },
+  autumn: { label: '가을', emoji: '🍂', color: '#D4AF37' },
+  winter: { label: '겨울', emoji: '❄️', color: '#60a5fa' },
 };
 
 type Tab = 'saju' | 'astrology' | 'numerology';
 
-const TABS: { id: Tab; label: string; icon: string }[] = [
-  { id: 'saju', label: '사주', icon: '☯' },
-  { id: 'astrology', label: '점성술', icon: '⭐' },
-  { id: 'numerology', label: '수비학', icon: '🔢' },
+const TABS: { id: Tab; label: string; icon: string; desc: string }[] = [
+  { id: 'saju',       label: '사주',   icon: '☯',  desc: '명리학 관점' },
+  { id: 'astrology',  label: '점성술', icon: '⭐', desc: '서양 점성술' },
+  { id: 'numerology', label: '수비학', icon: '🔢', desc: '수비학 관점' },
 ];
 
 export default function SeasonReasoning({ data, season }: Props) {
@@ -32,15 +33,36 @@ export default function SeasonReasoning({ data, season }: Props) {
   };
 
   return (
-    <div className="card" style={{ padding: '20px', display: 'grid', gap: '16px' }}>
+    <div
+      style={{
+        background: 'var(--card)',
+        border: '1px solid rgba(212,175,55,0.15)',
+        borderRadius: '16px',
+        padding: '22px',
+        display: 'grid',
+        gap: '18px',
+      }}
+    >
       {/* 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <span style={{ fontSize: '20px' }}>{seasonInfo.emoji}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <div
+          style={{
+            width: '48px', height: '48px',
+            borderRadius: '12px',
+            background: `${seasonInfo.color}15`,
+            border: `1px solid ${seasonInfo.color}30`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '24px',
+            flexShrink: 0,
+          }}
+        >
+          {seasonInfo.emoji}
+        </div>
         <div>
-          <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '2px' }}>
+          <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px', letterSpacing: '1px' }}>
             지금이 왜
           </p>
-          <p style={{ fontSize: '16px', fontWeight: 700, color: seasonInfo.color }}>
+          <p style={{ fontSize: '18px', fontWeight: 800, color: seasonInfo.color, letterSpacing: '-0.3px' }}>
             커리어 {seasonInfo.label}인가?
           </p>
         </div>
@@ -49,27 +71,33 @@ export default function SeasonReasoning({ data, season }: Props) {
       {/* 종합 근거 */}
       <div
         style={{
-          padding: '14px 16px',
-          borderRadius: '10px',
+          padding: '16px 18px',
+          borderRadius: '12px',
           background: 'rgba(255,255,255,0.03)',
           border: '1px solid rgba(255,255,255,0.07)',
         }}
       >
-        <p style={{ fontSize: '11px', color: 'var(--gold)', marginBottom: '8px', letterSpacing: '1px' }}>
-          종합 분석
+        <p style={{ fontSize: '11px', color: 'var(--gold)', marginBottom: '10px', fontWeight: 700, letterSpacing: '2px' }}>
+          ◆ 종합 분석
         </p>
-        <p style={{ fontSize: '13px', color: 'var(--text)', lineHeight: 1.8, fontWeight: 500 }}>
+        <p style={{ fontSize: '14px', color: 'var(--text)', lineHeight: 1.9, fontWeight: 500 }}>
           {data.overall_reasoning}
         </p>
       </div>
 
       {/* 탭 전환 */}
       <div>
+        {/* Tab buttons */}
         <div
           style={{
-            display: 'flex',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
             gap: '6px',
-            marginBottom: '12px',
+            marginBottom: '14px',
+            background: 'rgba(255,255,255,0.02)',
+            padding: '4px',
+            borderRadius: '12px',
+            border: '1px solid rgba(255,255,255,0.05)',
           }}
         >
           {TABS.map((tab) => (
@@ -77,51 +105,61 @@ export default function SeasonReasoning({ data, season }: Props) {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               style={{
-                flex: 1,
-                padding: '8px 4px',
-                borderRadius: '8px',
-                border: activeTab === tab.id
-                  ? '1px solid rgba(212,175,55,0.4)'
-                  : '1px solid rgba(255,255,255,0.07)',
+                padding: '10px 6px',
+                borderRadius: '9px',
+                border: 'none',
                 background: activeTab === tab.id
-                  ? 'rgba(212,175,55,0.1)'
-                  : 'rgba(255,255,255,0.02)',
+                  ? 'rgba(212,175,55,0.15)'
+                  : 'transparent',
                 color: activeTab === tab.id ? 'var(--gold)' : 'var(--text-muted)',
-                fontSize: '12px',
+                fontSize: '13px',
                 fontWeight: activeTab === tab.id ? 700 : 400,
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'center',
-                gap: '5px',
+                gap: '3px',
+                fontFamily: 'Noto Sans KR, sans-serif',
+                outline: activeTab === tab.id ? '1px solid rgba(212,175,55,0.25)' : 'none',
               }}
             >
-              <span style={{ fontSize: '14px' }}>{tab.icon}</span>
-              {tab.label}
+              <span style={{ fontSize: '18px' }}>{tab.icon}</span>
+              <span>{tab.label}</span>
+              {activeTab === tab.id && (
+                <span style={{ fontSize: '10px', color: 'rgba(212,175,55,0.6)', fontWeight: 400 }}>
+                  {tab.desc}
+                </span>
+              )}
             </button>
           ))}
         </div>
 
-        {/* 탭 콘텐츠 */}
-        <div
-          key={activeTab}
-          style={{
-            padding: '14px 16px',
-            borderRadius: '10px',
-            background: 'rgba(212,175,55,0.03)',
-            border: '1px solid rgba(212,175,55,0.12)',
-            minHeight: '100px',
-          }}
-        >
-          <p style={{ fontSize: '11px', color: 'rgba(212,175,55,0.6)', marginBottom: '8px' }}>
-            {TABS.find((t) => t.id === activeTab)?.icon}{' '}
-            {activeTab === 'saju' ? '사주·명리 관점' : activeTab === 'astrology' ? '서양 점성술 관점' : '수비학 관점'}
-          </p>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.8 }}>
-            {tabContent[activeTab]}
-          </p>
-        </div>
+        {/* Tab content */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+            style={{
+              padding: '16px 18px',
+              borderRadius: '12px',
+              background: 'rgba(212,175,55,0.03)',
+              border: '1px solid rgba(212,175,55,0.1)',
+              minHeight: '100px',
+            }}
+          >
+            <p style={{ fontSize: '11px', color: 'rgba(212,175,55,0.7)', marginBottom: '10px', fontWeight: 700, letterSpacing: '1px' }}>
+              {TABS.find((t) => t.id === activeTab)?.icon}{' '}
+              {TABS.find((t) => t.id === activeTab)?.desc}
+            </p>
+            <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.9 }}>
+              {tabContent[activeTab]}
+            </p>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

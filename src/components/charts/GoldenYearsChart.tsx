@@ -13,56 +13,60 @@ const CustomTooltip = ({ active, payload }: any) => {
   return (
     <div
       style={{
-        background: '#1a1a1a',
-        border: '1px solid rgba(212,175,55,0.3)',
-        borderRadius: '10px',
-        padding: '12px 16px',
+        background: '#181510',
+        border: '1px solid rgba(212,175,55,0.4)',
+        borderRadius: '12px',
+        padding: '14px 18px',
         maxWidth: '240px',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
       }}
     >
-      <p style={{ color: 'var(--gold)', fontWeight: 700, marginBottom: '6px', fontSize: '14px' }}>
+      <p style={{ color: 'var(--gold)', fontWeight: 800, marginBottom: '6px', fontSize: '15px' }}>
         {d.year}년 — {d.score}점
       </p>
-      <p style={{ color: '#ccc', fontSize: '13px', lineHeight: 1.5 }}>{d.reason}</p>
+      <p style={{ color: 'rgba(240,238,232,0.75)', fontSize: '13px', lineHeight: 1.6 }}>{d.reason}</p>
     </div>
   );
 };
+
+const BAR_COLORS = [
+  '#D4AF37',
+  '#C9A227',
+  '#B8960C',
+  'rgba(212,175,55,0.45)',
+  'rgba(212,175,55,0.3)',
+];
 
 export default function GoldenYearsChart({ data }: Props) {
   const sorted = [...data].sort((a, b) => b.score - a.score);
 
   return (
-    <div style={{ width: '100%', height: 280 }}>
+    <div style={{ width: '100%', height: 290 }}>
       <ResponsiveContainer>
-        <BarChart data={sorted} margin={{ top: 8, right: 16, left: -16, bottom: 8 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+        <BarChart data={sorted} margin={{ top: 8, right: 12, left: -20, bottom: 8 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
           <XAxis
             dataKey="year"
-            tick={{ fill: '#888', fontSize: 13 }}
+            tick={{ fill: '#888', fontSize: 13, fontWeight: 600 }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
             domain={[0, 100]}
-            tick={{ fill: '#888', fontSize: 12 }}
+            tick={{ fill: '#666', fontSize: 11 }}
             axisLine={false}
             tickLine={false}
             tickFormatter={(v) => `${v}`}
           />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(212,175,55,0.05)' }} />
-          <Bar dataKey="score" radius={[6, 6, 0, 0]} maxBarSize={60}>
+          <Tooltip
+            content={<CustomTooltip />}
+            cursor={{ fill: 'rgba(212,175,55,0.06)', radius: 6 }}
+          />
+          <Bar dataKey="score" radius={[8, 8, 0, 0]} maxBarSize={56}>
             {sorted.map((entry, i) => (
               <Cell
                 key={entry.year}
-                fill={
-                  i === 0
-                    ? '#D4AF37'
-                    : i === 1
-                    ? '#C9A227'
-                    : i === 2
-                    ? '#B8960C'
-                    : 'rgba(212,175,55,0.4)'
-                }
+                fill={BAR_COLORS[i] ?? 'rgba(212,175,55,0.25)'}
               />
             ))}
           </Bar>

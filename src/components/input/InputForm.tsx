@@ -25,6 +25,8 @@ function genYears() {
   return years;
 }
 
+const TOTAL_STEPS = 2;
+
 export default function InputForm({ onSubmit, onBack }: InputFormProps) {
   const { t, lang } = useLang();
   const [step, setStep] = useState<1 | 2>(1);
@@ -55,20 +57,18 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
   const isStep1Valid = form.birthYear && form.birthMonth && form.birthDay;
 
   const labelStyle: React.CSSProperties = {
-    fontSize: '14px',
+    fontSize: '13px',
     color: 'var(--text-muted)',
     marginBottom: '8px',
-    display: 'block',
-    letterSpacing: '0.5px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    letterSpacing: '0.3px',
+    fontWeight: 500,
   };
 
   const rowStyle: React.CSSProperties = {
-    marginBottom: '24px',
-  };
-
-  const gridStyle: React.CSSProperties = {
-    display: 'grid',
-    gap: '12px',
+    marginBottom: '22px',
   };
 
   return (
@@ -83,52 +83,90 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
       }}
     >
       {/* Header */}
-      <div style={{ width: '100%', maxWidth: '560px', marginBottom: '40px' }}>
+      <div style={{ width: '100%', maxWidth: '560px', marginBottom: '32px' }}>
         <button
           onClick={onBack}
           className="btn-secondary"
-          style={{ marginBottom: '32px', padding: '8px 16px', fontSize: '13px' }}
+          style={{ marginBottom: '28px', padding: '8px 16px', fontSize: '13px' }}
         >
-          {t.input.backBtn}
+          ← {t.input.backBtn}
         </button>
 
-        {/* Progress */}
-        <div style={{ marginBottom: '32px' }}>
+        {/* Step indicator — numbered circles */}
+        <div style={{ marginBottom: '28px' }}>
           <div
             style={{
               display: 'flex',
-              justifyContent: 'space-between',
-              marginBottom: '8px',
+              alignItems: 'center',
+              gap: '0',
+              marginBottom: '12px',
             }}
           >
-            {[t.input.step1Title, t.input.step2Title].map((label, i) => (
-              <span
-                key={i}
-                style={{
-                  fontSize: '12px',
-                  color: step === i + 1 ? 'var(--gold)' : 'var(--text-muted)',
-                  fontWeight: step === i + 1 ? 700 : 400,
-                }}
-              >
-                {i + 1}. {label}
-              </span>
-            ))}
+            {Array.from({ length: TOTAL_STEPS }).map((_, i) => {
+              const isActive = step === i + 1;
+              const isDone = step > i + 1;
+              return (
+                <div
+                  key={i}
+                  style={{ display: 'flex', alignItems: 'center', flex: i < TOTAL_STEPS - 1 ? 1 : 0 }}
+                >
+                  <div
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      background: isActive
+                        ? 'linear-gradient(135deg, #C9A227, #D4AF37)'
+                        : isDone
+                        ? 'rgba(212,175,55,0.2)'
+                        : 'rgba(255,255,255,0.05)',
+                      border: isActive
+                        ? 'none'
+                        : isDone
+                        ? '1px solid rgba(212,175,55,0.4)'
+                        : '1px solid var(--border)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '13px',
+                      fontWeight: 700,
+                      color: isActive ? '#080808' : isDone ? 'var(--gold)' : 'var(--text-muted)',
+                      flexShrink: 0,
+                      boxShadow: isActive ? '0 4px 16px rgba(212,175,55,0.3)' : 'none',
+                      transition: 'all 0.3s',
+                    }}
+                  >
+                    {isDone ? '✓' : i + 1}
+                  </div>
+                  {i < TOTAL_STEPS - 1 && (
+                    <div
+                      style={{
+                        flex: 1,
+                        height: '2px',
+                        background: isDone
+                          ? 'rgba(212,175,55,0.4)'
+                          : 'var(--border)',
+                        margin: '0 4px',
+                        borderRadius: '1px',
+                        transition: 'background 0.3s',
+                      }}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
-          <div className="score-bar">
-            <motion.div
-              className="score-bar-fill"
-              animate={{ width: step === 1 ? '50%' : '100%' }}
-              transition={{ duration: 0.4 }}
-            />
-          </div>
+          <p style={{ fontSize: '11px', color: 'var(--text-muted)', letterSpacing: '1px' }}>
+            {step} / {TOTAL_STEPS} 단계
+          </p>
         </div>
 
         <h1
           style={{
-            fontSize: 'clamp(22px, 5vw, 30px)',
+            fontSize: 'clamp(22px, 5vw, 28px)',
             fontWeight: 800,
             lineHeight: 1.3,
-            marginBottom: '8px',
+            marginBottom: '6px',
           }}
         >
           {step === 1 ? (
@@ -137,22 +175,23 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
             <span className="gold-text">{t.input.step2Title}</span>
           )}
         </h1>
-        <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
+        <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.6 }}>
           {step === 1
             ? (lang === 'ko' ? '정확할수록 분석이 더 정밀해집니다' : 'More precise input = more accurate analysis')
-            : (lang === 'ko' ? '출생지와 MBTI를 입력하면 더 깊은 분석이 가능합니다' : 'Birthplace and MBTI enable deeper analysis')}
+            : (lang === 'ko' ? '출생지와 MBTI로 더 깊은 분석이 가능합니다' : 'Birthplace and MBTI enable deeper analysis')}
         </p>
       </div>
 
-      {/* Form */}
+      {/* Form card */}
       <div
         style={{
           width: '100%',
           maxWidth: '560px',
           background: 'var(--card)',
-          border: '1px solid var(--border)',
+          border: '1px solid rgba(212,175,55,0.2)',
           borderRadius: '20px',
-          padding: '24px 20px',
+          padding: '28px 24px',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
         }}
       >
         <AnimatePresence mode="wait">
@@ -166,8 +205,10 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
             >
               {/* Calendar Type */}
               <div style={rowStyle}>
-                <label style={labelStyle}>{t.input.calendarLabel} *</label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <label style={labelStyle as React.CSSProperties}>
+                  <span>🗓</span> {t.input.calendarLabel} *
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   {[
                     { value: 'solar', label: `☀️ ${t.input.solar}` },
                     { value: 'lunar', label: `🌙 ${t.input.lunar}` },
@@ -178,15 +219,18 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                       onClick={() => set('calendarType', opt.value as 'solar' | 'lunar')}
                       style={{
                         padding: '14px',
-                        borderRadius: '10px',
+                        borderRadius: '12px',
                         border: `1px solid ${form.calendarType === opt.value ? 'var(--gold)' : 'var(--border)'}`,
-                        background: form.calendarType === opt.value ? 'rgba(212,175,55,0.1)' : 'rgba(255,255,255,0.02)',
+                        background: form.calendarType === opt.value
+                          ? 'rgba(212,175,55,0.12)'
+                          : 'rgba(255,255,255,0.02)',
                         color: form.calendarType === opt.value ? 'var(--gold)' : 'var(--text-muted)',
                         cursor: 'pointer',
                         fontSize: '15px',
                         fontWeight: form.calendarType === opt.value ? 700 : 400,
                         transition: 'all 0.2s',
                         fontFamily: 'Noto Sans KR, sans-serif',
+                        boxShadow: form.calendarType === opt.value ? '0 0 12px rgba(212,175,55,0.12)' : 'none',
                       }}
                     >
                       {opt.label}
@@ -197,24 +241,26 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
 
               {/* Birth Year */}
               <div style={rowStyle}>
-                <label style={labelStyle}>{t.input.yearLabel} *</label>
+                <label style={labelStyle as React.CSSProperties}>
+                  <span>📅</span> {t.input.yearLabel} *
+                </label>
                 <select
                   className="input-field"
                   value={form.birthYear}
                   onChange={(e) => set('birthYear', parseInt(e.target.value))}
                 >
                   {genYears().map((y) => (
-                    <option key={y} value={y}>
-                      {y}년
-                    </option>
+                    <option key={y} value={y}>{y}년</option>
                   ))}
                 </select>
               </div>
 
               {/* Month & Day */}
-              <div style={{ ...rowStyle, ...gridStyle, gridTemplateColumns: '1fr 1fr' }}>
+              <div style={{ ...rowStyle, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={labelStyle}>{t.input.monthLabel} *</label>
+                  <label style={labelStyle as React.CSSProperties}>
+                    <span>📆</span> {t.input.monthLabel} *
+                  </label>
                   <select
                     className="input-field"
                     value={form.birthMonth}
@@ -228,7 +274,9 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                   </select>
                 </div>
                 <div>
-                  <label style={labelStyle}>{t.input.dayLabel} *</label>
+                  <label style={labelStyle as React.CSSProperties}>
+                    <span>📆</span> {t.input.dayLabel} *
+                  </label>
                   <select
                     className="input-field"
                     value={form.birthDay}
@@ -245,13 +293,15 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
 
               {/* Hour */}
               <div style={rowStyle}>
-                <label style={labelStyle}>{t.input.hourLabel}</label>
+                <label style={labelStyle as React.CSSProperties}>
+                  <span>🕐</span> {t.input.hourLabel}
+                </label>
                 <select
                   className="input-field"
                   value={form.birthHour}
                   onChange={(e) => set('birthHour', parseInt(e.target.value))}
                 >
-                  <option value={-1}>🕐 {t.input.hourUnknown}</option>
+                  <option value={-1}>{t.input.hourUnknown}</option>
                   {HOURS.map((h) => (
                     <option key={h} value={h}>
                       {lang === 'ko'
@@ -260,7 +310,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                     </option>
                   ))}
                 </select>
-                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '6px' }}>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '6px', lineHeight: 1.5 }}>
                   {lang === 'ko' ? '출생 시각을 알면 사주 분석이 더욱 정확해집니다' : 'Knowing your birth hour improves analysis accuracy'}
                 </p>
               </div>
@@ -275,7 +325,9 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
             >
               {/* Birth Place */}
               <div style={rowStyle}>
-                <label style={labelStyle}>{t.input.birthPlaceLabel}</label>
+                <label style={labelStyle as React.CSSProperties}>
+                  <span>📍</span> {t.input.birthPlaceLabel}
+                </label>
                 <input
                   className="input-field"
                   type="text"
@@ -287,8 +339,10 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
 
               {/* Gender */}
               <div style={rowStyle}>
-                <label style={labelStyle}>{t.input.genderLabel} *</label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <label style={labelStyle as React.CSSProperties}>
+                  <span>👤</span> {t.input.genderLabel} *
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   {[
                     { value: 'male', label: `👨 ${t.input.male}` },
                     { value: 'female', label: `👩 ${t.input.female}` },
@@ -299,18 +353,18 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                       onClick={() => set('gender', opt.value as 'male' | 'female')}
                       style={{
                         padding: '14px',
-                        borderRadius: '10px',
+                        borderRadius: '12px',
                         border: `1px solid ${form.gender === opt.value ? 'var(--gold)' : 'var(--border)'}`,
-                        background:
-                          form.gender === opt.value
-                            ? 'rgba(212,175,55,0.1)'
-                            : 'rgba(255,255,255,0.02)',
+                        background: form.gender === opt.value
+                          ? 'rgba(212,175,55,0.12)'
+                          : 'rgba(255,255,255,0.02)',
                         color: form.gender === opt.value ? 'var(--gold)' : 'var(--text-muted)',
                         cursor: 'pointer',
                         fontSize: '15px',
                         fontWeight: form.gender === opt.value ? 700 : 400,
                         transition: 'all 0.2s',
                         fontFamily: 'Noto Sans KR, sans-serif',
+                        boxShadow: form.gender === opt.value ? '0 0 12px rgba(212,175,55,0.12)' : 'none',
                       }}
                     >
                       {opt.label}
@@ -321,12 +375,14 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
 
               {/* MBTI */}
               <div style={rowStyle}>
-                <label style={labelStyle}>{t.input.mbtiLabel}</label>
+                <label style={labelStyle as React.CSSProperties}>
+                  <span>🧠</span> {t.input.mbtiLabel}
+                </label>
                 <div
                   style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(4, 1fr)',
-                    gap: '8px',
+                    gap: '7px',
                     marginBottom: '8px',
                   }}
                 >
@@ -339,13 +395,12 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                         padding: '10px 4px',
                         borderRadius: '8px',
                         border: `1px solid ${form.mbti === type ? 'var(--gold)' : 'var(--border)'}`,
-                        background:
-                          form.mbti === type
-                            ? 'rgba(212,175,55,0.12)'
-                            : 'rgba(255,255,255,0.02)',
+                        background: form.mbti === type
+                          ? 'rgba(212,175,55,0.12)'
+                          : 'rgba(255,255,255,0.02)',
                         color: form.mbti === type ? 'var(--gold)' : 'var(--text-muted)',
                         cursor: 'pointer',
-                        fontSize: '13px',
+                        fontSize: '12px',
                         fontWeight: form.mbti === type ? 700 : 400,
                         transition: 'all 0.15s',
                         fontFamily: 'Noto Sans KR, sans-serif',
@@ -364,10 +419,9 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                     padding: '10px',
                     borderRadius: '8px',
                     border: `1px solid ${form.mbti === '모름' ? 'var(--gold)' : 'var(--border)'}`,
-                    background:
-                      form.mbti === '모름'
-                        ? 'rgba(212,175,55,0.12)'
-                        : 'rgba(255,255,255,0.02)',
+                    background: form.mbti === '모름'
+                      ? 'rgba(212,175,55,0.12)'
+                      : 'rgba(255,255,255,0.02)',
                     color: form.mbti === '모름' ? 'var(--gold)' : 'var(--text-muted)',
                     cursor: 'pointer',
                     fontSize: '13px',
@@ -382,21 +436,15 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
           )}
         </AnimatePresence>
 
-        {/* Buttons */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '12px',
-            marginTop: '8px',
-          }}
-        >
+        {/* Action buttons */}
+        <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
           {step === 2 && (
             <button
               className="btn-secondary"
               onClick={() => setStep(1)}
               style={{ flex: 1 }}
             >
-              {t.input.backBtn}
+              ← {t.input.backBtn}
             </button>
           )}
           {step === 1 ? (
@@ -404,18 +452,25 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
               className="btn-primary"
               onClick={handleNext}
               disabled={!isStep1Valid}
-              style={{ flex: 1 }}
+              style={{ flex: 1, fontSize: '16px' }}
             >
-              {t.input.nextBtn}
+              {t.input.nextBtn} →
             </button>
           ) : (
-            <button
+            <motion.button
               className="btn-primary"
               onClick={handleSubmit}
-              style={{ flex: 2 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              style={{
+                flex: 2,
+                fontSize: '17px',
+                padding: '18px 24px',
+                boxShadow: '0 6px 28px rgba(212,175,55,0.35)',
+              }}
             >
-              {t.input.analyzeBtn}
-            </button>
+              ✦ {t.input.analyzeBtn}
+            </motion.button>
           )}
         </div>
       </div>
@@ -423,14 +478,15 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
       {/* Privacy note */}
       <p
         style={{
-          marginTop: '24px',
+          marginTop: '20px',
           fontSize: '12px',
           color: 'var(--text-muted)',
           textAlign: 'center',
           maxWidth: '400px',
+          lineHeight: 1.6,
         }}
       >
-        입력하신 정보는 AI 분석에만 사용되며 저장되지 않습니다.
+        🔒 입력하신 정보는 AI 분석에만 사용되며 저장되지 않습니다.
       </p>
     </div>
   );
