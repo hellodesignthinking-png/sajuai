@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useAuth } from './AuthContext';
 
 interface PaymentContextType {
   isPaid: boolean;
@@ -11,16 +12,20 @@ interface PaymentContextType {
 const PaymentContext = createContext<PaymentContextType | null>(null);
 
 const STORAGE_KEY = 'sajuai_paid';
+const ADMIN_EMAILS = ['taina@ant3na.com'];
 
 export function PaymentProvider({ children }: { children: React.ReactNode }) {
   const [isPaid, setIsPaid] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { user } = useAuth();
+
+  const isAdmin = !!(user?.email && ADMIN_EMAILS.includes(user.email));
 
   useEffect(() => {
-    if (localStorage.getItem(STORAGE_KEY) === 'true') {
+    if (isAdmin || localStorage.getItem(STORAGE_KEY) === 'true') {
       setIsPaid(true);
     }
-  }, []);
+  }, [isAdmin]);
 
   const openPaymentModal = useCallback(() => setIsModalOpen(true), []);
   const closePaymentModal = useCallback(() => setIsModalOpen(false), []);
