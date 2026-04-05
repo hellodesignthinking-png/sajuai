@@ -218,75 +218,80 @@ ${buildCalcDataBlock(calc, input.birthYear, 'ko')}
 2. top5_golden_years 연도 = [${goldenYearsList}] 절대 변경 금지
 3. 모든 필드에 일간 ${calc.dayMaster.heavenly}(${calc.dayMaster.element}), 용신 ${calc.favorableElement}, 기신 ${calc.unfavorableElement} 인용
 
+모든 텍스트 필드는 최소 3문장 이상 작성하라. 돈을 받는 수준의 구체적이고 실용적인 내용이어야 한다.
+추상적 조언 금지. 구체적 행동, 날짜, 숫자를 포함하라.
+
 반드시 아래 JSON만 반환:
 {
-  "sharp_feedback": "2-3문장. 일간과 핵심 긴장 구도 직격, 구체적 행동 1개.",
+  "saju_summary": "사주 총평 5-7문장. 이 사람의 사주 원국 구조를 해설하라. 일간의 성격, 오행 균형/불균형, 강점과 약점, 타고난 재능과 한계를 구체적으로 설명. 용신과 기신이 왜 그렇게 결정되는지 근거 포함.",
+  "yearly_fortune": "올해(${currentYear}년) 운세 5-7문장. 올해 세운의 천간지지가 이 사람의 원국/대운과 어떤 관계인지. 올해 특별히 조심할 달, 기회가 오는 달을 구체적으로 명시. 금전운/건강운/대인운을 각각 언급.",
+  "sharp_feedback": "5-7문장. 일간과 핵심 긴장 구도를 직격하라. 이 사람의 가장 큰 커리어 문제점을 정면으로 지적하고, 구체적 해결책과 기한을 제시.",
   "current_season": "${calc.careerSeason}",
   "season_details": {
     "season": "${calc.careerSeason}",
     "year_range": "${yearRange}",
-    "advice": "용신 활성화 조언 2문장.",
-    "warning": "기신 위험 경고 1문장."
+    "advice": "용신 활성화 조언 3-5문장. 구체적 행동과 시기 포함.",
+    "warning": "기신 위험 경고 3문장. 구체적으로 피해야 할 행동과 시기."
   },
   "top5_golden_years": [
-    {"year": ${calc.goldenYears[0]?.year ?? currentYear + 3}, "score": ${calc.goldenYears[0]?.score ?? 90}, "reason": "대운 근거 1문장"},
-    {"year": ${calc.goldenYears[1]?.year ?? currentYear + 5}, "score": ${calc.goldenYears[1]?.score ?? 85}, "reason": "대운 근거 1문장"},
-    {"year": ${calc.goldenYears[2]?.year ?? currentYear + 8}, "score": ${calc.goldenYears[2]?.score ?? 80}, "reason": "대운 근거 1문장"},
-    {"year": ${calc.goldenYears[3]?.year ?? currentYear + 12}, "score": ${calc.goldenYears[3]?.score ?? 75}, "reason": "대운 근거 1문장"},
-    {"year": ${calc.goldenYears[4]?.year ?? currentYear + 18}, "score": ${calc.goldenYears[4]?.score ?? 70}, "reason": "대운 근거 1문장"}
+    {"year": ${calc.goldenYears[0]?.year ?? currentYear + 3}, "score": ${calc.goldenYears[0]?.score ?? 90}, "reason": "대운+세운 오행 근거 3문장. 구체적으로 어떤 분야에서 기회가 오는지, 무엇을 미리 준비해야 하는지."},
+    {"year": ${calc.goldenYears[1]?.year ?? currentYear + 5}, "score": ${calc.goldenYears[1]?.score ?? 85}, "reason": "대운 근거 3문장"},
+    {"year": ${calc.goldenYears[2]?.year ?? currentYear + 8}, "score": ${calc.goldenYears[2]?.score ?? 80}, "reason": "대운 근거 3문장"},
+    {"year": ${calc.goldenYears[3]?.year ?? currentYear + 12}, "score": ${calc.goldenYears[3]?.score ?? 75}, "reason": "대운 근거 3문장"},
+    {"year": ${calc.goldenYears[4]?.year ?? currentYear + 18}, "score": ${calc.goldenYears[4]?.score ?? 70}, "reason": "대운 근거 3문장"}
   ],
   "life_cycle_scores": [
-    {"age_range": "20대", "score": 65, "description": "당시 대운 오행과 영향 1문장"},
-    {"age_range": "30대", "score": 80, "description": "1문장"},
-    {"age_range": "40대", "score": 90, "description": "1문장"},
-    {"age_range": "50대", "score": 75, "description": "1문장"},
-    {"age_range": "60대", "score": 60, "description": "1문장"}
+    {"age_range": "20대", "score": 65, "description": "당시 대운 오행, 커리어에 미치는 영향, 핵심 행동 지침 3문장"},
+    {"age_range": "30대", "score": 80, "description": "대운 오행 + 커리어 영향 + 행동 지침 3문장"},
+    {"age_range": "40대", "score": 90, "description": "3문장"},
+    {"age_range": "50대", "score": 75, "description": "3문장"},
+    {"age_range": "60대", "score": 60, "description": "3문장"}
   ],
   "season_cycle": ${JSON.stringify(calc.seasonCycle)},
   "season_guidance": {
     "season_title": "현재 대운 오행 연결 제목",
-    "core_message": "일간과 계절 요구 2문장.",
-    "actions": ["용신 활용 행동 1문장", "부족 오행 보충 1문장", "대운 강점 활용 1문장"],
-    "warnings": ["기신 경고 1문장", "이 계절 함정 1문장"],
-    "transition_warning": "다음 대운 전환 대비 1문장",
-    "content_direction": "일간 강점 살리는 방향 1문장",
-    "avoid_content": "충돌 패턴 1문장"
+    "core_message": "일간과 계절 요구 3-5문장. 왜 지금이 이 계절인지 구체적으로.",
+    "actions": ["용신 활용 구체적 행동 2-3문장", "부족 오행 보충 방법 2-3문장", "대운 강점 활용 전략 2-3문장"],
+    "warnings": ["기신 경고 2-3문장", "이 계절 함정 2-3문장"],
+    "transition_warning": "다음 대운 전환 대비 3문장",
+    "content_direction": "일간 강점 살리는 방향 2-3문장",
+    "avoid_content": "충돌 패턴 2-3문장"
   },
   "yearly_strategy": {
     "quarter_scores": [
-      {"q": "Q1 (1-3월)", "score": 72, "strategy": "오행 근거 + 행동 1문장"},
-      {"q": "Q2 (4-6월)", "score": 85, "strategy": "오행 근거 + 행동 1문장"},
-      {"q": "Q3 (7-9월)", "score": 68, "strategy": "오행 근거 + 행동 1문장"},
-      {"q": "Q4 (10-12월)", "score": 90, "strategy": "오행 근거 + 행동 1문장"}
+      {"q": "Q1 (1-3월)", "score": 72, "strategy": "오행 근거 + 구체적 행동 + 주의사항 3문장"},
+      {"q": "Q2 (4-6월)", "score": 85, "strategy": "오행 근거 + 구체적 행동 3문장"},
+      {"q": "Q3 (7-9월)", "score": 68, "strategy": "오행 근거 + 구체적 행동 3문장"},
+      {"q": "Q4 (10-12월)", "score": 90, "strategy": "오행 근거 + 구체적 행동 3문장"}
     ],
-    "d_day": {"date": "${currentYear}-06-21", "description": "이 날짜가 이 원국에 특별한 이유 1문장"},
+    "d_day": {"date": "${currentYear}-06-21", "description": "이 날짜가 이 원국에 특별한 이유 + 그날 해야 할 것 3문장"},
     "missions": [
-      {"type": "즉시", "content": "이번 주 실행 미션 1-2문장"},
-      {"type": "단기", "content": "3개월 미션 1-2문장"},
-      {"type": "장기", "content": "12개월 프로젝트 1-2문장"}
+      {"type": "즉시", "content": "이번 주 실행 미션 3문장. 구체적 행동+기한+기대효과"},
+      {"type": "단기", "content": "3개월 미션 3문장"},
+      {"type": "장기", "content": "12개월 프로젝트 3문장"}
     ]
   },
   "networking_guide": {
-    "current_season_tip": "1문장",
+    "current_season_tip": "현재 계절에 맞는 네트워킹 전략 3문장",
     "people_to_meet": [
-      {"type": "부족 오행 체현 사람 유형", "reason": "1문장", "how": "1문장"},
-      {"type": "두 번째 부족 오행 유형", "reason": "1문장", "how": "1문장"}
+      {"type": "부족 오행 체현 사람 유형", "reason": "왜 만나야 하는지 2-3문장", "how": "어떻게 만나는지 구체적 방법 2문장"},
+      {"type": "두 번째 부족 오행 유형", "reason": "2-3문장", "how": "2문장"}
     ],
-    "avoid": "기신 증폭 유형 1문장"
+    "avoid": "기신 증폭 유형 + 왜 피해야 하는지 2-3문장"
   },
   "growth_missions": [
-    {"type": "crisis", "label": "극복할 위기", "content": "1-2문장", "action": "1문장"},
-    {"type": "person", "label": "만나야 할 사람", "content": "1-2문장", "action": "1문장"},
-    {"type": "skill", "label": "배워야 할 것", "content": "1-2문장", "action": "1문장"}
+    {"type": "crisis", "label": "극복할 위기", "content": "이 사주의 구조적 약점에서 오는 위기 3문장", "action": "구체적 극복 방법 2문장"},
+    {"type": "person", "label": "만나야 할 사람", "content": "부족한 오행을 보완해줄 사람의 특징 3문장", "action": "만나는 구체적 방법 2문장"},
+    {"type": "skill", "label": "배워야 할 것", "content": "용신 오행을 강화하는 스킬 3문장", "action": "학습 방법과 기한 2문장"}
   ],
   "mbti_integration": {
     "type": "${mbtiText}",
-    "career_synergy": "일간+MBTI 시너지 2문장",
-    "blind_spot": "약점 충돌 1문장"
+    "career_synergy": "일간+MBTI 시너지 분석 3-5문장. 구체적 직업/분야 추천 포함.",
+    "blind_spot": "일간의 그림자와 MBTI 약점이 충돌하는 패턴 3문장. 구체적 시나리오."
   },
   "season_reasoning": {
-    "saju_basis": "현재 대운과 일간 관계 2문장",
-    "overall_reasoning": "3가지 분석 공통 결론 2문장"
+    "saju_basis": "현재 대운 천간지지가 일간과 어떤 관계인지, 왜 이 계절인지 3-5문장",
+    "overall_reasoning": "사주+점성술+수비학 종합 결론 3-5문장. 구체적 숫자와 연도 포함."
   }
 }`;
 }
@@ -314,7 +319,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         model: 'gemini-2.5-flash',
         generationConfig: {
           temperature: 0.7,
-          maxOutputTokens: 4096,
+          maxOutputTokens: 16384,
           responseMimeType: 'application/json',
         },
       });
@@ -387,6 +392,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       };
 
       return res.status(200).json({
+        saju_summary: basicParsed.saju_summary ?? null,
+        yearly_fortune: basicParsed.yearly_fortune ?? null,
         sharp_feedback: basicParsed.sharp_feedback ?? '분석이 완료되었습니다.',
         top5_golden_years: basicParsed.top5_golden_years ?? [],
         life_cycle_scores: basicParsed.life_cycle_scores ?? [],
