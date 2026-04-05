@@ -581,18 +581,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
       console.log(`[api/saju] Calc: ${calcResult.fourPillars.year.heavenly}${calcResult.fourPillars.month.heavenly}${calcResult.fourPillars.day.heavenly} | season=${calcResult.careerSeason} | golden=${calcResult.goldenYears.map(g=>g.year).join(',')}`);
 
-      // 1단계 + 2단계 프롬프트 병렬 실행 (순차 대비 시간 절반)
       const basicPrompt = buildBasicPrompt(input, calcResult, currentYear, lang);
-      const sajuPrompt = buildSajuDetailPrompt(
-        input,
-        calcResult,
-        currentYear,
-        lang,
-        calcResult.careerSeason,
-        calcResult.goldenYears
-      );
 
-      async function callOnce(prompt: string, label: string): Promise<any> {
+      const callOnce = async (prompt: string, label: string): Promise<any> => {
         const result = await model.generateContent(prompt);
         const text = result.response.text();
         try {
@@ -601,7 +592,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           console.warn(`[api/saju] ${label} parse failed:`, (parseErr as Error).message);
           return null;
         }
-      }
+      };
 
       let basicParsed: any;
       let sajuDetail: any = null;
