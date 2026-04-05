@@ -149,4 +149,7 @@ export interface AnalysisResult {
   // Phase 3
   saju_detail?: SajuDetail;
   season_reasoning?: SeasonReasoning;
+  // Phase 4
+  saju_summary?: string;
+  yearly_fortune?: string;
 }

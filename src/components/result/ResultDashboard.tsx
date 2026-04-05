@@ -189,6 +189,64 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
           gap: '36px',
         }}
       >
+        {/* ── FREE: 0-1. 사주 총평 ─────────────────────────── */}
+        {result.saju_summary && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.05 }}>
+            <SectionTitle icon="📜">사주 총평</SectionTitle>
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #0f0e0a 0%, #1a1400 100%)',
+                border: '1px solid rgba(212,175,55,0.35)',
+                borderRadius: '16px',
+                padding: '24px',
+                boxShadow: '0 4px 32px rgba(0,0,0,0.5)',
+              }}
+            >
+              <p
+                style={{
+                  fontSize: '15px',
+                  lineHeight: 1.9,
+                  color: 'var(--text)',
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                {result.saju_summary}
+              </p>
+            </div>
+          </motion.section>
+        )}
+
+        {result.saju_summary && <SectionDivider />}
+
+        {/* ── FREE: 0-2. 올해 운세 ─────────────────────────── */}
+        {result.yearly_fortune && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.08 }}>
+            <SectionTitle icon="🌟">올해 운세</SectionTitle>
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #0a0f10 0%, #001a14 100%)',
+                border: '1px solid rgba(212,175,55,0.35)',
+                borderRadius: '16px',
+                padding: '24px',
+                boxShadow: '0 4px 32px rgba(0,0,0,0.5)',
+              }}
+            >
+              <p
+                style={{
+                  fontSize: '15px',
+                  lineHeight: 1.9,
+                  color: 'var(--text)',
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                {result.yearly_fortune}
+              </p>
+            </div>
+          </motion.section>
+        )}
+
+        {result.yearly_fortune && <SectionDivider />}
+
         {/* ── FREE: 1. 책사의 한마디 ─────────────────────── */}
         {result.sharp_feedback && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.1 }}>
