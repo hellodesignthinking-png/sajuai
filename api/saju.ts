@@ -561,8 +561,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const model = genAI.getGenerativeModel({
         model: 'gemini-2.5-flash',
         generationConfig: {
-          temperature: 0.8,
-          maxOutputTokens: 65536,
+          temperature: 0.7,
+          maxOutputTokens: 32768,
           responseMimeType: 'application/json',
         },
       });
@@ -581,20 +581,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
       console.log(`[api/saju] Calc: ${calcResult.fourPillars.year.heavenly}${calcResult.fourPillars.month.heavenly}${calcResult.fourPillars.day.heavenly} | season=${calcResult.careerSeason} | golden=${calcResult.goldenYears.map(g=>g.year).join(',')}`);
 
-      // 1단계: 기본 분석
+      // 1단계 + 2단계 프롬프트 병렬 실행 (순차 대비 시간 절반)
       const basicPrompt = buildBasicPrompt(input, calcResult, currentYear, lang);
-      let basicParsed: any;
-      for (let attempt = 1; attempt <= 3; attempt++) {
-        const result = await model.generateContent(basicPrompt);
-        const text = result.response.text();
-        try {
-          basicParsed = JSON.parse(extractJSON(text));
-          break;
-        } catch (parseErr) {
-          if (attempt === 3) throw new Error(`JSON 파싱 실패 (3회 시도): ${(parseErr as Error).message}`);
-          console.warn(`[api/saju] Basic prompt parse attempt ${attempt} failed, retrying...`);
+      const sajuPrompt = buildSajuDetailPrompt(
+        input,
+        calcResult,
+        currentYear,
+        lang,
+        calcResult.careerSeason,
+        calcResult.goldenYears
+      );
+
+      async function callWithRetry(prompt: string, label: string): Promise<any> {
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          const result = await model.generateContent(prompt);
+          const text = result.response.text();
+          try {
+            return JSON.parse(extractJSON(text));
+          } catch (parseErr) {
+            if (attempt === 3) throw new Error(`${label} JSON 파싱 실패 (3회 시도): ${(parseErr as Error).message}`);
+            console.warn(`[api/saju] ${label} parse attempt ${attempt} failed, retrying...`);
+          }
         }
       }
+
+      let basicParsed: any;
+      let sajuDetail: any = null;
+      let seasonReasoning: any = null;
+
+      const [basicResult, sajuResult] = await Promise.all([
+        callWithRetry(basicPrompt, 'Basic').catch((err: Error) => { throw err; }),
+        callWithRetry(sajuPrompt, 'SajuDetail').catch((err: Error) => {
+          console.warn('[api/saju] Saju detail step failed, returning basic result only:', err);
+          return null;
+        }),
+      ]);
+
+      basicParsed = basicResult;
 
       // 코드 계산값으로 강제 덮어쓰기 (Gemini가 변경한 경우 방어)
       basicParsed.current_season = calcResult.careerSeason;
@@ -607,34 +630,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }));
       }
 
-      // 2단계: 사주 상세 + 계절 근거 (1단계 결과 참조)
-      let sajuDetail: any = null;
-      let seasonReasoning: any = null;
-      try {
-        const sajuPrompt = buildSajuDetailPrompt(
-          input,
-          calcResult,
-          currentYear,
-          lang,
-          calcResult.careerSeason,
-          basicParsed.top5_golden_years ?? []
-        );
-        let sajuParsed: any;
-        for (let attempt = 1; attempt <= 3; attempt++) {
-          const result = await model.generateContent(sajuPrompt);
-          const text = result.response.text();
-          try {
-            sajuParsed = JSON.parse(extractJSON(text));
-            break;
-          } catch (parseErr) {
-            if (attempt === 3) throw parseErr;
-            console.warn(`[api/saju] Saju detail parse attempt ${attempt} failed, retrying...`);
-          }
-        }
-        sajuDetail = sajuParsed.saju_detail ?? null;
-        seasonReasoning = sajuParsed.season_reasoning ?? null;
-      } catch (sajuErr) {
-        console.warn('[api/saju] Saju detail step failed, returning basic result only:', sajuErr);
+      if (sajuResult) {
+        sajuDetail = sajuResult.saju_detail ?? null;
+        seasonReasoning = sajuResult.season_reasoning ?? null;
       }
 
       return res.status(200).json({
