@@ -592,16 +592,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         calcResult.goldenYears
       );
 
-      async function callWithRetry(prompt: string, label: string): Promise<any> {
-        for (let attempt = 1; attempt <= 3; attempt++) {
-          const result = await model.generateContent(prompt);
-          const text = result.response.text();
-          try {
-            return JSON.parse(extractJSON(text));
-          } catch (parseErr) {
-            if (attempt === 3) throw new Error(`${label} JSON 파싱 실패 (3회 시도): ${(parseErr as Error).message}`);
-            console.warn(`[api/saju] ${label} parse attempt ${attempt} failed, retrying...`);
-          }
+      async function callOnce(prompt: string, label: string): Promise<any> {
+        const result = await model.generateContent(prompt);
+        const text = result.response.text();
+        try {
+          return JSON.parse(extractJSON(text));
+        } catch (parseErr) {
+          console.warn(`[api/saju] ${label} parse failed:`, (parseErr as Error).message);
+          return null;
         }
       }
 
@@ -609,15 +607,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       let sajuDetail: any = null;
       let seasonReasoning: any = null;
 
-      const [basicResult, sajuResult] = await Promise.all([
-        callWithRetry(basicPrompt, 'Basic').catch((err: Error) => { throw err; }),
-        callWithRetry(sajuPrompt, 'SajuDetail').catch((err: Error) => {
-          console.warn('[api/saju] Saju detail step failed, returning basic result only:', err);
-          return null;
-        }),
-      ]);
-
-      basicParsed = basicResult;
+      // 1단계만 먼저 실행 (10초 제한 대응)
+      basicParsed = await callOnce(basicPrompt, 'Basic');
+      if (!basicParsed) {
+        return res.status(500).json({ error: '분석 결과 생성에 실패했습니다. 다시 시도해주세요.' });
+      }
 
       // 코드 계산값으로 강제 덮어쓰기 (Gemini가 변경한 경우 방어)
       basicParsed.current_season = calcResult.careerSeason;
@@ -630,10 +624,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }));
       }
 
-      if (sajuResult) {
-        sajuDetail = sajuResult.saju_detail ?? null;
-        seasonReasoning = sajuResult.season_reasoning ?? null;
-      }
+      // 2단계(사주 상세)는 별도 호출 없이 코드 계산 + 1단계 결과로 구성
+      const fp = calcResult.fourPillars;
+      const codeSajuDetail = {
+        four_pillars: {
+          year: { heavenly: extractChar(fp.year.heavenly), earthly: extractChar(fp.year.earthly), meaning: basicParsed.saju_detail?.four_pillars?.year?.meaning ?? '' },
+          month: { heavenly: extractChar(fp.month.heavenly), earthly: extractChar(fp.month.earthly), meaning: basicParsed.saju_detail?.four_pillars?.month?.meaning ?? '' },
+          day: { heavenly: extractChar(fp.day.heavenly), earthly: extractChar(fp.day.earthly), meaning: basicParsed.saju_detail?.four_pillars?.day?.meaning ?? '' },
+          hour: fp.hour ? { heavenly: extractChar(fp.hour.heavenly), earthly: extractChar(fp.hour.earthly), meaning: basicParsed.saju_detail?.four_pillars?.hour?.meaning ?? '' } : { heavenly: '?', earthly: '?', meaning: '시간 미상' },
+        },
+        day_master: {
+          element: calcResult.dayMaster.element + '(' + (calcResult.dayMaster.element === '목' ? '木' : calcResult.dayMaster.element === '화' ? '火' : calcResult.dayMaster.element === '토' ? '土' : calcResult.dayMaster.element === '금' ? '金' : '水') + ')',
+          character: calcResult.dayMaster.heavenly + ' ' + calcResult.dayMaster.yinYang,
+          description: basicParsed.saju_detail?.day_master?.description ?? '',
+        },
+        five_elements: calcResult.fiveElements,
+        favorable_element: calcResult.favorableElement,
+        unfavorable_element: calcResult.unfavorableElement,
+        personality_summary: basicParsed.saju_detail?.personality_summary ?? basicParsed.sharp_feedback ?? '',
+        current_luck_period: calcResult.currentLuck ? {
+          period: `${calcResult.currentLuck.startYear}-${calcResult.currentLuck.endYear}`,
+          element: calcResult.currentLuck.stemElement,
+          influence: basicParsed.saju_detail?.current_luck_period?.influence ?? '',
+        } : null,
+      };
 
       return res.status(200).json({
         sharp_feedback: basicParsed.sharp_feedback ?? '분석이 완료되었습니다.',
@@ -647,14 +661,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         season_guidance: basicParsed.season_guidance ?? null,
         networking_guide: basicParsed.networking_guide ?? null,
         growth_missions: basicParsed.growth_missions ?? [],
-        saju_detail: sajuDetail ? {
-          ...sajuDetail,
-          // 오행 분포는 코드 계산값으로 강제 덮어쓰기
-          five_elements: calcResult.fiveElements,
-          favorable_element: sajuDetail.favorable_element ?? calcResult.favorableElement,
-          unfavorable_element: sajuDetail.unfavorable_element ?? calcResult.unfavorableElement,
-        } : null,
-        season_reasoning: seasonReasoning,
+        saju_detail: codeSajuDetail,
+        season_reasoning: basicParsed.season_reasoning ?? null,
         // 계산 메타데이터 (디버깅용)
         _calc_meta: {
           four_pillars_raw: {
