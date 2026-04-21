@@ -102,12 +102,36 @@ export interface FourPillar {
   meaning: string;
 }
 
+export interface HiddenStem {
+  char: string;      // e.g. "갑(甲)"
+  element: string;   // "목"
+  tenGod: string;    // "편재(偏財)"
+  role: '본기' | '중기' | '여기';
+}
+
+export interface PillarAnalysis {
+  label: string;         // "년주" · "월주" · "일주" · "시주"
+  heavenly: string;
+  earthly: string;
+  stemElement: string;   // 천간 오행
+  branchElement: string; // 지지 오행
+  stemTenGod: string;    // 일주는 "일원(日元)"
+  branchTenGod: string;  // 지지 본기 기준
+  hiddenStems: HiddenStem[];
+}
+
 export interface SajuDetail {
   four_pillars: {
     year: FourPillar;
     month: FourPillar;
     day: FourPillar;
     hour: FourPillar;
+  };
+  pillar_analysis?: {
+    year: PillarAnalysis;
+    month: PillarAnalysis;
+    day: PillarAnalysis;
+    hour: PillarAnalysis | null;
   };
   day_master: {
     element: string;

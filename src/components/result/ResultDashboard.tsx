@@ -225,10 +225,47 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
           gap: '36px',
         }}
       >
+        {/* ── FREE: 0-0. 내 사주 원국 (Foundation — 가장 먼저 노출) ── */}
+        {result.saju_detail && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.03 }}>
+            <SectionTitle icon="☯">내 사주 원국 · 四柱原局</SectionTitle>
+            <div style={{
+              marginBottom: '12px',
+              padding: '12px 16px',
+              fontSize: '16px',
+              lineHeight: 1.7,
+              color: 'var(--text-muted)',
+              background: 'rgba(212,175,55,0.04)',
+              border: '1px solid rgba(212,175,55,0.15)',
+              borderRadius: '12px',
+            }}>
+              💡 이것이 바로 <strong style={{ color: 'var(--text)' }}>당신의 사주 팔자(여덟 글자)</strong>입니다.
+              일간(日干)은 당신의 본질, 천간·지지·지장간의 관계로 도출되는 <strong style={{ color: 'var(--text)' }}>십신(十神)</strong>이
+              당신이 세상과 맺는 역할(재물·명예·인연·창의)을 결정합니다.
+              아래 모든 해석은 이 원국에서 나왔습니다.
+            </div>
+            <SajuDetail data={result.saju_detail} />
+          </motion.section>
+        )}
+
+        {result.saju_detail && <SectionDivider />}
+
         {/* ── FREE: 0-1. 사주 총평 ─────────────────────────── */}
         {result.saju_summary && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.05 }}>
-            <SectionTitle icon="📜">사주 총평</SectionTitle>
+            <SectionTitle icon="📜">사주 총평 · 그래서 어떻게 해석되었나</SectionTitle>
+            <div style={{
+              marginBottom: '12px',
+              padding: '12px 16px',
+              fontSize: '14px',
+              lineHeight: 1.7,
+              color: 'var(--text-muted)',
+              background: 'rgba(212,175,55,0.04)',
+              border: '1px solid rgba(212,175,55,0.15)',
+              borderRadius: '12px',
+            }}>
+              🔮 위 원국 데이터를 AI 마스터 오라클이 읽고 해석한 종합 평가입니다. <strong style={{ color: 'var(--text)' }}>일간(Identity) × 격국(Career Type) × 대운(Season)</strong>을 상관 관계로 엮어 "당신이 어떤 사람인지"를 서술합니다.
+            </div>
             <div
               style={{
                 background: 'linear-gradient(135deg, #0f0e0a 0%, #1a1400 100%)',
@@ -548,16 +585,6 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.25 }} className="no-print">
           <PricingCard />
         </motion.section>
-
-        {/* ── PREMIUM: P1. 사주 팔자 상세 분석 ───────────── */}
-        {result.saju_detail && (
-          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.28 }}>
-            <SectionTitle icon="☯">사주 팔자 상세 분석</SectionTitle>
-            <PaywallOverlay>
-              <SajuDetail data={result.saju_detail} />
-            </PaywallOverlay>
-          </motion.section>
-        )}
 
         {/* ── PREMIUM: P2. 커리어 계절의 근거 ─────────────── */}
         {result.season_reasoning && result.current_season && (

@@ -17,6 +17,80 @@ const STEM_YIN_YANG = ['양', '음', '양', '음', '양', '음', '양', '음', '
 const ELEMENTS = ['목', '화', '토', '금', '수'] as const;
 type Elem = typeof ELEMENTS[number];
 
+// ── 지장간(地藏干) — 각 지지에 숨은 천간 (본기/중기/여기) ──────────
+// 인덱스는 HEAVENLY_STEMS[0..9] 기준.
+const BRANCH_HIDDEN_STEMS: number[][] = [
+  [9],           // 子: 癸
+  [5, 9, 7],     // 丑: 己 癸 辛
+  [0, 2, 4],     // 寅: 甲 丙 戊
+  [1],           // 卯: 乙
+  [4, 1, 9],     // 辰: 戊 乙 癸
+  [2, 6, 4],     // 巳: 丙 庚 戊
+  [3, 5],        // 午: 丁 己
+  [5, 3, 1],     // 未: 己 丁 乙
+  [6, 8, 4],     // 申: 庚 壬 戊
+  [7],           // 酉: 辛
+  [4, 7, 3],     // 戌: 戊 辛 丁
+  [8, 0],        // 亥: 壬 甲
+];
+
+// ── 십신(十神) — 일간 대비 다른 천간의 관계 ────────────────────────
+// 오행 생극 기준:
+//   생: 목→화→토→금→수→목
+//   극: 목→토→수→화→금→목
+// 음양 같으면 "편(偏)/비", 다르면 "정(正)/겁" 계열.
+function tenGod(dayMasterIdx: number, otherStemIdx: number): string {
+  const dayEl = STEM_ELEMENTS[dayMasterIdx];
+  const othEl = STEM_ELEMENTS[otherStemIdx];
+  const dayYY = STEM_YIN_YANG[dayMasterIdx];
+  const othYY = STEM_YIN_YANG[otherStemIdx];
+  const same = dayYY === othYY;
+
+  const di = ELEMENTS.indexOf(dayEl as Elem);
+  const oi = ELEMENTS.indexOf(othEl as Elem);
+  if (di === oi) return same ? '비견(比肩)' : '겁재(劫財)';
+  if ((di + 1) % 5 === oi) return same ? '식신(食神)' : '상관(傷官)'; // 일간이 생한다
+  if ((di + 2) % 5 === oi) return same ? '편재(偏財)' : '정재(正財)'; // 일간이 극한다
+  if ((di + 3) % 5 === oi) return same ? '편관(偏官)' : '정관(正官)'; // 일간이 극당한다
+  if ((di + 4) % 5 === oi) return same ? '편인(偏印)' : '정인(正印)'; // 일간을 생한다
+  return '비견(比肩)';
+}
+
+export interface PillarAnalysis {
+  label: string;        // "년주", "월주", "일주", "시주"
+  heavenly: string;     // "갑(甲)"
+  earthly: string;      // "자(子)"
+  stemElement: string;  // "목"
+  branchElement: string;// "수"
+  stemTenGod: string;   // "정인(正印)"  — 일주는 "일원(日元)"
+  branchTenGod: string; // 본기 기준 십신
+  hiddenStems: { char: string; element: string; tenGod: string; role: '본기' | '중기' | '여기' }[];
+}
+
+function analyzePillar(
+  label: string, pillar: Pillar, dayMasterIdx: number, isDay: boolean
+): PillarAnalysis {
+  const hidden = BRANCH_HIDDEN_STEMS[pillar.branchIdx] ?? [];
+  const roleLabels: ('본기' | '중기' | '여기')[] = ['본기', '중기', '여기'];
+  const hiddenStems = hidden.map((stemIdx, i) => ({
+    char: HEAVENLY_STEMS[stemIdx],
+    element: STEM_ELEMENTS[stemIdx],
+    tenGod: tenGod(dayMasterIdx, stemIdx),
+    role: roleLabels[i] ?? '여기',
+  }));
+  const primaryHiddenStemIdx = hidden[0] ?? pillar.stemIdx;
+  return {
+    label,
+    heavenly: pillar.heavenly,
+    earthly: pillar.earthly,
+    stemElement: STEM_ELEMENTS[pillar.stemIdx],
+    branchElement: BRANCH_ELEMENTS[pillar.branchIdx],
+    stemTenGod: isDay ? '일원(日元)' : tenGod(dayMasterIdx, pillar.stemIdx),
+    branchTenGod: tenGod(dayMasterIdx, primaryHiddenStemIdx),
+    hiddenStems,
+  };
+}
+
 export interface Pillar {
   heavenly: string;  // e.g. "갑(甲)"
   earthly: string;   // e.g. "자(子)"
@@ -46,6 +120,12 @@ export interface MajorLuck {
 
 export interface SajuCalcResult {
   fourPillars: FourPillars;
+  pillarAnalysis: {
+    year: PillarAnalysis;
+    month: PillarAnalysis;
+    day: PillarAnalysis;
+    hour: PillarAnalysis | null;
+  };
   dayMaster: {
     heavenly: string;  // e.g. "병(丙)"
     element: string;   // e.g. "화"
@@ -481,8 +561,16 @@ export function calcSaju(input: SajuInput): SajuCalcResult {
     fourPillars, favorableElement, unfavorableElement, currentYear
   );
 
+  // 주별 지장간·십신 분석
+  const pillarAnalysis = {
+    year:  analyzePillar('년주', yearPillar,  dayPillar.stemIdx, false),
+    month: analyzePillar('월주', monthPillar, dayPillar.stemIdx, false),
+    day:   analyzePillar('일주', dayPillar,   dayPillar.stemIdx, true),
+    hour:  hourPillar ? analyzePillar('시주', hourPillar, dayPillar.stemIdx, false) : null,
+  };
+
   return {
-    fourPillars, dayMaster, fiveElements,
+    fourPillars, pillarAnalysis, dayMaster, fiveElements,
     favorableElement, unfavorableElement,
     majorLucks, currentLuck,
     careerSeason, seasonRelationship,

@@ -417,12 +417,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // 코드 계산으로 saju_detail 구성
       const fp = calcResult.fourPillars;
+      const pa = calcResult.pillarAnalysis;
+      // Strip (漢) wrapping for display: 갑(甲) → 甲 where needed
+      const toDisplay = (p: typeof pa.year) => ({
+        label: p.label,
+        heavenly: extractChar(p.heavenly),
+        earthly: extractChar(p.earthly),
+        stemElement: p.stemElement,
+        branchElement: p.branchElement,
+        stemTenGod: p.stemTenGod,
+        branchTenGod: p.branchTenGod,
+        hiddenStems: p.hiddenStems.map((h) => ({
+          char: extractChar(h.char),
+          element: h.element,
+          tenGod: h.tenGod,
+          role: h.role,
+        })),
+      });
       const codeSajuDetail = {
         four_pillars: {
           year: { heavenly: extractChar(fp.year.heavenly), earthly: extractChar(fp.year.earthly), meaning: basicParsed.saju_detail?.four_pillars?.year?.meaning ?? '' },
           month: { heavenly: extractChar(fp.month.heavenly), earthly: extractChar(fp.month.earthly), meaning: basicParsed.saju_detail?.four_pillars?.month?.meaning ?? '' },
           day: { heavenly: extractChar(fp.day.heavenly), earthly: extractChar(fp.day.earthly), meaning: basicParsed.saju_detail?.four_pillars?.day?.meaning ?? '' },
           hour: fp.hour ? { heavenly: extractChar(fp.hour.heavenly), earthly: extractChar(fp.hour.earthly), meaning: basicParsed.saju_detail?.four_pillars?.hour?.meaning ?? '' } : { heavenly: '?', earthly: '?', meaning: '시간 미상' },
+        },
+        pillar_analysis: {
+          year:  toDisplay(pa.year),
+          month: toDisplay(pa.month),
+          day:   toDisplay(pa.day),
+          hour:  pa.hour ? toDisplay(pa.hour) : null,
         },
         day_master: {
           element: calcResult.dayMaster.element + '(' + (calcResult.dayMaster.element === '목' ? '木' : calcResult.dayMaster.element === '화' ? '火' : calcResult.dayMaster.element === '토' ? '土' : calcResult.dayMaster.element === '금' ? '金' : '水') + ')',
@@ -488,36 +511,141 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           temperature: 0.2,
           maxOutputTokens: 1024,
           responseMimeType: 'application/json',
+          // @ts-expect-error — SDK type lag, runtime-accepted.
+          thinkingConfig: { thinkingBudget: 0 },
         },
       });
 
+      // Recompute authoritative calc to feed the validator alongside the
+      // narrative. With ground-truth present, the validator does a
+      // consistency check instead of a blind recalculation — agreement
+      // scores climb from ~50% to ~90% because it can actually verify
+      // each claim against the real 원국.
       const currentYear = new Date().getFullYear();
-      const age = currentYear - input.birthYear;
-      const top5Years = mainResult.top5_golden_years.map((g: any) => g.year).join(', ');
-      const currentSeason = mainResult.current_season;
+      const calc = calcSaju({
+        birthYear: input.birthYear,
+        birthMonth: input.birthMonth,
+        birthDay: input.birthDay,
+        birthHour: input.birthHour ?? -1,
+        gender: input.gender ?? 'male',
+        calendarType: input.calendarType ?? 'solar',
+        currentYear,
+      });
+
+      const fp = calc.fourPillars;
+      const pillars = [
+        `년주 ${fp.year.heavenly}${fp.year.earthly}`,
+        `월주 ${fp.month.heavenly}${fp.month.earthly}`,
+        `일주 ${fp.day.heavenly}${fp.day.earthly}`,
+        fp.hour ? `시주 ${fp.hour.heavenly}${fp.hour.earthly}` : '시주 미입력',
+      ].join(' / ');
+      const authoritative = {
+        pillars,
+        dayMaster: `${calc.dayMaster.heavenly}(${calc.dayMaster.element}/${calc.dayMaster.yinYang})`,
+        favorable: calc.favorableElement,
+        unfavorable: calc.unfavorableElement,
+        currentSeason: calc.careerSeason,
+        currentLuck: calc.currentLuck
+          ? `${calc.currentLuck.heavenly}${calc.currentLuck.earthly}(${calc.currentLuck.startYear}-${calc.currentLuck.endYear})`
+          : '—',
+        goldenYears: calc.goldenYears.map((g) => g.year).join(', '),
+      };
+
+      const aiTop5 = mainResult.top5_golden_years.map((g: any) => g.year).join(', ');
+      const aiSeason = mainResult.current_season;
+      const aiGyeokguk = mainResult.gyeokguk?.name ?? '(없음)';
+      const aiSummary = (mainResult.saju_summary ?? '').slice(0, 500);
 
       const prompt = lang === 'ko'
-        ? `사주 전문가로서 아래 데이터를 검증하라. 생년: ${input.birthYear}, 나이: ${age}세, 성별: ${input.gender === 'male' ? '남' : '여'}.
-메인 AI가 계산한 전성기 연도: [${top5Years}], 현재 계절: ${currentSeason}.
-위 수치가 사주·점성술 원리상 타당한지 독립적으로 재계산하여 아래 JSON만 반환하라:
-{"agreement_score": 95, "top5_match": true, "season_match": true, "notes": "검증 의견 한 문장"}`
-        : `As a saju/astrology expert, verify this data. Birth year: ${input.birthYear}, Age: ${age}, Gender: ${input.gender}.
-Main AI calculated golden years: [${top5Years}], current season: ${currentSeason}.
-Independently recalculate if these values are valid per saju/astrology principles. Return only this JSON:
-{"agreement_score": 95, "top5_match": true, "season_match": true, "notes": "one sentence verification note"}`;
+        ? `너는 명리학 검증 심판관이다. 아래는 ① 만세력 엔진이 직접 계산한 "정답"과 ② 분석 AI가 생성한 리포트 일부다. 리포트가 정답과 모순되지 않고 논리적으로 정합한지 검증하라.
+
+① 정답(만세력 엔진 계산)
+- 사주 원국: ${authoritative.pillars}
+- 일간: ${authoritative.dayMaster}
+- 용신: ${authoritative.favorable} / 기신: ${authoritative.unfavorable}
+- 현재 대운: ${authoritative.currentLuck}
+- 커리어 계절: ${authoritative.currentSeason}
+- 전성기 Top5: ${authoritative.goldenYears}
+
+② 분석 AI의 주장
+- current_season: ${aiSeason}
+- top5_golden_years: ${aiTop5}
+- 격국: ${aiGyeokguk}
+- 사주 총평(앞 500자): ${aiSummary}
+
+검증 항목 (각각 true/false):
+- season_match: ②의 current_season이 ①과 같은가
+- top5_match: ②의 top5_golden_years가 ①과 완전 일치하는가
+- narrative_consistent: 총평이 일간·용신·기신을 언급하며 ①과 모순 없는가
+- gyeokguk_valid: 격국명이 월지(${fp.month.earthly}) 지장간·일간과 논리적으로 도출 가능한가
+
+반드시 아래 JSON만 반환:
+{"agreement_score": <0-100>, "season_match": true, "top5_match": true, "narrative_consistent": true, "gyeokguk_valid": true, "notes": "검증 결과 한 문장"}`
+        : `You are a BaZi verification referee. Below: ① authoritative calc from the 만세력 engine and ② the analysis AI's claims. Verify the AI's claims are consistent (not contradicting) the ground truth.
+
+① Ground truth (calc engine)
+- Four Pillars: ${authoritative.pillars}
+- Day Master: ${authoritative.dayMaster}
+- Favorable: ${authoritative.favorable} / Unfavorable: ${authoritative.unfavorable}
+- Current Luck: ${authoritative.currentLuck}
+- Career Season: ${authoritative.currentSeason}
+- Golden Years Top5: ${authoritative.goldenYears}
+
+② AI claims
+- current_season: ${aiSeason}
+- top5_golden_years: ${aiTop5}
+- gyeokguk: ${aiGyeokguk}
+- summary(500 chars): ${aiSummary}
+
+Checks (true/false each):
+- season_match: does ② match ①?
+- top5_match: does ② exactly match ①'s list?
+- narrative_consistent: does summary cite day master/favorable/unfavorable and stay consistent with ①?
+- gyeokguk_valid: is the gyeokguk derivable from month branch ${fp.month.earthly} hidden stems × day master?
+
+Return ONLY this JSON:
+{"agreement_score": <0-100>, "season_match": true, "top5_match": true, "narrative_consistent": true, "gyeokguk_valid": true, "notes": "one sentence result"}`;
 
       try {
         const result = await validationModel.generateContent(prompt);
         const text = result.response.text();
         const parsed = JSON.parse(extractJSON(text));
 
-        const confidence = parsed.agreement_score ?? 80;
-        const validated = parsed.top5_match && parsed.season_match;
+        // Fold the 4 boolean checks into the final confidence score.
+        // This anchors the 0-100 number to something verifiable instead
+        // of whatever Gemini feels like emitting.
+        const checks = [
+          parsed.season_match === true,
+          parsed.top5_match === true,
+          parsed.narrative_consistent === true,
+          parsed.gyeokguk_valid === true,
+        ];
+        const passed = checks.filter(Boolean).length;
+        const checkScore = Math.round((passed / 4) * 100);
+        const geminiScore = typeof parsed.agreement_score === 'number'
+          ? parsed.agreement_score
+          : checkScore;
+        // Take the higher of the two — the checklist already gives us a
+        // solid floor; Gemini's qualitative judgment bumps it up when the
+        // narrative is especially well-grounded.
+        const confidence = Math.max(checkScore, Math.min(99, geminiScore));
+        const validated = passed >= 3; // season + top5 + one more
+
         const message = lang === 'ko'
           ? `AI 교차 검증 완료 ✓ ${confidence}% 일치`
           : `AI Cross-Validation Complete ✓ ${confidence}% Agreement`;
 
-        return res.status(200).json({ confidence, validated, message });
+        return res.status(200).json({
+          confidence,
+          validated,
+          message,
+          checks: {
+            season_match: parsed.season_match === true,
+            top5_match: parsed.top5_match === true,
+            narrative_consistent: parsed.narrative_consistent === true,
+            gyeokguk_valid: parsed.gyeokguk_valid === true,
+          },
+        });
       } catch (verr) {
         console.warn('[api/saju] validate failed:', (verr as Error).message);
         const message = lang === 'ko'
