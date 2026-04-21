@@ -319,16 +319,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (action === 'analyze') {
       if (!input) return res.status(400).json({ error: 'input is required' });
 
-      // Two parallel calls, each sized for its half. Core has denser text
-      // fields (saju_summary, yearly_fortune, sharp_feedback all 5-7
-      // sentences + 5 top years + 5 life cycles) so needs more headroom
-      // than Deep.
+      // Two parallel calls. Gemini 2.5 Flash defaults to a "thinking" mode
+      // that burns tokens before emitting output — for this structured JSON
+      // task it adds latency without real benefit. Disable via
+      // `thinkingConfig.thinkingBudget: 0`. Also cap each call under
+      // Vercel's 60s hobby-plan limit.
       const coreModel = genAI.getGenerativeModel({
         model: 'gemini-2.5-flash',
         generationConfig: {
           temperature: 0.7,
           maxOutputTokens: 12288,
           responseMimeType: 'application/json',
+          // @ts-expect-error — SDK type lags behind API; field is accepted at runtime.
+          thinkingConfig: { thinkingBudget: 0 },
         },
       });
       const deepModel = genAI.getGenerativeModel({
@@ -337,6 +340,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           temperature: 0.7,
           maxOutputTokens: 10240,
           responseMimeType: 'application/json',
+          // @ts-expect-error — SDK type lags behind API; field is accepted at runtime.
+          thinkingConfig: { thinkingBudget: 0 },
         },
       });
 
