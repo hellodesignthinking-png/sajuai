@@ -256,6 +256,18 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {result.gyeokguk && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.06 }}>
             <SectionTitle icon="🏛">격국 — 사주 구조의 본질</SectionTitle>
+            <div style={{
+              marginBottom: '12px',
+              padding: '12px 16px',
+              fontSize: '16px',
+              lineHeight: 1.7,
+              color: 'var(--text-muted)',
+              background: 'rgba(212,175,55,0.04)',
+              border: '1px solid rgba(212,175,55,0.15)',
+              borderRadius: '12px',
+            }}>
+              💡 격국은 당신의 <strong style={{ color: 'var(--text)' }}>커리어 유형(Career Type)</strong>을 결정합니다. 일간이 "나는 누구인가"라면, 격국은 "나는 어떻게 일하는 사람인가"예요. 아래 격국명이 곧 당신의 일하는 스타일 · 성공 패턴의 뿌리입니다.
+            </div>
             <div
               style={{
                 background: 'linear-gradient(135deg, #110e08 0%, #1d1608 100%)',
@@ -412,6 +424,18 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {result.career_sync && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.23 }}>
             <SectionTitle icon="🍂">운명의 계절 · 전공 & 천직</SectionTitle>
+            <div style={{
+              marginBottom: '12px',
+              padding: '12px 16px',
+              fontSize: '16px',
+              lineHeight: 1.7,
+              color: 'var(--text-muted)',
+              background: 'rgba(212,175,55,0.04)',
+              border: '1px solid rgba(212,175,55,0.15)',
+              borderRadius: '12px',
+            }}>
+              💡 인생의 4계절(봄 씨앗 · 여름 성장 · 가을 수확 · 겨울 내실)은 대운의 흐름을 의미합니다. 지금 당신이 <strong style={{ color: 'var(--text)' }}>어느 계절에 있느냐</strong>에 따라 '확장할 때'인지 '수축할 때'인지가 갈려요. 아래 추천 전공·직업군은 당신의 오행과 십성에서 유도된 결과입니다.
+            </div>
             <div
               style={{
                 background: 'linear-gradient(135deg, #0a1012 0%, #091618 100%)',
@@ -757,6 +781,18 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {result.relationship_code && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.46 }}>
             <SectionTitle icon="🧬">인간관계 코드</SectionTitle>
+            <div style={{
+              marginBottom: '12px',
+              padding: '12px 16px',
+              fontSize: '16px',
+              lineHeight: 1.7,
+              color: 'var(--text-muted)',
+              background: 'rgba(212,175,55,0.04)',
+              border: '1px solid rgba(212,175,55,0.15)',
+              borderRadius: '12px',
+            }}>
+              💡 사주의 <strong style={{ color: 'var(--text)' }}>십성(비겁 · 식상 · 재성 · 관성 · 인성)</strong>은 당신이 조직과 관계 속에서 자연스럽게 맡는 역할을 알려줍니다. 이 섹션은 당신이 빛나는 파트너 유형, 피해야 할 충돌 유형, 조직 내 정치력을 진단합니다.
+            </div>
             <PaywallOverlay>
               <div className="card-gold" style={{ display: 'grid', gap: '16px' }}>
                 {[
@@ -797,6 +833,18 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {result.survival_strategy && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.47 }}>
             <SectionTitle icon="⚔️">생존 & 성장 전략</SectionTitle>
+            <div style={{
+              marginBottom: '12px',
+              padding: '12px 16px',
+              fontSize: '16px',
+              lineHeight: 1.7,
+              color: 'var(--text-muted)',
+              background: 'rgba(212,175,55,0.04)',
+              border: '1px solid rgba(212,175,55,0.15)',
+              borderRadius: '12px',
+            }}>
+              💡 "성공한다"가 아니라 "지금 이 계절에서 <strong style={{ color: 'var(--text)' }}>무엇을 버리고 무엇을 취할지</strong>"에 대한 Action Plan입니다. 용신(유리한 오행)과 연결된 습관은 취하고, 기신(불리한 오행)을 증폭하는 습관은 버리세요.
+            </div>
             <PaywallOverlay>
               <div className="card-gold" style={{ display: 'grid', gap: '18px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>

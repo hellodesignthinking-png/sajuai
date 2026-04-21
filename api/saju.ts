@@ -141,16 +141,28 @@ function buildPromptCtx(input: any, calc: SajuCalcResult, currentYear: number, l
 }
 
 function buildSharedHeaderKo(input: any, calc: SajuCalcResult, ctx: PromptCtx): string {
-  return `[V63: Oracle Genesis — 4계절 커리어 동기화]
-너는 명리학 마스터 오라클이다. 논문처럼 논리적이면서 장엄하고 실용적인 말투를 유지하라.
-이 리포트는 단순 점술이 아니라 "커리어 전략 보고서" 수준의 분석이어야 한다.
+  const seasonKo: Record<string, string> = {
+    spring: '봄(씨앗·Start) — 전공 선택·신기술 습득·기획',
+    summer: '여름(성장·Action) — 네트워크 확장·실행·에너지 발산',
+    autumn: '가을(수확·Result) — 성과·승진·전문성 확립·재물',
+    winter: '겨울(내실·Wisdom) — 연구·멘토링·다음 시즌 준비',
+  };
+  return `[V63 Core-Sync: 인생 사계절 커리어 오라클]
+너는 명리학 마스터 오라클이다. 장엄하면서 논리적이고 실용적인 말투.
+이 리포트는 단순 점술이 아니라 "커리어 전략 보고서" 수준의 분석이다.
+
+[해석 3대 축 — 반드시 상관관계로 서술]
+1. 일간(Identity) ${calc.dayMaster.heavenly}(${calc.dayMaster.element}) — 이 사람의 본질
+2. 격국(Career Type) — 월지 ${extractChar(calc.fourPillars.month.earthly)}의 지장간(본기·중기·여기) × 일간 관계로 도출
+3. 대운(Season) — 현재 "${seasonKo[calc.careerSeason]}"
+
+핵심 원칙: 각 데이터를 따로 읽지 말고 "${calc.dayMaster.heavenly}의 ${calc.dayMaster.element} 기운이 현재 '${calc.careerSeason}' 대운을 만나 [격국]으로 발현되므로…" 같은 **상관 서술**로 커리어·전공·관계를 통합 해석하라.
 
 [미션]
-1. 진짜 데이터만 사용: 범용 문구 절대 금지. 반드시 만세력과 지장간(地藏干)의 합충변화(合冲變化)를 반영.
-2. 격국(格局) 정밀 정의: 일간(${calc.dayMaster.heavenly})과 월지(${extractChar(calc.fourPillars.month.earthly)})의 관계, 지장간 근거로 격국 도출.
-3. 인생의 4계절 커리어 로드맵: 봄(씨앗)·여름(성장)·가을(수확)·겨울(내실) 중 현재 위치 명시.
-4. 오행 + 십성으로 전공·직업·정치력 진단.
-5. "버려야 할 습관"과 "취해야 할 에너지"를 구체적 Action Plan으로 제시.
+1. Zero Mock — 범용 문구 절대 금지. 만세력·지장간 합충변화(合冲變化) 실제 반영.
+2. 4계절 타이밍 — "확장할 때"인지 "수축할 때"인지 구체적 시점(Timing) 제시.
+3. 전공·직업 매핑 — 오행 + 십성(비겁·식상·재성·관성·인성)으로 최적 전공·직업·조직 정치력 도출.
+4. 생존 전략 — "버릴 습관"과 "취할 에너지"를 Action Plan으로.
 
 [사용자]
 - 생년월일시: ${input.birthYear}년 ${input.birthMonth}월 ${input.birthDay}일 ${ctx.hourText} (${ctx.calText}), ${ctx.genderText}, MBTI: ${ctx.mbtiText}, ${ctx.age}세
@@ -223,11 +235,11 @@ Return ONLY valid JSON matching this shape (CORE analysis only):
   }
   return `${buildSharedHeaderKo(input, calc, ctx)}
 
-반드시 아래 JSON만 반환 (CORE 분석):
+반드시 아래 JSON만 반환 (CORE 분석 — 각 필드에서 일간·격국·대운을 반드시 한 문장 안에서 연결하라):
 {
-  "saju_summary": "사주 총평 5-7문장. 원국 구조, 일간 성격, 오행 균형, 강점·약점, 용신·기신 결정 근거.",
-  "yearly_fortune": "올해(${currentYear}년) 운세 5-7문장. 세운 천간지지 × 원국·대운 관계. 조심할 달·기회의 달. 금전·건강·대인운 각각.",
-  "sharp_feedback": "5-7문장. 일간 핵심 긴장을 직격하고, 가장 큰 커리어 문제점 + 구체적 해결책 + 기한.",
+  "saju_summary": "5-7문장. [구조] 일간 ${calc.dayMaster.heavenly}(${calc.dayMaster.element})의 본질 → 월지·지장간 관계로 도출되는 격국 → 현재 ${calc.careerSeason} 대운이 원국에 미치는 영향. 이 3축을 연결해 서술하고 오행 균형·용신·기신을 근거로 제시.",
+  "yearly_fortune": "올해(${currentYear}) 운세 5-7문장. 세운 천간지지가 원국·대운과 맺는 관계. 조심할 달·기회의 달을 월 숫자로 명시. 금전·건강·대인운 각각.",
+  "sharp_feedback": "5-7문장. 일간×격국×대운이 만나 생기는 핵심 커리어 긴장을 직격. 지금 전문 분야(${ctx.specialtyText})·현재 상황(${ctx.situationText})에서 가장 큰 문제점 + 구체적 해결책 + 기한(YYYY-MM) 제시.",
   "current_season": "${calc.careerSeason}",
   "season_details": {"season":"${calc.careerSeason}","year_range":"${ctx.yearRange}","advice":"용신 활성화 3-5문장. 행동·시기 포함.","warning":"기신 위험 경고 3문장. 구체적으로 피해야 할 행동과 시기."},
   "top5_golden_years": [
@@ -274,9 +286,9 @@ Return ONLY valid JSON matching this shape (V63 DEEP strategy only):
   }
   return `${buildSharedHeaderKo(input, calc, ctx)}
 
-반드시 아래 JSON만 반환 (V63 DEEP 전략):
+반드시 아래 JSON만 반환 (V63 DEEP 전략 — 현재 계절(${calc.careerSeason})의 역할을 명확히 지키되, 각 필드에서 전문 분야·현재 상황을 구체적으로 반영하라):
 {
-  "career_sync": {"season_label":"봄: 씨앗의 시기 / 여름: 성장의 시기 / 가을: 수확의 시기 / 겨울: 내실의 시기 중 current_season(${calc.careerSeason})에 맞춰 선택","season_focus":"현재 계절에서 해야 할 일 3문장. 전문 분야(${ctx.specialtyText}) 연결.","recommended_majors":["전공1","전공2","전공3"],"recommended_jobs":["직업군1","직업군2","직업군3"],"reasoning":"오행·십성 근거 3-5문장. 현재 전문 분야 연결/전환 가능성."},
+  "career_sync": {"season_label":"${calc.careerSeason === 'spring' ? '봄(Start): 씨앗의 시기 — 전공 선택·기술 습득·기획' : calc.careerSeason === 'summer' ? '여름(Action): 확장의 시기 — 네트워크·실행·에너지 발산' : calc.careerSeason === 'autumn' ? '가을(Result): 수확의 시기 — 성과·전문성·재물 축적' : '겨울(Wisdom): 내실의 시기 — 연구·멘토링·다음 시즌 준비'} 그대로 사용","season_focus":"3문장. 지금이 '확장할 때'인지 '수축할 때'인지 명확한 타이밍 판단 + 전문 분야(${ctx.specialtyText})에서 이번 계절에 해야 할 핵심 행동.","recommended_majors":["전공1","전공2","전공3"],"recommended_jobs":["직업군1","직업군2","직업군3"],"reasoning":"3-5문장. 일간 ${calc.dayMaster.heavenly}(${calc.dayMaster.element}) × 격국 × 현재 대운이 맞물려 이 전공·직업이 왜 맞는지 설명. 현재 전문 분야(${ctx.specialtyText})와 연결 또는 전환 가능성."},
   "relationship_code": {"leadership_style":"일간·격국 기반 리더십 2-3문장 (장점·약점).","partnership_style":"협업 스타일 2-3문장.","political_navigation":"조직 내 처세 2-3문장. 현재 상황(${ctx.situationText}) 반영.","ten_gods_balance":"비겁·식상·재성·관성·인성 중 강약 + 관계 표현 3-5문장.","synergy_people":"시너지 내는 사람 2-3문장. 오행·십성 근거.","friction_people":"충돌하는 사람 2-3문장. 기신 연결."},
   "survival_strategy": {"habits_to_abandon":["버려야 할 습관 1 구체적 행동","습관2","습관3"],"energy_to_embrace":["취해야 할 에너지 1 용신 연결 구체적 행동","에너지2","에너지3"],"immediate_action":"이번 주 실행 2-3문장. 현재 상황(${ctx.situationText})에서 실현 가능.","ninety_day_plan":"90일 측정 가능한 목표 3문장. 전문 분야(${ctx.specialtyText}) 안에서.","one_year_vision":"1년 후 모습 3문장. 다음 계절 전환 준비."},
   "career_pentagon": {"leadership":<0-100>,"execution":<0-100>,"analysis":<0-100>,"creativity":<0-100>,"empathy":<0-100>,"notes":"강점·약점 축 해석 + 커리어 포지셔닝 2-3문장"},
