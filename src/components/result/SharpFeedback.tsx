@@ -41,10 +41,10 @@ export default function SharpFeedback({ feedback }: Props) {
         </motion.div>
         <div>
           <p style={{ fontSize: '11px', letterSpacing: '3px', color: '#65a30d', fontWeight: 600 }}>
-            책사의 한마디
+            핵심 인사이트
           </p>
           <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-            제갈량의 날카로운 조언
+            핵심 커리어 인사이트
           </p>
         </div>
       </div>
@@ -94,7 +94,7 @@ export default function SharpFeedback({ feedback }: Props) {
           fontFamily: 'Noto Serif KR, serif',
         }}
       >
-        — 제갈량 (AI 책사)
+        — 너튜유니온 SAJU
       </p>
     </div>
   );

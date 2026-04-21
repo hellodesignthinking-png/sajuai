@@ -1,35 +1,35 @@
 const ko = {
   // App name
-  appName: 'AI 책사',
-  tagline: 'CAREER STRATEGIST',
+  appName: '너튜유니온 SAJU',
+  tagline: 'CAREER INSIGHT PLATFORM',
 
   // Landing
   landing: {
-    badge: '⚔️ 제갈량 AI 책사',
-    heroTitle1: '당신의 때',
-    heroTitle2: '를',
-    heroTitle3: '알아라',
-    subtitle1: '지금이 봄인가, 겨울인가.',
-    subtitle2: 'AI 책사가 사주·점성술·수비학으로',
-    subtitle3strong: '당신의 커리어 전략',
-    subtitle3end: '을 계산합니다.',
-    quote: '때를 아는 자가 천하를 얻는다',
-    ctaStart: '⚔️ 지금 내 때 분석하기',
-    ctaFree: '무료 · 약 30초 소요',
-    ctaBottom: '무료로 시작하기 →',
-    resultsLabel: '분석 결과',
+    badge: '💼 CAREER × SAJU',
+    heroTitle1: '지금 가장 핫한',
+    heroTitle2: '당신의',
+    heroTitle3: '커리어 시즌은?',
+    subtitle1: '사주는 운명이 아니라 커리어 데이터입니다.',
+    subtitle2: '너튜유니온 SAJU가 당신의 원국을 읽고',
+    subtitle3strong: '지금 당장 써먹을 전략',
+    subtitle3end: '으로 정리해드려요.',
+    quote: '운명을 보는 게 아니라, 타이밍을 설계하는 것',
+    ctaStart: '내 커리어 시즌 분석하기',
+    ctaFree: '무료 · 약 30초',
+    ctaBottom: '바로 시작하기 →',
+    resultsLabel: '이런 인사이트를 받아요',
     features: [
-      { icon: '🔯', title: '사주팔자 분석', desc: '천간지지로 타고난 운의 구조를 계산' },
-      { icon: '♈', title: '서양 점성술', desc: '행성 위치와 하우스로 타이밍을 분석' },
-      { icon: '🔢', title: '수비학', desc: '생년월일 수비학으로 인생 주기를 계산' },
+      { icon: '🔯', title: '사주 원국 분석', desc: '천간·지지·지장간으로 커리어 구조 해독' },
+      { icon: '🗓', title: '4계절 로드맵', desc: '대운의 흐름으로 확장·수축 타이밍 판단' },
+      { icon: '💼', title: '전공·천직 매칭', desc: '오행·십성으로 맞춤 직업군 추천' },
     ],
     resultItems: [
       { icon: '🏆', text: '커리어 전성기 Top 5' },
       { icon: '📊', text: '생애 주기 운 그래프' },
-      { icon: '🌸', text: '현재 커리어 계절' },
+      { icon: '🍂', text: '현재 커리어 계절' },
       { icon: '📅', text: '올해 분기별 전략' },
-      { icon: '🧠', text: 'MBTI 시너지 분석' },
-      { icon: '⚡', text: '책사의 날카로운 한마디' },
+      { icon: '🧬', text: '인간관계 코드' },
+      { icon: '⚔️', text: '생존 & 성장 전략' },
     ],
   },
 
@@ -54,14 +54,14 @@ const ko = {
     mbtiUnknown: '모름',
     nextBtn: '다음 →',
     backBtn: '← 뒤로',
-    analyzeBtn: '⚔️ 분석 시작',
+    analyzeBtn: '커리어 인사이트 받기',
     step: '단계',
     of: '/',
   },
 
   // Loading
   loading: {
-    title: '책사가 계산 중입니다...',
+    title: '당신의 커리어 인사이트를 계산 중...',
   },
 
   // Error

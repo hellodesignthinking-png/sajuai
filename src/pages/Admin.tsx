@@ -137,7 +137,7 @@ export default function Admin() {
               Admin Dashboard
             </span>
             <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text)', marginTop: '4px' }}>
-              AI 책사 통계
+              너튜유니온 SAJU 통계
             </h1>
           </div>
           <a href="/" style={{ fontSize: '13px', color: 'var(--text-muted)', textDecoration: 'none' }}>

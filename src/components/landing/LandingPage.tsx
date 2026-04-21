@@ -61,7 +61,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               padding: '3px 8px',
               borderRadius: '6px',
             }}>
-              AI 책사
+              {t.tagline}
             </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -147,12 +147,13 @@ export default function LandingPage({ onStart }: LandingPageProps) {
           </motion.div>
 
           <motion.h1
+            className="display-font"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.08 }}
             style={{
-              fontSize: 'clamp(36px, 8vw, 64px)',
-              fontWeight: 900,
+              fontSize: 'clamp(42px, 9vw, 72px)',
+              fontWeight: 400,
               lineHeight: 1.05,
               marginBottom: '20px',
               letterSpacing: '-2px',

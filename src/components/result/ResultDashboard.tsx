@@ -234,24 +234,26 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         </motion.div>
 
         <motion.h1
+          className="display-font"
           {...fadeUp}
           transition={{ duration: 0.5, delay: 0.08 }}
           style={{
-            fontSize: 'clamp(30px, 7vw, 44px)',
-            fontWeight: 900,
+            fontSize: 'clamp(34px, 8vw, 50px)',
+            fontWeight: 400,
             marginBottom: '10px',
-            letterSpacing: '-1.2px',
-            lineHeight: 1.1,
+            letterSpacing: '-1.5px',
+            lineHeight: 1.05,
             color: 'var(--text)',
           }}
         >
           <span style={{
             display: 'block',
-            fontSize: '0.4em',
-            fontWeight: 600,
+            fontFamily: 'Noto Sans KR, sans-serif',
+            fontSize: '0.32em',
+            fontWeight: 700,
             color: 'var(--text-muted)',
-            letterSpacing: '1.5px',
-            marginBottom: '10px',
+            letterSpacing: '2px',
+            marginBottom: '14px',
           }}>
             {userInput.birthYear}년 · {calLabel} · {age}세
           </span>
@@ -418,11 +420,11 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
 
         {result.yearly_fortune && <SectionDivider />}
 
-        {/* ── FREE: 1. 책사의 한마디 ─────────────────────── */}
+        {/* ── FREE: 1. 핵심 인사이트 ─────────────────────── */}
         {result.sharp_feedback && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.1 }}>
-            <SectionTitle icon="🔮" accent="rose" kicker="SHARP · 책사의 직언">
-              책사의 한마디
+            <SectionTitle icon="🔮" accent="rose" kicker="SHARP · SHARP INSIGHT">
+              핵심 인사이트
             </SectionTitle>
             <SharpFeedback feedback={result.sharp_feedback} />
           </motion.section>

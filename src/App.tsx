@@ -37,7 +37,7 @@ function requestNotificationPermission(lang: Lang) {
     Notification.requestPermission().then((perm) => {
       if (perm === 'granted') {
         const msg = lang === 'ko' ? 'D-day 알림이 설정되었습니다!' : 'D-day notifications enabled!';
-        new Notification('AI 책사', { body: msg, icon: '/favicon.ico' });
+        new Notification('너튜유니온 SAJU', { body: msg, icon: '/favicon.ico' });
       }
     });
   }

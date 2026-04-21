@@ -8,7 +8,7 @@ const STEPS = [
   '수비학 에너지를 계산하는 중...',
   '운의 흐름을 종합하는 중...',
   '커리어 전략을 수립하는 중...',
-  '책사의 한마디를 준비하는 중...',
+  '핵심 인사이트를 준비하는 중...',
 ];
 
 export default function LoadingScreen() {
@@ -128,7 +128,7 @@ export default function LoadingScreen() {
             fontWeight: 500,
           }}
         >
-          제갈량 분석 중
+          SAJU 분석 중
         </p>
         <h2
           style={{

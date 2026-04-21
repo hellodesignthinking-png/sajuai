@@ -103,7 +103,7 @@ async function generateShareCard(
   // ── Header label
   ctx.font = `bold 22px ${FONT}`;
   ctx.fillStyle = GOLD;
-  ctx.fillText('AI 책사  |  커리어 전략', 80, 80);
+  ctx.fillText('너튜유니온 SAJU  |  커리어 전략', 80, 80);
 
   // ── Season badge pill
   const badgeText = `${SEASON_EMOJI[season]}  ${SEASON_LABEL[season]}`;
@@ -156,7 +156,7 @@ async function generateShareCard(
   // ── Footer
   ctx.font = `16px ${FONT}`;
   ctx.fillStyle = '#444444';
-  ctx.fillText('AI 책사  •  당신의 때를 알아라', 80, 498);
+  ctx.fillText('너튜유니온 SAJU  •  당신의 때를 알아라', 80, 498);
 
   ctx.font = `bold 20px ${FONT}`;
   ctx.fillStyle = GOLD;
@@ -182,7 +182,7 @@ export default function ShareSection({ result, userInput, peakYear }: Props) {
 
   const season = result.current_season;
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
-  const shareMessage = `AI 책사가 분석한 나의 커리어 전성기는 ${peakYear}년! 너도 확인해봐 🔮`;
+  const shareMessage = `너튜유니온 SAJU가 분석한 나의 커리어 전성기는 ${peakYear}년! 너도 확인해봐 🔮`;
 
   // Initialize Kakao SDK if key is configured
   useEffect(() => {
@@ -218,7 +218,7 @@ export default function ShareSection({ result, userInput, peakYear }: Props) {
       Kakao.Share.sendDefault({
         objectType: 'feed',
         content: {
-          title: 'AI 책사 | 커리어 전략',
+          title: '너튜유니온 SAJU | 커리어 전략',
           description: shareMessage,
           link: { mobileWebUrl: shareUrl, webUrl: shareUrl },
         },
@@ -252,7 +252,7 @@ export default function ShareSection({ result, userInput, peakYear }: Props) {
   const handleNativeShare = async () => {
     try {
       await navigator.share({
-        title: 'AI 책사 | 커리어 전략',
+        title: '너튜유니온 SAJU | 커리어 전략',
         text: shareMessage,
         url: shareUrl,
       });
@@ -284,7 +284,7 @@ export default function ShareSection({ result, userInput, peakYear }: Props) {
       );
       const a = document.createElement('a');
       a.href = dataUrl;
-      a.download = `AI책사_커리어카드_${peakYear}.png`;
+      a.download = `NutuyuSAJU_CareerCard_${peakYear}.png`;
       a.click();
     } finally {
       setGenerating(false);
@@ -355,7 +355,7 @@ export default function ShareSection({ result, userInput, peakYear }: Props) {
               fontWeight: 700,
             }}
           >
-            AI 책사 | 커리어 전략
+            너튜유니온 SAJU | 커리어 전략
           </p>
 
           <div

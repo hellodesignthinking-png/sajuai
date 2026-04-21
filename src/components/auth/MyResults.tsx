@@ -70,7 +70,7 @@ export default function MyResults({ onClose, onRestore }: MyResultsProps) {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <div>
-            <p style={{ fontSize: '11px', letterSpacing: '3px', color: '#65a30d', marginBottom: '4px' }}>AI 책사</p>
+            <p style={{ fontSize: '11px', letterSpacing: '3px', color: '#65a30d', marginBottom: '4px' }}>너튜유니온 SAJU</p>
             <h2 style={{ fontSize: '20px', fontWeight: 700 }}>📁 내 분석 기록</h2>
           </div>
           <button
