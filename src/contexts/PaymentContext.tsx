@@ -1,8 +1,23 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 
+// ──────────────────────────────────────────────────────────────
+// Test-mode flag — flip to `false` when re-enabling the paywall
+// + reconnecting Toss Payments for real billing.
+//
+// When `true`: every premium section renders fully unlocked but shows a
+// "💎 PREMIUM" ribbon so you can still see *where the free/paid boundary
+// will be*. PricingCard still renders as a visual preview.
+// When `false`: normal gating — only paid or admin users see premium.
+// ──────────────────────────────────────────────────────────────
+const TEST_MODE_SHOW_ALL = true;
+
 interface PaymentContextType {
   isPaid: boolean;
+  isTestMode: boolean;
+  /** True when the user should see all premium content —
+   *  paid real users, admin emails, or TEST_MODE_SHOW_ALL. */
+  canAccessPremium: boolean;
   isModalOpen: boolean;
   openPaymentModal: () => void;
   closePaymentModal: () => void;
@@ -36,8 +51,18 @@ export function PaymentProvider({ children }: { children: React.ReactNode }) {
     setIsModalOpen(false);
   }, []);
 
+  const canAccessPremium = isPaid || TEST_MODE_SHOW_ALL;
+
   return (
-    <PaymentContext.Provider value={{ isPaid, isModalOpen, openPaymentModal, closePaymentModal, markAsPaid }}>
+    <PaymentContext.Provider value={{
+      isPaid,
+      isTestMode: TEST_MODE_SHOW_ALL,
+      canAccessPremium,
+      isModalOpen,
+      openPaymentModal,
+      closePaymentModal,
+      markAsPaid,
+    }}>
       {children}
     </PaymentContext.Provider>
   );

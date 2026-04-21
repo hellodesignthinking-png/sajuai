@@ -23,6 +23,7 @@ import ShareSection from '../social/ShareSection';
 import PaywallOverlay from '../payment/PaywallOverlay';
 import PricingCard from '../payment/PricingCard';
 import { useAuth } from '../../contexts/AuthContext';
+import { usePayment } from '../../contexts/PaymentContext';
 import { saveResult } from '../../services/storage';
 
 interface Props {
@@ -108,6 +109,7 @@ const fadeUp = {
 
 export default function ResultDashboard({ result, userInput, onReset, onOpenAuth }: Props) {
   const { user } = useAuth();
+  const { isTestMode, isPaid } = usePayment();
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
@@ -510,6 +512,37 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         )}
 
         {result.career_sync && <SectionDivider />}
+
+        {/* ── TEST-MODE BOUNDARY BANNER ────────────────────── */}
+        {isTestMode && !isPaid && (
+          <motion.div
+            {...fadeUp}
+            transition={{ duration: 0.5, delay: 0.24 }}
+            className="no-print"
+            style={{
+              padding: '14px 18px',
+              borderRadius: '14px',
+              background: 'linear-gradient(135deg, rgba(212,175,55,0.10), rgba(184,136,42,0.06))',
+              border: '1px dashed rgba(212,175,55,0.45)',
+              fontSize: '13px',
+              lineHeight: 1.7,
+              color: 'var(--text)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, color: 'var(--gold)' }}>
+              <span style={{ fontSize: '14px' }}>🧪</span>
+              테스트 모드 — 결제 없이 모든 프리미엄 섹션 공개 중
+            </div>
+            <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
+              ⬆ 위 섹션까지는 <strong style={{ color: 'var(--text)' }}>무료(FREE)</strong> ·
+              ⬇ 아래 💎 PREMIUM 뱃지가 붙은 섹션은 결제 출시 후 <strong style={{ color: 'var(--gold)' }}>유료 전환</strong>됩니다.
+              카드 모듈 연결 후 <code style={{ fontSize: '11px', background: 'rgba(0,0,0,0.3)', padding: '1px 5px', borderRadius: '4px' }}>TEST_MODE_SHOW_ALL = false</code>로 전환하면 자동 게이팅 됩니다.
+            </p>
+          </motion.div>
+        )}
 
         {/* ── PRICING CTA ─────────────────────────────────── */}
         <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.25 }} className="no-print">

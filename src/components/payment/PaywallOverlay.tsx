@@ -7,8 +7,9 @@ interface Props {
 }
 
 export default function PaywallOverlay({ children }: Props) {
-  const { isPaid, openPaymentModal } = usePayment();
+  const { isPaid, isTestMode, openPaymentModal } = usePayment();
 
+  // Real paid / admin — render fully, no chrome.
   if (isPaid) {
     return (
       <motion.div
@@ -21,6 +22,42 @@ export default function PaywallOverlay({ children }: Props) {
     );
   }
 
+  // Test mode — show the full content but mark it so the free/paid
+  // boundary is still visually clear for QA. Flip TEST_MODE_SHOW_ALL to
+  // `false` in PaymentContext.tsx when wiring real payments.
+  if (isTestMode) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        style={{ position: 'relative' }}
+      >
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            fontSize: '10px',
+            fontWeight: 800,
+            letterSpacing: '2px',
+            padding: '4px 10px',
+            marginBottom: '10px',
+            borderRadius: '999px',
+            background: 'linear-gradient(135deg, rgba(212,175,55,0.22), rgba(184,136,42,0.18))',
+            border: '1px solid rgba(212,175,55,0.4)',
+            color: 'var(--gold)',
+            textTransform: 'uppercase',
+          }}
+        >
+          💎 PREMIUM · 테스트 모드 무료 공개
+        </div>
+        {children}
+      </motion.div>
+    );
+  }
+
+  // Normal gate — blurred preview + unlock CTA.
   return (
     <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden' }}>
       {/* Blurred content preview */}
