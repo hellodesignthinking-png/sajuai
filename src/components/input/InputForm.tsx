@@ -119,23 +119,23 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                       height: '32px',
                       borderRadius: '50%',
                       background: isActive
-                        ? 'linear-gradient(135deg, #C9A227, #D4AF37)'
+                        ? '#84cc16'
                         : isDone
-                        ? 'rgba(212,175,55,0.2)'
-                        : 'rgba(255,255,255,0.05)',
+                        ? '#d9f99d'
+                        : 'var(--bg)',
                       border: isActive
                         ? 'none'
                         : isDone
-                        ? '1px solid rgba(212,175,55,0.4)'
+                        ? '1px solid #84cc16'
                         : '1px solid var(--border)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontSize: '13px',
                       fontWeight: 700,
-                      color: isActive ? '#080808' : isDone ? 'var(--gold)' : 'var(--text-muted)',
+                      color: isActive ? '#080808' : isDone ? '#65a30d' : 'var(--text-muted)',
                       flexShrink: 0,
-                      boxShadow: isActive ? '0 4px 16px rgba(212,175,55,0.3)' : 'none',
+                      boxShadow: isActive ? '0 4px 16px #84cc16' : 'none',
                       transition: 'all 0.3s',
                     }}
                   >
@@ -147,7 +147,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                         flex: 1,
                         height: '2px',
                         background: isDone
-                          ? 'rgba(212,175,55,0.4)'
+                          ? '#84cc16'
                           : 'var(--border)',
                         margin: '0 4px',
                         borderRadius: '1px',
@@ -199,10 +199,10 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
           width: '100%',
           maxWidth: '560px',
           background: 'var(--card)',
-          border: '1px solid rgba(212,175,55,0.2)',
+          border: '1px solid #d9f99d',
           borderRadius: '20px',
           padding: '28px 24px',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
+          boxShadow: 'var(--shadow)',
         }}
       >
         <AnimatePresence mode="wait">
@@ -231,17 +231,17 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                       style={{
                         padding: '14px',
                         borderRadius: '12px',
-                        border: `1px solid ${form.calendarType === opt.value ? 'var(--gold)' : 'var(--border)'}`,
+                        border: `1px solid ${form.calendarType === opt.value ? '#65a30d' : 'var(--border)'}`,
                         background: form.calendarType === opt.value
-                          ? 'rgba(212,175,55,0.12)'
-                          : 'rgba(255,255,255,0.02)',
-                        color: form.calendarType === opt.value ? 'var(--gold)' : 'var(--text-muted)',
+                          ? '#ecfccb'
+                          : 'var(--bg)',
+                        color: form.calendarType === opt.value ? '#65a30d' : 'var(--text-muted)',
                         cursor: 'pointer',
                         fontSize: '15px',
                         fontWeight: form.calendarType === opt.value ? 700 : 400,
                         transition: 'all 0.2s',
                         fontFamily: 'Noto Sans KR, sans-serif',
-                        boxShadow: form.calendarType === opt.value ? '0 0 12px rgba(212,175,55,0.12)' : 'none',
+                        boxShadow: form.calendarType === opt.value ? '0 0 12px #ecfccb' : 'none',
                       }}
                     >
                       {opt.label}
@@ -365,17 +365,17 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                       style={{
                         padding: '14px',
                         borderRadius: '12px',
-                        border: `1px solid ${form.gender === opt.value ? 'var(--gold)' : 'var(--border)'}`,
+                        border: `1px solid ${form.gender === opt.value ? '#65a30d' : 'var(--border)'}`,
                         background: form.gender === opt.value
-                          ? 'rgba(212,175,55,0.12)'
-                          : 'rgba(255,255,255,0.02)',
-                        color: form.gender === opt.value ? 'var(--gold)' : 'var(--text-muted)',
+                          ? '#ecfccb'
+                          : 'var(--bg)',
+                        color: form.gender === opt.value ? '#65a30d' : 'var(--text-muted)',
                         cursor: 'pointer',
                         fontSize: '15px',
                         fontWeight: form.gender === opt.value ? 700 : 400,
                         transition: 'all 0.2s',
                         fontFamily: 'Noto Sans KR, sans-serif',
-                        boxShadow: form.gender === opt.value ? '0 0 12px rgba(212,175,55,0.12)' : 'none',
+                        boxShadow: form.gender === opt.value ? '0 0 12px #ecfccb' : 'none',
                       }}
                     >
                       {opt.label}
@@ -405,11 +405,11 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                       style={{
                         padding: '10px 4px',
                         borderRadius: '8px',
-                        border: `1px solid ${form.mbti === type ? 'var(--gold)' : 'var(--border)'}`,
+                        border: `1px solid ${form.mbti === type ? '#65a30d' : 'var(--border)'}`,
                         background: form.mbti === type
-                          ? 'rgba(212,175,55,0.12)'
-                          : 'rgba(255,255,255,0.02)',
-                        color: form.mbti === type ? 'var(--gold)' : 'var(--text-muted)',
+                          ? '#ecfccb'
+                          : 'var(--bg)',
+                        color: form.mbti === type ? '#65a30d' : 'var(--text-muted)',
                         cursor: 'pointer',
                         fontSize: '12px',
                         fontWeight: form.mbti === type ? 700 : 400,
@@ -429,11 +429,11 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                     width: '100%',
                     padding: '10px',
                     borderRadius: '8px',
-                    border: `1px solid ${form.mbti === '모름' ? 'var(--gold)' : 'var(--border)'}`,
+                    border: `1px solid ${form.mbti === '모름' ? '#65a30d' : 'var(--border)'}`,
                     background: form.mbti === '모름'
-                      ? 'rgba(212,175,55,0.12)'
-                      : 'rgba(255,255,255,0.02)',
-                    color: form.mbti === '모름' ? 'var(--gold)' : 'var(--text-muted)',
+                      ? '#ecfccb'
+                      : 'var(--bg)',
+                    color: form.mbti === '모름' ? '#65a30d' : 'var(--text-muted)',
                     cursor: 'pointer',
                     fontSize: '13px',
                     transition: 'all 0.15s',
@@ -530,7 +530,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                 flex: 2,
                 fontSize: '17px',
                 padding: '18px 24px',
-                boxShadow: '0 6px 28px rgba(212,175,55,0.35)',
+                boxShadow: '0 6px 28px #84cc16',
               }}
             >
               ✦ {t.input.analyzeBtn}

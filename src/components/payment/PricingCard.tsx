@@ -23,8 +23,8 @@ export default function PricingCard() {
       transition={{ duration: 0.45 }}
       style={{
         borderRadius: '16px',
-        border: '1px solid rgba(212,175,55,0.4)',
-        background: 'linear-gradient(135deg, rgba(212,175,55,0.07) 0%, rgba(212,175,55,0.02) 100%)',
+        border: '1px solid #84cc16',
+        background: 'linear-gradient(135deg, #f7fee7 0%, #fafaf9 100%)',
         padding: '28px 24px',
         textAlign: 'center',
       }}
@@ -33,7 +33,7 @@ export default function PricingCard() {
         style={{
           fontSize: '10px',
           letterSpacing: '3px',
-          color: 'var(--gold)',
+          color: '#65a30d',
           marginBottom: '10px',
           textTransform: 'uppercase',
         }}
@@ -57,15 +57,15 @@ export default function PricingCard() {
       >
         {FEATURES.map((f) => (
           <div key={f} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Check size={14} color="var(--gold)" strokeWidth={2.5} style={{ flexShrink: 0 }} />
+            <Check size={14} color="#65a30d" strokeWidth={2.5} style={{ flexShrink: 0 }} />
             <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{f}</span>
           </div>
         ))}
       </div>
 
       <div style={{ marginBottom: '16px' }}>
-        <span style={{ fontSize: '30px', fontWeight: 900, color: 'var(--gold)' }}>990</span>
-        <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--gold)' }}>원</span>
+        <span style={{ fontSize: '30px', fontWeight: 900, color: '#65a30d' }}>990</span>
+        <span style={{ fontSize: '18px', fontWeight: 700, color: '#65a30d' }}>원</span>
         <span style={{ fontSize: '13px', color: 'var(--text-muted)', marginLeft: '8px' }}>
           1회 결제 · 평생 열람
         </span>

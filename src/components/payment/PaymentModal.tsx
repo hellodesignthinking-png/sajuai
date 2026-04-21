@@ -144,7 +144,7 @@ export default function PaymentModal() {
             width: '100%',
             maxWidth: '480px',
             maxHeight: '90vh',
-            background: '#111',
+            background: '#fff',
             borderRadius: '24px 24px 0 0',
             overflow: 'hidden',
             display: 'flex',
@@ -163,7 +163,7 @@ export default function PaymentModal() {
             }}
           >
             <div>
-              <p style={{ fontSize: '11px', letterSpacing: '2px', color: 'var(--gold)' }}>
+              <p style={{ fontSize: '11px', letterSpacing: '2px', color: '#65a30d' }}>
                 PREMIUM UNLOCK
               </p>
               <h2 style={{ fontSize: '18px', fontWeight: 800, marginTop: '2px' }}>
@@ -197,7 +197,7 @@ export default function PaymentModal() {
             {step === 'pricing' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-                  <div style={{ fontSize: '36px', fontWeight: 900, color: 'var(--gold)' }}>
+                  <div style={{ fontSize: '36px', fontWeight: 900, color: '#65a30d' }}>
                     990<span style={{ fontSize: '20px' }}>원</span>
                   </div>
                   <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -213,14 +213,14 @@ export default function PaymentModal() {
                           width: '20px',
                           height: '20px',
                           borderRadius: '50%',
-                          background: 'rgba(212,175,55,0.15)',
+                          background: '#d9f99d',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           flexShrink: 0,
                         }}
                       >
-                        <Check size={11} color="var(--gold)" strokeWidth={3} />
+                        <Check size={11} color="#65a30d" strokeWidth={3} />
                       </div>
                       <span style={{ fontSize: '13px', color: 'var(--text)' }}>{f}</span>
                     </div>
@@ -250,7 +250,7 @@ export default function PaymentModal() {
                       background: 'rgba(239,68,68,0.1)',
                       borderRadius: '10px',
                       marginBottom: '16px',
-                      color: '#f87171',
+                      color: '#e11d48',
                       fontSize: '13px',
                     }}
                   >
@@ -291,7 +291,7 @@ export default function PaymentModal() {
                   color: 'var(--text-muted)',
                 }}
               >
-                <Loader2 size={36} color="var(--gold)" style={{ animation: 'spin 1s linear infinite' }} />
+                <Loader2 size={36} color="#65a30d" style={{ animation: 'spin 1s linear infinite' }} />
                 <p>결제 페이지로 이동 중...</p>
               </div>
             )}

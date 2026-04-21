@@ -94,14 +94,14 @@ export default function AuthModal({ onClose }: AuthModalProps) {
           onClick={(e) => e.stopPropagation()}
           style={{
             width: '100%', maxWidth: '400px',
-            background: '#111', border: '1px solid #222',
+            background: '#fff', border: '1px solid var(--border)',
             borderRadius: '16px', padding: '28px 24px',
           }}
         >
           {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
             <div>
-              <p style={{ fontSize: '11px', letterSpacing: '3px', color: 'var(--gold)', marginBottom: '4px' }}>AI 책사</p>
+              <p style={{ fontSize: '11px', letterSpacing: '3px', color: '#65a30d', marginBottom: '4px' }}>AI 책사</p>
               <h2 style={{ fontSize: '18px', fontWeight: 700 }}>
                 {tab === 'login' ? '로그인' : tab === 'signup' ? '회원가입' : '비밀번호 찾기'}
               </h2>
@@ -118,7 +118,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
           {tab !== 'reset' && (
             <div style={{
               display: 'flex', gap: '2px',
-              background: '#0a0a0a', borderRadius: '10px',
+              background: 'var(--bg)', borderRadius: '10px',
               padding: '3px', marginBottom: '20px',
             }}>
               {(['login', 'signup'] as const).map((t) => (
@@ -143,10 +143,10 @@ export default function AuthModal({ onClose }: AuthModalProps) {
           {!configured && (
             <div style={{
               padding: '10px 14px', borderRadius: '10px', marginBottom: '16px',
-              background: isAdminEmail ? 'rgba(212,175,55,0.08)' : 'rgba(239,68,68,0.08)',
-              border: `1px solid ${isAdminEmail ? 'rgba(212,175,55,0.25)' : 'rgba(239,68,68,0.2)'}`,
+              background: isAdminEmail ? '#ecfccb' : 'rgba(239,68,68,0.08)',
+              border: `1px solid ${isAdminEmail ? '#a3e635' : 'rgba(239,68,68,0.2)'}`,
               fontSize: '12px',
-              color: isAdminEmail ? 'var(--gold)' : '#f87171',
+              color: isAdminEmail ? '#65a30d' : '#f87171',
             }}>
               {isAdminEmail
                 ? '🔑 관리자 계정 로컬 로그인 모드 (Supabase 미설정)'
@@ -180,7 +180,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                 placeholder="you@example.com"
                 style={{
                   width: '100%', padding: '10px 12px',
-                  background: '#0a0a0a', border: '1px solid var(--border)',
+                  background: 'var(--bg)', border: '1px solid var(--border)',
                   borderRadius: '10px', color: 'var(--text)', fontSize: '14px',
                   outline: 'none',
                 }}
@@ -201,7 +201,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                   minLength={6}
                   style={{
                     width: '100%', padding: '10px 12px',
-                    background: '#0a0a0a', border: '1px solid var(--border)',
+                    background: 'var(--bg)', border: '1px solid var(--border)',
                     borderRadius: '10px', color: 'var(--text)', fontSize: '14px',
                     outline: 'none',
                   }}
@@ -214,7 +214,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
               disabled={loading}
               style={{
                 width: '100%', padding: '11px 0',
-                background: 'linear-gradient(135deg, var(--gold-dark), var(--gold))',
+                background: 'linear-gradient(135deg, #65a30d, #65a30d)',
                 border: 'none', borderRadius: '10px',
                 fontSize: '14px', fontWeight: 700, color: '#000',
                 cursor: loading ? 'not-allowed' : 'pointer',
@@ -231,7 +231,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
             {tab === 'reset' ? (
               <button
                 onClick={() => { setTab('login'); setMessage(null); }}
-                style={{ background: 'none', border: 'none', color: 'var(--gold)', fontSize: '13px', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: '#65a30d', fontSize: '13px', cursor: 'pointer' }}
               >
                 ← 로그인으로 돌아가기
               </button>

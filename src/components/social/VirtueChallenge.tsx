@@ -194,7 +194,7 @@ export default function VirtueChallenge() {
               fontWeight: 700,
               zIndex: 9999,
               whiteSpace: 'nowrap',
-              boxShadow: '0 8px 32px rgba(212,175,55,0.45)',
+              boxShadow: '0 8px 32px #84cc16',
               pointerEvents: 'none',
             }}
           >
@@ -207,8 +207,8 @@ export default function VirtueChallenge() {
       <div
         className="card"
         style={{
-          background: 'rgba(212,175,55,0.04)',
-          border: '1px solid rgba(212,175,55,0.18)',
+          background: '#f7fee7',
+          border: '1px solid #d9f99d',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
@@ -217,7 +217,7 @@ export default function VirtueChallenge() {
             <p
               style={{
                 fontSize: '13px',
-                color: 'var(--gold)',
+                color: '#65a30d',
                 fontWeight: 700,
                 letterSpacing: '1px',
               }}
@@ -232,7 +232,7 @@ export default function VirtueChallenge() {
             style={{
               fontSize: '12px',
               color:
-                gratitudeEntries.length >= 3 ? 'var(--gold)' : 'var(--text-muted)',
+                gratitudeEntries.length >= 3 ? '#65a30d' : 'var(--text-muted)',
               background: 'var(--border)',
               padding: '3px 10px',
               borderRadius: '100px',
@@ -265,7 +265,7 @@ export default function VirtueChallenge() {
             onClick={handleAddGratitude}
             disabled={!gratitudeText.trim()}
             style={{
-              background: gratitudeText.trim() ? 'var(--gold)' : 'var(--border)',
+              background: gratitudeText.trim() ? '#65a30d' : 'var(--border)',
               color: gratitudeText.trim() ? '#000' : 'var(--text-muted)',
               border: 'none',
               borderRadius: '10px',
@@ -290,7 +290,7 @@ export default function VirtueChallenge() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 style={{
-                  background: 'rgba(212,175,55,0.05)',
+                  background: '#f7fee7',
                   borderRadius: '8px',
                   padding: '8px 12px',
                   display: 'flex',
@@ -339,7 +339,7 @@ export default function VirtueChallenge() {
             <p
               style={{
                 fontSize: '13px',
-                color: '#4ade80',
+                color: '#16a34a',
                 fontWeight: 700,
                 letterSpacing: '1px',
               }}
@@ -463,9 +463,9 @@ export default function VirtueChallenge() {
                   textAlign: 'center',
                   padding: '18px 10px',
                   background: earned
-                    ? 'rgba(212,175,55,0.07)'
+                    ? '#f7fee7'
                     : 'rgba(255,255,255,0.02)',
-                  border: `1px solid ${earned ? 'rgba(212,175,55,0.3)' : 'var(--border)'}`,
+                  border: `1px solid ${earned ? '#84cc16' : 'var(--border)'}`,
                   borderRadius: '14px',
                   position: 'relative',
                   overflow: 'hidden',
@@ -478,7 +478,7 @@ export default function VirtueChallenge() {
                       position: 'absolute',
                       inset: 0,
                       background:
-                        'radial-gradient(circle at 50% 30%, rgba(212,175,55,0.1) 0%, transparent 70%)',
+                        'radial-gradient(circle at 50% 30%, #ecfccb 0%, transparent 70%)',
                       pointerEvents: 'none',
                     }}
                   />
@@ -497,7 +497,7 @@ export default function VirtueChallenge() {
                   style={{
                     fontSize: '12px',
                     fontWeight: 700,
-                    color: earned ? 'var(--gold)' : 'var(--text-muted)',
+                    color: earned ? '#65a30d' : 'var(--text-muted)',
                     marginBottom: '4px',
                     lineHeight: 1.3,
                   }}
@@ -518,7 +518,7 @@ export default function VirtueChallenge() {
                   <span
                     style={{
                       fontSize: '10px',
-                      color: 'var(--gold)',
+                      color: '#65a30d',
                       fontWeight: 700,
                       letterSpacing: '1px',
                     }}
@@ -542,7 +542,7 @@ export default function VirtueChallenge() {
                         transition={{ duration: 0.8, ease: 'easeOut' }}
                         style={{
                           height: '100%',
-                          background: 'var(--gold)',
+                          background: '#65a30d',
                           borderRadius: '100px',
                         }}
                       />

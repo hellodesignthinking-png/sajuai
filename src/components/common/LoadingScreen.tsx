@@ -42,7 +42,7 @@ export default function LoadingScreen() {
             position: 'absolute',
             inset: 0,
             borderRadius: '50%',
-            border: '1px solid rgba(212,175,55,0.3)',
+            border: '1px solid #d9f99d',
           }}
           animate={{ rotate: 360 }}
           transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
@@ -53,9 +53,9 @@ export default function LoadingScreen() {
             position: 'absolute',
             inset: 20,
             borderRadius: '50%',
-            border: '1px solid rgba(212,175,55,0.5)',
-            borderTopColor: 'rgba(212,175,55,0.1)',
-            borderRightColor: 'rgba(212,175,55,0.1)',
+            border: '1px solid #84cc16',
+            borderTopColor: 'transparent',
+            borderRightColor: 'transparent',
           }}
           animate={{ rotate: -360 }}
           transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
@@ -66,7 +66,7 @@ export default function LoadingScreen() {
             position: 'absolute',
             inset: 40,
             borderRadius: '50%',
-            border: '2px solid var(--gold)',
+            border: '2px solid #65a30d',
             borderTopColor: 'transparent',
             borderLeftColor: 'transparent',
           }}
@@ -97,7 +97,7 @@ export default function LoadingScreen() {
               width: 6,
               height: 6,
               borderRadius: '50%',
-              background: 'var(--gold)',
+              background: '#84cc16',
               top: '50%',
               left: '50%',
               marginTop: -3,
@@ -122,7 +122,7 @@ export default function LoadingScreen() {
           style={{
             fontSize: '13px',
             letterSpacing: '4px',
-            color: 'var(--gold)',
+            color: '#65a30d',
             textTransform: 'uppercase',
             marginBottom: '12px',
             fontWeight: 500,
@@ -170,7 +170,7 @@ export default function LoadingScreen() {
               color: 'var(--text-muted)',
             }}
           >
-            <span style={{ color: 'var(--gold)', marginRight: '8px' }}>◆</span>
+            <span style={{ color: '#65a30d', marginRight: '8px' }}>◆</span>
             {STEPS[stepIndex]}
           </motion.p>
         </AnimatePresence>
@@ -190,7 +190,7 @@ export default function LoadingScreen() {
                 width: i === stepIndex ? 20 : 6,
                 height: 6,
                 borderRadius: '3px',
-                background: i === stepIndex ? 'var(--gold)' : 'var(--border)',
+                background: i === stepIndex ? '#65a30d' : 'var(--border)',
               }}
               animate={{ width: i === stepIndex ? 20 : 6 }}
               transition={{ duration: 0.3 }}

@@ -8,9 +8,9 @@ interface Props {
 }
 
 const SEASON_LABELS: Record<CareerSeason, { label: string; emoji: string; color: string }> = {
-  spring: { label: '봄', emoji: '🌱', color: '#4ade80' },
+  spring: { label: '봄', emoji: '🌱', color: '#16a34a' },
   summer: { label: '여름', emoji: '🔥', color: '#f97316' },
-  autumn: { label: '가을', emoji: '🍂', color: '#D4AF37' },
+  autumn: { label: '가을', emoji: '🍂', color: '#84cc16' },
   winter: { label: '겨울', emoji: '❄️', color: '#60a5fa' },
 };
 
@@ -36,7 +36,7 @@ export default function SeasonReasoning({ data, season }: Props) {
     <div
       style={{
         background: 'var(--card)',
-        border: '1px solid rgba(212,175,55,0.15)',
+        border: '1px solid #d9f99d',
         borderRadius: '16px',
         padding: '22px',
         display: 'grid',
@@ -77,7 +77,7 @@ export default function SeasonReasoning({ data, season }: Props) {
           border: '1px solid rgba(255,255,255,0.07)',
         }}
       >
-        <p style={{ fontSize: '11px', color: 'var(--gold)', marginBottom: '10px', fontWeight: 700, letterSpacing: '2px' }}>
+        <p style={{ fontSize: '11px', color: '#65a30d', marginBottom: '10px', fontWeight: 700, letterSpacing: '2px' }}>
           ◆ 종합 분석
         </p>
         <p style={{ fontSize: '14px', color: 'var(--text)', lineHeight: 1.9, fontWeight: 500 }}>
@@ -109,9 +109,9 @@ export default function SeasonReasoning({ data, season }: Props) {
                 borderRadius: '9px',
                 border: 'none',
                 background: activeTab === tab.id
-                  ? 'rgba(212,175,55,0.15)'
+                  ? '#d9f99d'
                   : 'transparent',
-                color: activeTab === tab.id ? 'var(--gold)' : 'var(--text-muted)',
+                color: activeTab === tab.id ? '#65a30d' : 'var(--text-muted)',
                 fontSize: '13px',
                 fontWeight: activeTab === tab.id ? 700 : 400,
                 cursor: 'pointer',
@@ -121,13 +121,13 @@ export default function SeasonReasoning({ data, season }: Props) {
                 alignItems: 'center',
                 gap: '3px',
                 fontFamily: 'Noto Sans KR, sans-serif',
-                outline: activeTab === tab.id ? '1px solid rgba(212,175,55,0.25)' : 'none',
+                outline: activeTab === tab.id ? '1px solid #a3e635' : 'none',
               }}
             >
               <span style={{ fontSize: '18px' }}>{tab.icon}</span>
               <span>{tab.label}</span>
               {activeTab === tab.id && (
-                <span style={{ fontSize: '10px', color: 'rgba(212,175,55,0.6)', fontWeight: 400 }}>
+                <span style={{ fontSize: '10px', color: '#65a30d', fontWeight: 400 }}>
                   {tab.desc}
                 </span>
               )}
@@ -146,12 +146,12 @@ export default function SeasonReasoning({ data, season }: Props) {
             style={{
               padding: '16px 18px',
               borderRadius: '12px',
-              background: 'rgba(212,175,55,0.03)',
-              border: '1px solid rgba(212,175,55,0.1)',
+              background: '#fafaf9',
+              border: '1px solid #ecfccb',
               minHeight: '100px',
             }}
           >
-            <p style={{ fontSize: '11px', color: 'rgba(212,175,55,0.7)', marginBottom: '10px', fontWeight: 700, letterSpacing: '1px' }}>
+            <p style={{ fontSize: '11px', color: '#65a30d', marginBottom: '10px', fontWeight: 700, letterSpacing: '1px' }}>
               {TABS.find((t) => t.id === activeTab)?.icon}{' '}
               {TABS.find((t) => t.id === activeTab)?.desc}
             </p>

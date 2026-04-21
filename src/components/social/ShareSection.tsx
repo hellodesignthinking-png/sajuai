@@ -21,7 +21,7 @@ const SEASON_LABEL: Record<CareerSeason, string> = {
 const SEASON_COLOR: Record<CareerSeason, string> = {
   spring: '#4ade80',
   summer: '#f97316',
-  autumn: '#D4AF37',
+  autumn: '#84cc16',
   winter: '#60a5fa',
 };
 
@@ -74,7 +74,7 @@ async function generateShareCard(
   if (!ctx) throw new Error('Canvas 2D context를 생성할 수 없습니다.');
 
   const FONT = '"Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
-  const GOLD = '#D4AF37';
+  const GOLD = '#84cc16';
   const SEASON_C = SEASON_COLOR[season];
 
   // ── Background
@@ -83,7 +83,7 @@ async function generateShareCard(
 
   // ── Gradient overlay
   const grad = ctx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, 'rgba(212,175,55,0.10)');
+  grad.addColorStop(0, 'rgba(132,204,22,0.10)');
   grad.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
@@ -301,15 +301,15 @@ export default function ShareSection({ result, userInput, peakYear }: Props) {
       <div
         className="card"
         style={{
-          background: 'linear-gradient(135deg, rgba(212,175,55,0.05) 0%, rgba(0,0,0,0) 100%)',
-          border: '1px solid rgba(212,175,55,0.22)',
+          background: 'linear-gradient(135deg, #f7fee7 0%, rgba(0,0,0,0) 100%)',
+          border: '1px solid rgba(132,204,22,0.22)',
           padding: '24px',
         }}
       >
         {/* Card preview */}
         <div
           style={{
-            background: '#0a0a0a',
+            background: 'var(--bg)',
             border: '1px solid #1e1e1e',
             borderRadius: '14px',
             padding: '20px 20px 20px 28px',
@@ -349,7 +349,7 @@ export default function ShareSection({ result, userInput, peakYear }: Props) {
           <p
             style={{
               fontSize: '10px',
-              color: 'var(--gold)',
+              color: '#65a30d',
               letterSpacing: '3px',
               marginBottom: '8px',
               fontWeight: 700,
@@ -394,7 +394,7 @@ export default function ShareSection({ result, userInput, peakYear }: Props) {
             style={{
               fontSize: '40px',
               fontWeight: 900,
-              color: 'var(--gold)',
+              color: '#65a30d',
               lineHeight: 1.1,
               marginBottom: '4px',
             }}
@@ -429,10 +429,10 @@ export default function ShareSection({ result, userInput, peakYear }: Props) {
           style={{
             width: '100%',
             padding: '13px',
-            background: generating ? 'var(--border)' : 'rgba(212,175,55,0.1)',
-            border: `1px solid ${generating ? 'var(--border)' : 'rgba(212,175,55,0.3)'}`,
+            background: generating ? 'var(--border)' : '#ecfccb',
+            border: `1px solid ${generating ? 'var(--border)' : '#84cc16'}`,
             borderRadius: '10px',
-            color: generating ? 'var(--text-muted)' : 'var(--gold)',
+            color: generating ? 'var(--text-muted)' : '#65a30d',
             fontSize: '14px',
             fontWeight: 700,
             cursor: generating ? 'default' : 'pointer',
@@ -473,7 +473,7 @@ export default function ShareSection({ result, userInput, peakYear }: Props) {
             style={{
               fontSize: '18px',
               fontWeight: 900,
-              color: shareCount >= 3 ? 'var(--gold)' : 'var(--text-muted)',
+              color: shareCount >= 3 ? '#65a30d' : 'var(--text-muted)',
             }}
           >
             {Math.min(shareCount, 3)}/3
@@ -626,13 +626,13 @@ export default function ShareSection({ result, userInput, peakYear }: Props) {
             style={{
               marginTop: '16px',
               padding: '14px 18px',
-              background: 'rgba(212,175,55,0.08)',
-              border: '1px solid rgba(212,175,55,0.28)',
+              background: '#ecfccb',
+              border: '1px solid rgba(132,204,22,0.28)',
               borderRadius: '12px',
               textAlign: 'center',
             }}
           >
-            <p style={{ fontSize: '15px', color: 'var(--gold)', fontWeight: 700 }}>
+            <p style={{ fontSize: '15px', color: '#65a30d', fontWeight: 700 }}>
               ✨ 덕 전파자 챌린지 완료!
             </p>
             <p

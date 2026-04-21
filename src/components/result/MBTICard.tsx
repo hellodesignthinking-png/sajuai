@@ -28,7 +28,7 @@ export default function MBTICard({ data }: Props) {
               style={{
                 fontSize: '18px',
                 fontWeight: 900,
-                color: 'var(--gold)',
+                color: '#65a30d',
               }}
             >
               {data.type}
@@ -46,8 +46,8 @@ export default function MBTICard({ data }: Props) {
           {/* Career Synergy */}
           <div
             style={{
-              background: 'rgba(212,175,55,0.06)',
-              border: '1px solid rgba(212,175,55,0.15)',
+              background: '#f7fee7',
+              border: '1px solid #d9f99d',
               borderRadius: '10px',
               padding: '14px 16px',
             }}
@@ -55,7 +55,7 @@ export default function MBTICard({ data }: Props) {
             <p
               style={{
                 fontSize: '12px',
-                color: 'var(--gold)',
+                color: '#65a30d',
                 fontWeight: 600,
                 marginBottom: '8px',
                 letterSpacing: '0.5px',

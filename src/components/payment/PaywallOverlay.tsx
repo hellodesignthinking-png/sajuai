@@ -108,14 +108,14 @@ export default function PaywallOverlay({ children }: Props) {
             width: '48px',
             height: '48px',
             borderRadius: '50%',
-            background: 'rgba(212,175,55,0.12)',
-            border: '1px solid rgba(212,175,55,0.35)',
+            background: '#ecfccb',
+            border: '1px solid #84cc16',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          <Lock size={20} color="var(--gold)" />
+          <Lock size={20} color="#65a30d" />
         </div>
         <button
           onClick={openPaymentModal}

@@ -133,7 +133,7 @@ export default function Admin() {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
           <div>
-            <span style={{ fontSize: '11px', letterSpacing: '3px', color: 'var(--gold)', textTransform: 'uppercase' }}>
+            <span style={{ fontSize: '11px', letterSpacing: '3px', color: '#65a30d', textTransform: 'uppercase' }}>
               Admin Dashboard
             </span>
             <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text)', marginTop: '4px' }}>
@@ -158,7 +158,7 @@ export default function Admin() {
           ].map((kpi, i) => (
             <div key={i} className="card" style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '28px', marginBottom: '8px' }}>{kpi.icon}</div>
-              <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--gold)', marginBottom: '4px' }}>
+              <div style={{ fontSize: '28px', fontWeight: 800, color: '#65a30d', marginBottom: '4px' }}>
                 {kpi.value}
               </div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{kpi.label}</div>
@@ -276,7 +276,7 @@ export default function Admin() {
                   {[...stats.logs].reverse().slice(0, 20).map((log, i) => (
                     <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                       <td style={{ padding: '8px 12px', color: 'var(--text-muted)' }}>{log.time}</td>
-                      <td style={{ padding: '8px 12px', color: 'var(--gold)' }}>{log.mbti}</td>
+                      <td style={{ padding: '8px 12px', color: '#65a30d' }}>{log.mbti}</td>
                       <td style={{ padding: '8px 12px', color: 'var(--text)' }}>{log.gender === 'male' ? '남' : '여'}</td>
                       <td style={{ padding: '8px 12px', color: 'var(--text)' }}>{log.birthDecade}</td>
                     </tr>

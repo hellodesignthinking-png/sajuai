@@ -7,13 +7,13 @@ export default function LanguageToggle() {
     <button
       onClick={() => setLang(lang === 'ko' ? 'en' : 'ko')}
       style={{
-        background: 'rgba(212,175,55,0.1)',
-        border: '1px solid rgba(212,175,55,0.3)',
+        background: '#ecfccb',
+        border: '1px solid #84cc16',
         borderRadius: '20px',
         padding: '5px 12px',
         fontSize: '12px',
         fontWeight: 700,
-        color: 'var(--gold)',
+        color: '#65a30d',
         cursor: 'pointer',
         letterSpacing: '1px',
         transition: 'all 0.2s',

@@ -113,7 +113,7 @@ function AuthButton({
       >
         <span style={{
           width: '22px', height: '22px', borderRadius: '50%',
-          background: 'linear-gradient(135deg, var(--gold-dark), var(--gold))',
+          background: 'linear-gradient(135deg, #65a30d, #65a30d)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: '11px', color: '#000', fontWeight: 800,
         }}>
@@ -323,14 +323,14 @@ function AppInner() {
                 <div className="no-print" style={{
                   position: 'fixed', top: '16px', right: '16px', zIndex: 1000,
                   background: isValidating ? 'rgba(0,0,0,0.7)' : 'rgba(20,20,20,0.95)',
-                  border: `1px solid ${validation && !validation.validated ? 'rgba(239,68,68,0.4)' : 'rgba(212,175,55,0.4)'}`,
+                  border: `1px solid ${validation && !validation.validated ? 'rgba(239,68,68,0.4)' : '#84cc16'}`,
                   borderRadius: '20px', padding: '6px 14px',
                   fontSize: '12px',
                   color: isValidating
                     ? 'var(--text-muted)'
                     : validation && !validation.validated
                     ? '#f87171'
-                    : 'var(--gold)',
+                    : '#65a30d',
                   backdropFilter: 'blur(8px)',
                   display: 'flex', alignItems: 'center', gap: '6px',
                 }}>

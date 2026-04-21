@@ -917,7 +917,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                     border: '1px solid rgba(239,68,68,0.2)',
                     borderRadius: '10px',
                   }}>
-                    <p style={{ fontSize: '11px', color: '#f87171', fontWeight: 700, marginBottom: '10px', letterSpacing: '1px' }}>
+                    <p style={{ fontSize: '11px', color: '#e11d48', fontWeight: 700, marginBottom: '10px', letterSpacing: '1px' }}>
                       🗑 버려야 할 습관
                     </p>
                     <ul style={{ paddingLeft: '18px', margin: 0, display: 'grid', gap: '6px' }}>
@@ -932,7 +932,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                     border: '1px solid rgba(74,222,128,0.2)',
                     borderRadius: '10px',
                   }}>
-                    <p style={{ fontSize: '11px', color: '#4ade80', fontWeight: 700, marginBottom: '10px', letterSpacing: '1px' }}>
+                    <p style={{ fontSize: '11px', color: '#16a34a', fontWeight: 700, marginBottom: '10px', letterSpacing: '1px' }}>
                       ⚡ 취해야 할 에너지
                     </p>
                     <ul style={{ paddingLeft: '18px', margin: 0, display: 'grid', gap: '6px' }}>
@@ -954,7 +954,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                     border: '1px solid var(--border)',
                     borderRadius: '10px',
                   }}>
-                    <p style={{ fontSize: '11px', color: 'var(--gold)', fontWeight: 700, marginBottom: '6px', letterSpacing: '1px' }}>
+                    <p style={{ fontSize: '11px', color: '#65a30d', fontWeight: 700, marginBottom: '6px', letterSpacing: '1px' }}>
                       {r.label}
                     </p>
                     <p style={{ fontSize: '13px', lineHeight: 1.8, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>

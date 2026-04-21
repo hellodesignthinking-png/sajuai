@@ -5,7 +5,7 @@ interface Props {
 }
 
 function ScoreBadge({ score }: { score: number }) {
-  const color = score >= 80 ? '#4ade80' : score >= 65 ? '#D4AF37' : '#f87171';
+  const color = score >= 80 ? '#4ade80' : score >= 65 ? '#84cc16' : '#f87171';
   return (
     <span
       style={{
@@ -62,7 +62,7 @@ export default function YearlyStrategy({ data }: Props) {
                   style={{
                     fontSize: '13px',
                     fontWeight: 700,
-                    color: 'var(--gold)',
+                    color: '#65a30d',
                     marginBottom: '3px',
                   }}
                 >
@@ -80,8 +80,8 @@ export default function YearlyStrategy({ data }: Props) {
       {/* D-Day */}
       <div
         style={{
-          background: 'linear-gradient(135deg, rgba(212,175,55,0.06), rgba(212,175,55,0.02))',
-          border: '1px solid rgba(212,175,55,0.25)',
+          background: 'linear-gradient(135deg, #f7fee7, #fafaf9)',
+          border: '1px solid #a3e635',
           borderRadius: '16px',
           padding: '20px 24px',
           display: 'flex',
@@ -95,7 +95,7 @@ export default function YearlyStrategy({ data }: Props) {
             style={{
               fontSize: '11px',
               letterSpacing: '2px',
-              color: 'var(--gold)',
+              color: '#65a30d',
               marginBottom: '4px',
             }}
           >
@@ -136,7 +136,7 @@ export default function YearlyStrategy({ data }: Props) {
               단기: '#f97316',
               장기: '#4ade80',
             };
-            const color = badgeColors[m.type] || 'var(--gold)';
+            const color = badgeColors[m.type] || '#65a30d';
             return (
               <div
                 key={i}

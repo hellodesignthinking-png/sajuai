@@ -159,9 +159,9 @@ export default function OracleChat({ open, onClose, result, userInput }: Props) 
             maxWidth: '560px',
             height: '82vh',
             maxHeight: '720px',
-            background: 'linear-gradient(180deg, #0b0a08 0%, #0a0905 100%)',
+            background: '#fff',
             borderRadius: '24px 24px 0 0',
-            border: '1px solid rgba(212,175,55,0.2)',
+            border: '1px solid #d9f99d',
             borderBottom: 'none',
             display: 'flex',
             flexDirection: 'column',
@@ -172,7 +172,7 @@ export default function OracleChat({ open, onClose, result, userInput }: Props) 
           <div
             style={{
               padding: '18px 20px',
-              borderBottom: '1px solid rgba(212,175,55,0.15)',
+              borderBottom: '1px solid #d9f99d',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
@@ -180,7 +180,7 @@ export default function OracleChat({ open, onClose, result, userInput }: Props) 
             }}
           >
             <div>
-              <p style={{ fontSize: '10px', letterSpacing: '3px', color: 'var(--gold)', fontWeight: 700 }}>
+              <p style={{ fontSize: '10px', letterSpacing: '3px', color: '#65a30d', fontWeight: 700 }}>
                 MASTER ORACLE
               </p>
               <h2 style={{ fontSize: '17px', fontWeight: 800, marginTop: '4px' }}>
@@ -191,7 +191,7 @@ export default function OracleChat({ open, onClose, result, userInput }: Props) 
               onClick={onClose}
               style={{
                 width: '34px', height: '34px', borderRadius: '50%',
-                background: 'rgba(255,255,255,0.06)',
+                background: '#f5f5f4',
                 border: 'none', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 color: 'var(--text-muted)',
@@ -222,9 +222,9 @@ export default function OracleChat({ open, onClose, result, userInput }: Props) 
                   padding: '10px 14px',
                   borderRadius: m.role === 'user' ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
                   background: m.role === 'user'
-                    ? 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.10))'
-                    : 'rgba(255,255,255,0.04)',
-                  border: `1px solid ${m.role === 'user' ? 'rgba(212,175,55,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                    ? 'linear-gradient(135deg, #d9f99d, rgba(132,204,22,0.10))'
+                    : '#fafaf9',
+                  border: `1px solid ${m.role === 'user' ? '#84cc16' : 'rgba(255,255,255,0.08)'}`,
                   fontSize: '14px',
                   lineHeight: 1.65,
                   color: 'var(--text)',
@@ -240,8 +240,8 @@ export default function OracleChat({ open, onClose, result, userInput }: Props) 
                   alignSelf: 'flex-start',
                   padding: '10px 14px',
                   borderRadius: '14px 14px 14px 4px',
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: '#fafaf9',
+                  border: '1px solid var(--border)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
@@ -258,8 +258,8 @@ export default function OracleChat({ open, onClose, result, userInput }: Props) 
                 alignSelf: 'center',
                 padding: '8px 12px',
                 fontSize: '12px',
-                color: '#f87171',
-                background: 'rgba(239,68,68,0.08)',
+                color: '#e11d48',
+                background: '#ffe4e6',
                 border: '1px solid rgba(239,68,68,0.2)',
                 borderRadius: '10px',
               }}>
@@ -272,7 +272,7 @@ export default function OracleChat({ open, onClose, result, userInput }: Props) 
           <div
             style={{
               padding: '12px 16px 18px',
-              borderTop: '1px solid rgba(212,175,55,0.12)',
+              borderTop: '1px solid #ecfccb',
               flexShrink: 0,
               display: 'flex',
               gap: '10px',
@@ -293,7 +293,7 @@ export default function OracleChat({ open, onClose, result, userInput }: Props) 
                 padding: '10px 12px',
                 fontSize: '14px',
                 lineHeight: 1.5,
-                background: 'rgba(255,255,255,0.04)',
+                background: '#fafaf9',
                 border: '1px solid rgba(255,255,255,0.12)',
                 borderRadius: '12px',
                 color: 'var(--text)',
@@ -310,7 +310,7 @@ export default function OracleChat({ open, onClose, result, userInput }: Props) 
                 borderRadius: '12px',
                 background: input.trim() && !sending
                   ? 'linear-gradient(135deg, #D4AF37, #b8882a)'
-                  : 'rgba(255,255,255,0.06)',
+                  : '#f5f5f4',
                 color: input.trim() && !sending ? '#000' : 'var(--text-muted)',
                 border: 'none',
                 cursor: input.trim() && !sending ? 'pointer' : 'not-allowed',

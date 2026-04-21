@@ -33,9 +33,9 @@ const SEASON_CONFIG: Record<CareerSeason, {
   autumn: {
     icon: '🍂',
     label: '가을',
-    color: '#D4AF37',
-    gradientBg: 'linear-gradient(135deg, rgba(212,175,55,0.14) 0%, rgba(212,175,55,0.04) 60%, transparent 100%)',
-    borderColor: 'rgba(212,175,55,0.35)',
+    color: '#84cc16',
+    gradientBg: 'linear-gradient(135deg, #ecfccb 0%, #f7fee7 60%, transparent 100%)',
+    borderColor: '#84cc16',
     desc: '수확과 결실의 시기 · 마무리와 정리의 계절',
   },
   winter: {

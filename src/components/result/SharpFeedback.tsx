@@ -25,7 +25,7 @@ export default function SharpFeedback({ feedback }: Props) {
           width: '200px',
           height: '200px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, #ecfccb 0%, transparent 70%)',
           pointerEvents: 'none',
         }}
       />
@@ -40,7 +40,7 @@ export default function SharpFeedback({ feedback }: Props) {
           ⚔️
         </motion.div>
         <div>
-          <p style={{ fontSize: '11px', letterSpacing: '3px', color: 'var(--gold)', fontWeight: 600 }}>
+          <p style={{ fontSize: '11px', letterSpacing: '3px', color: '#65a30d', fontWeight: 600 }}>
             책사의 한마디
           </p>
           <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
@@ -53,7 +53,7 @@ export default function SharpFeedback({ feedback }: Props) {
       <div
         style={{
           fontSize: '60px',
-          color: 'rgba(212,175,55,0.15)',
+          color: '#d9f99d',
           lineHeight: 1,
           marginBottom: '-10px',
           fontFamily: 'Georgia, serif',
@@ -80,7 +80,7 @@ export default function SharpFeedback({ feedback }: Props) {
       <div
         style={{
           height: '1px',
-          background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent)',
+          background: 'linear-gradient(90deg, transparent, #84cc16, transparent)',
           margin: '20px 0 16px',
         }}
       />
@@ -89,7 +89,7 @@ export default function SharpFeedback({ feedback }: Props) {
       <p
         style={{
           fontSize: '13px',
-          color: 'var(--gold)',
+          color: '#65a30d',
           textAlign: 'right',
           fontFamily: 'Noto Serif KR, serif',
         }}

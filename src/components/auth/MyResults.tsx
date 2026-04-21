@@ -63,14 +63,14 @@ export default function MyResults({ onClose, onRestore }: MyResultsProps) {
         onClick={(e) => e.stopPropagation()}
         style={{
           width: '100%', maxWidth: '600px', marginTop: '40px', marginBottom: '40px',
-          background: '#111', border: '1px solid #222',
+          background: '#fff', border: '1px solid var(--border)',
           borderRadius: '16px', padding: '28px 24px',
         }}
       >
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <div>
-            <p style={{ fontSize: '11px', letterSpacing: '3px', color: 'var(--gold)', marginBottom: '4px' }}>AI 책사</p>
+            <p style={{ fontSize: '11px', letterSpacing: '3px', color: '#65a30d', marginBottom: '4px' }}>AI 책사</p>
             <h2 style={{ fontSize: '20px', fontWeight: 700 }}>📁 내 분석 기록</h2>
           </div>
           <button
@@ -91,7 +91,7 @@ export default function MyResults({ onClose, onRestore }: MyResultsProps) {
           <div style={{
             padding: '14px', borderRadius: '10px',
             background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
-            fontSize: '13px', color: '#f87171',
+            fontSize: '13px', color: '#e11d48',
           }}>
             {error}
           </div>
@@ -117,7 +117,7 @@ export default function MyResults({ onClose, onRestore }: MyResultsProps) {
                 <div
                   key={r.id}
                   style={{
-                    background: '#0d0d0d', border: '1px solid var(--border)',
+                    background: 'var(--bg)', border: '1px solid var(--border)',
                     borderRadius: '12px', padding: '16px',
                   }}
                 >
@@ -130,8 +130,8 @@ export default function MyResults({ onClose, onRestore }: MyResultsProps) {
                         </span>
                         <span style={{
                           fontSize: '11px', padding: '2px 8px',
-                          background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.2)',
-                          borderRadius: '20px', color: 'var(--gold)',
+                          background: '#ecfccb', border: '1px solid #d9f99d',
+                          borderRadius: '20px', color: '#65a30d',
                         }}>
                           {input.mbti}
                         </span>
@@ -145,7 +145,7 @@ export default function MyResults({ onClose, onRestore }: MyResultsProps) {
                         onClick={() => { onRestore(input, r.result as AnalysisResult); onClose(); }}
                         style={{
                           padding: '6px 14px', fontSize: '13px', fontWeight: 600,
-                          background: 'linear-gradient(135deg, var(--gold-dark), var(--gold))',
+                          background: 'linear-gradient(135deg, #65a30d, #65a30d)',
                           border: 'none', borderRadius: '8px', color: '#000', cursor: 'pointer',
                         }}
                       >

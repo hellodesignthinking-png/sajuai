@@ -7,9 +7,9 @@ interface Props {
 }
 
 const SEASON_META: Record<CareerSeason, { icon: string; label: string; color: string; bg: string }> = {
-  spring: { icon: '🌱', label: '봄', color: '#4ade80', bg: 'rgba(74,222,128,0.08)' },
+  spring: { icon: '🌱', label: '봄', color: '#16a34a', bg: 'rgba(74,222,128,0.08)' },
   summer: { icon: '🔥', label: '여름', color: '#f97316', bg: 'rgba(249,115,22,0.08)' },
-  autumn: { icon: '🍂', label: '가을', color: '#D4AF37', bg: 'rgba(212,175,55,0.1)' },
+  autumn: { icon: '🍂', label: '가을', color: '#84cc16', bg: '#ecfccb' },
   winter: { icon: '❄️', label: '겨울', color: '#60a5fa', bg: 'rgba(96,165,250,0.08)' },
 };
 
@@ -38,7 +38,7 @@ export default function SeasonCycle({ cycle, peakYear }: Props) {
           커리어 12년 주기
         </p>
         <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-          Top 전성기 <strong style={{ color: 'var(--gold)' }}>{peakYear}년</strong>을 가을(황금기)로 역산한 12년 사이클
+          Top 전성기 <strong style={{ color: '#65a30d' }}>{peakYear}년</strong>을 가을(황금기)로 역산한 12년 사이클
         </p>
       </div>
 

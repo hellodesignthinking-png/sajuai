@@ -25,7 +25,7 @@ const MISSION_CONFIG: Record<'crisis' | 'person' | 'skill', {
   },
   skill: {
     icon: '🎯',
-    color: '#4ade80',
+    color: '#16a34a',
     bg: 'rgba(74,222,128,0.07)',
     label: '배워야 할 것',
   },
@@ -39,8 +39,8 @@ export default function GrowthMissions({ missions }: Props) {
       {missions.map((mission, i) => {
         const config = MISSION_CONFIG[mission.type] ?? {
           icon: '🎯',
-          color: 'var(--gold)',
-          bg: 'rgba(212,175,55,0.07)',
+          color: '#65a30d',
+          bg: '#f7fee7',
           label: mission.label,
         };
 
