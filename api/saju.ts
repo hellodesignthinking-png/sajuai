@@ -235,30 +235,30 @@ Return ONLY valid JSON matching this shape (CORE analysis only):
   }
   return `${buildSharedHeaderKo(input, calc, ctx)}
 
-반드시 아래 JSON만 반환 (CORE 분석 — 각 필드에서 일간·격국·대운을 반드시 한 문장 안에서 연결하라):
+반드시 아래 JSON만 반환 (CORE 분석 — 각 필드에서 일간·격국·대운을 한 문장 안에서 연결):
 {
-  "saju_summary": "5-7문장. [구조] 일간 ${calc.dayMaster.heavenly}(${calc.dayMaster.element})의 본질 → 월지·지장간 관계로 도출되는 격국 → 현재 ${calc.careerSeason} 대운이 원국에 미치는 영향. 이 3축을 연결해 서술하고 오행 균형·용신·기신을 근거로 제시.",
-  "yearly_fortune": "올해(${currentYear}) 운세 5-7문장. 세운 천간지지가 원국·대운과 맺는 관계. 조심할 달·기회의 달을 월 숫자로 명시. 금전·건강·대인운 각각.",
-  "sharp_feedback": "5-7문장. 일간×격국×대운이 만나 생기는 핵심 커리어 긴장을 직격. 지금 전문 분야(${ctx.specialtyText})·현재 상황(${ctx.situationText})에서 가장 큰 문제점 + 구체적 해결책 + 기한(YYYY-MM) 제시.",
+  "saju_summary": "4-5문장. 일간 ${calc.dayMaster.heavenly}(${calc.dayMaster.element}) 본질 → 월지·지장간으로 도출되는 격국 → ${calc.careerSeason} 대운의 영향. 3축을 연결해 서술 + 오행 균형·용신·기신 근거.",
+  "yearly_fortune": "${currentYear}년 운세 4-5문장. 세운 × 원국·대운 관계. 조심할 달·기회의 달을 월 숫자로 명시. 금전·건강·대인운.",
+  "sharp_feedback": "4-5문장. 일간×격국×대운 긴장 직격 + 전문 분야(${ctx.specialtyText})·현재 상황(${ctx.situationText}) 가장 큰 문제점 + 구체 해결책 + 기한(YYYY-MM).",
   "current_season": "${calc.careerSeason}",
-  "season_details": {"season":"${calc.careerSeason}","year_range":"${ctx.yearRange}","advice":"용신 활성화 3-5문장. 행동·시기 포함.","warning":"기신 위험 경고 3문장. 구체적으로 피해야 할 행동과 시기."},
+  "season_details": {"season":"${calc.careerSeason}","year_range":"${ctx.yearRange}","advice":"용신 활성화 3문장. 행동·시기.","warning":"기신 위험 2문장. 피해야 할 행동·시기."},
   "top5_golden_years": [
-    {"year": ${calc.goldenYears[0]?.year ?? currentYear + 3}, "score": ${calc.goldenYears[0]?.score ?? 90}, "reason": "대운+세운 오행 근거 3문장. 어떤 분야에서 기회가 오는지, 무엇을 미리 준비해야 하는지."},
-    {"year": ${calc.goldenYears[1]?.year ?? currentYear + 5}, "score": ${calc.goldenYears[1]?.score ?? 85}, "reason": "대운 근거 3문장"},
-    {"year": ${calc.goldenYears[2]?.year ?? currentYear + 8}, "score": ${calc.goldenYears[2]?.score ?? 80}, "reason": "대운 근거 3문장"},
-    {"year": ${calc.goldenYears[3]?.year ?? currentYear + 12}, "score": ${calc.goldenYears[3]?.score ?? 75}, "reason": "대운 근거 3문장"},
-    {"year": ${calc.goldenYears[4]?.year ?? currentYear + 18}, "score": ${calc.goldenYears[4]?.score ?? 70}, "reason": "대운 근거 3문장"}
+    {"year": ${calc.goldenYears[0]?.year ?? currentYear + 3}, "score": ${calc.goldenYears[0]?.score ?? 90}, "reason": "대운+세운 오행 근거 2문장. 어떤 기회·무엇을 준비할지."},
+    {"year": ${calc.goldenYears[1]?.year ?? currentYear + 5}, "score": ${calc.goldenYears[1]?.score ?? 85}, "reason": "2문장"},
+    {"year": ${calc.goldenYears[2]?.year ?? currentYear + 8}, "score": ${calc.goldenYears[2]?.score ?? 80}, "reason": "2문장"},
+    {"year": ${calc.goldenYears[3]?.year ?? currentYear + 12}, "score": ${calc.goldenYears[3]?.score ?? 75}, "reason": "2문장"},
+    {"year": ${calc.goldenYears[4]?.year ?? currentYear + 18}, "score": ${calc.goldenYears[4]?.score ?? 70}, "reason": "2문장"}
   ],
   "life_cycle_scores": [
-    {"age_range": "20대", "score": <20대 대운 × 용신/기신 계산 0-99>, "description": "20대 대운 오행 + 커리어 영향 + 행동 지침 3문장"},
-    {"age_range": "30대", "score": <계산>, "description": "3문장"},
-    {"age_range": "40대", "score": <계산>, "description": "3문장"},
-    {"age_range": "50대", "score": <계산>, "description": "3문장"},
-    {"age_range": "60대", "score": <계산>, "description": "3문장"}
+    {"age_range": "20대", "score": <20대 대운 × 용신/기신 계산 0-99>, "description": "20대 대운 오행 + 커리어 영향 2문장"},
+    {"age_range": "30대", "score": <계산>, "description": "2문장"},
+    {"age_range": "40대", "score": <계산>, "description": "2문장"},
+    {"age_range": "50대", "score": <계산>, "description": "2문장"},
+    {"age_range": "60대", "score": <계산>, "description": "2문장"}
   ],
-  "season_reasoning": {"saju_basis": "현재 대운 천간지지 × 일간 관계, 왜 이 계절인지 3-5문장", "overall_reasoning": "종합 결론 3-5문장. 구체적 숫자·연도 포함."},
-  "mbti_integration": {"type": "${ctx.mbtiText}", "career_synergy": "일간+MBTI 시너지 3-5문장. 구체적 직업·분야 포함.", "blind_spot": "일간 그림자 × MBTI 약점 충돌 패턴 3문장."},
-  "gyeokguk": {"name": "월지 본기·지장간 기반 격국명 (정관격·편재격·식신생재격·건록격·양인격 등)", "reasoning": "월지 ${extractChar(calc.fourPillars.month.earthly)} 본기·중기·여기 × 일간 ${calc.dayMaster.heavenly} 관계를 3-5문장 근거 제시.", "implication": "커리어·성격 함의 3-5문장. 장점·함정 포함."}
+  "season_reasoning": {"saju_basis": "현재 대운 × 일간 관계, 왜 이 계절인지 2-3문장", "overall_reasoning": "종합 결론 2-3문장. 숫자·연도 포함."},
+  "mbti_integration": {"type": "${ctx.mbtiText}", "career_synergy": "일간+MBTI 시너지 2-3문장. 직업·분야 포함.", "blind_spot": "그림자 × 약점 충돌 2문장."},
+  "gyeokguk": {"name": "격국명 (정관격·편재격·식신생재격·건록격·양인격 등)", "reasoning": "월지 ${extractChar(calc.fourPillars.month.earthly)} × 일간 ${calc.dayMaster.heavenly} 2-3문장 근거.", "implication": "커리어·성격 함의 2-3문장."}
 }`;
 }
 
@@ -319,14 +319,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (action === 'analyze') {
       if (!input) return res.status(400).json({ error: 'input is required' });
 
-      // Smaller maxOutputTokens — we now make 2 parallel calls, each returns
-      // ~half the fields. 8K is plenty per half and comfortably fits under
-      // Vercel's 60s cap.
-      const model = genAI.getGenerativeModel({
+      // Two parallel calls, each sized for its half. Core has denser text
+      // fields (saju_summary, yearly_fortune, sharp_feedback all 5-7
+      // sentences + 5 top years + 5 life cycles) so needs more headroom
+      // than Deep.
+      const coreModel = genAI.getGenerativeModel({
         model: 'gemini-2.5-flash',
         generationConfig: {
           temperature: 0.7,
-          maxOutputTokens: 8192,
+          maxOutputTokens: 12288,
+          responseMimeType: 'application/json',
+        },
+      });
+      const deepModel = genAI.getGenerativeModel({
+        model: 'gemini-2.5-flash',
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 10240,
           responseMimeType: 'application/json',
         },
       });
@@ -350,6 +359,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Wrap every failure path (API error, safety block, parse error) so we
       // can surface a specific reason instead of a generic 500.
       const callOnce = async (
+        model: any,
         prompt: string,
         label: string,
       ): Promise<{ ok: true; data: any } | { ok: false; reason: string; rawPreview?: string }> => {
@@ -360,8 +370,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             return { ok: true, data: JSON.parse(extractJSON(text)) };
           } catch (parseErr) {
             const msg = (parseErr as Error).message;
-            console.warn(`[api/saju] ${label} parse failed: ${msg} | head: ${text.slice(0, 200)}`);
-            return { ok: false, reason: `${label} JSON parse failed: ${msg}`, rawPreview: text.slice(0, 500) };
+            console.warn(`[api/saju] ${label} parse failed: ${msg} | tail: …${text.slice(-200)}`);
+            return { ok: false, reason: `${label} JSON parse failed: ${msg}`, rawPreview: text.slice(-500) };
           }
         } catch (apiErr) {
           const msg = (apiErr as Error).message || String(apiErr);
@@ -372,8 +382,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       const started = Date.now();
       const [coreRes, deepRes] = await Promise.all([
-        callOnce(corePrompt, 'Core'),
-        callOnce(deepPrompt, 'Deep'),
+        callOnce(coreModel, corePrompt, 'Core'),
+        callOnce(deepModel, deepPrompt, 'Deep'),
       ]);
       const elapsed = Date.now() - started;
       console.log(`[api/saju] analyze finished in ${elapsed}ms | core=${coreRes.ok ? 'ok' : 'FAIL'} deep=${deepRes.ok ? 'ok' : 'FAIL'}`);
