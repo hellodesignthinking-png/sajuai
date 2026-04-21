@@ -347,25 +347,45 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const corePrompt = buildCorePrompt(input, calcResult, currentYear, lang);
       const deepPrompt = buildDeepPrompt(input, calcResult, currentYear, lang);
 
-      const callOnce = async (prompt: string, label: string): Promise<any> => {
-        const result = await model.generateContent(prompt);
-        const text = result.response.text();
+      // Wrap every failure path (API error, safety block, parse error) so we
+      // can surface a specific reason instead of a generic 500.
+      const callOnce = async (
+        prompt: string,
+        label: string,
+      ): Promise<{ ok: true; data: any } | { ok: false; reason: string; rawPreview?: string }> => {
         try {
-          return JSON.parse(extractJSON(text));
-        } catch (parseErr) {
-          console.warn(`[api/saju] ${label} parse failed:`, (parseErr as Error).message);
-          return null;
+          const result = await model.generateContent(prompt);
+          const text = result.response.text();
+          try {
+            return { ok: true, data: JSON.parse(extractJSON(text)) };
+          } catch (parseErr) {
+            const msg = (parseErr as Error).message;
+            console.warn(`[api/saju] ${label} parse failed: ${msg} | head: ${text.slice(0, 200)}`);
+            return { ok: false, reason: `${label} JSON parse failed: ${msg}`, rawPreview: text.slice(0, 500) };
+          }
+        } catch (apiErr) {
+          const msg = (apiErr as Error).message || String(apiErr);
+          console.error(`[api/saju] ${label} API failed: ${msg}`);
+          return { ok: false, reason: `${label} Gemini call failed: ${msg}` };
         }
       };
 
-      // Run both halves in parallel — total wall time ≈ slowest single call.
-      const [coreParsed, deepParsed] = await Promise.all([
+      const started = Date.now();
+      const [coreRes, deepRes] = await Promise.all([
         callOnce(corePrompt, 'Core'),
         callOnce(deepPrompt, 'Deep'),
       ]);
-      if (!coreParsed) {
-        return res.status(500).json({ error: '분석 결과 생성에 실패했습니다. 다시 시도해주세요.' });
+      const elapsed = Date.now() - started;
+      console.log(`[api/saju] analyze finished in ${elapsed}ms | core=${coreRes.ok ? 'ok' : 'FAIL'} deep=${deepRes.ok ? 'ok' : 'FAIL'}`);
+
+      if (!coreRes.ok) {
+        return res.status(500).json({
+          error: '분석 결과 생성에 실패했습니다. 다시 시도해주세요.',
+          debug: { core: coreRes.reason, deep: deepRes.ok ? 'ok' : deepRes.reason, elapsed_ms: elapsed, rawPreview: coreRes.rawPreview ?? null },
+        });
       }
+      const coreParsed = coreRes.data;
+      const deepParsed = deepRes.ok ? deepRes.data : null;
       // Merge core + deep; fields don't overlap between the two prompts.
       const basicParsed: any = { ...coreParsed, ...(deepParsed ?? {}) };
 
