@@ -35,6 +35,12 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // Force the new SW to take over immediately instead of waiting for
+        // all tabs to close. Avoids "stale bundle serves old code" bugs
+        // (e.g. the Supabase-URL-baked-in issue that blocked admin login).
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
           {
@@ -62,6 +68,14 @@ export default defineConfig({
   server: {
     port: 3000,
     host: '0.0.0.0',
+    // Proxy /api/* to the local dev-api-server (node dev-api-server.js) in development.
+    // In production on Vercel, /api/* is served directly by serverless functions.
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+    },
   },
   resolve: {
     alias: {

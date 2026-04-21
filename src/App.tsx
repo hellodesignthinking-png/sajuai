@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { UserInput, AnalysisResult } from './types';
 import { useAnalysis } from './hooks/useAnalysis';
@@ -83,6 +84,7 @@ function AuthButton({
   if (!user) {
     return (
       <button
+        className="no-print"
         onClick={onOpenAuth}
         style={{
           position: 'fixed', top: '16px', left: '16px', zIndex: 1000,
@@ -98,7 +100,7 @@ function AuthButton({
   }
 
   return (
-    <div style={{ position: 'fixed', top: '16px', left: '16px', zIndex: 1000 }}>
+    <div className="no-print" style={{ position: 'fixed', top: '16px', left: '16px', zIndex: 1000 }}>
       <button
         onClick={() => setMenuOpen((v) => !v)}
         style={{
@@ -166,7 +168,11 @@ function AppInner() {
   const [validation, setValidation] = useState<CrossValidationResult | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [lang, setLang] = useState<Lang>(() => {
-    return (localStorage.getItem('sajuai_lang') as Lang) ?? 'ko';
+    try {
+      return (localStorage.getItem('sajuai_lang') as Lang) ?? 'ko';
+    } catch {
+      return 'ko';
+    }
   });
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [myResultsOpen, setMyResultsOpen] = useState(false);
@@ -178,7 +184,7 @@ function AppInner() {
 
   // Persist language choice
   useEffect(() => {
-    localStorage.setItem('sajuai_lang', lang);
+    try { localStorage.setItem('sajuai_lang', lang); } catch { /* storage disabled */ }
   }, [lang]);
 
   // Request notification permission after successful analysis
@@ -238,11 +244,17 @@ function AppInner() {
         .then((data) => {
           if (data.success) {
             markAsPaid();
-            const payments = parseInt(localStorage.getItem('sajuai_total_payments') ?? '0', 10) + 1;
-            localStorage.setItem('sajuai_total_payments', String(payments));
+            try {
+              const payments = parseInt(localStorage.getItem('sajuai_total_payments') ?? '0', 10) + 1;
+              localStorage.setItem('sajuai_total_payments', String(payments));
+            } catch { /* storage disabled */ }
           }
         })
-        .catch(() => {
+        .catch((err) => {
+          // Only mark paid when Toss redirected here with valid params — payment was already
+          // charged on Toss side; we grant access to avoid blocking a paying user due to
+          // a transient server/network error.
+          console.error('[Payment confirm error]', err);
           markAsPaid();
         })
         .finally(() => {
@@ -308,12 +320,17 @@ function AppInner() {
             <motion.div key="result" {...pageTransition}>
               {/* Cross-validation badge */}
               {(isValidating || validation) && (
-                <div style={{
+                <div className="no-print" style={{
                   position: 'fixed', top: '16px', right: '16px', zIndex: 1000,
                   background: isValidating ? 'rgba(0,0,0,0.7)' : 'rgba(20,20,20,0.95)',
-                  border: '1px solid rgba(212,175,55,0.4)',
+                  border: `1px solid ${validation && !validation.validated ? 'rgba(239,68,68,0.4)' : 'rgba(212,175,55,0.4)'}`,
                   borderRadius: '20px', padding: '6px 14px',
-                  fontSize: '12px', color: isValidating ? 'var(--text-muted)' : 'var(--gold)',
+                  fontSize: '12px',
+                  color: isValidating
+                    ? 'var(--text-muted)'
+                    : validation && !validation.validated
+                    ? '#f87171'
+                    : 'var(--gold)',
                   backdropFilter: 'blur(8px)',
                   display: 'flex', alignItems: 'center', gap: '6px',
                 }}>
@@ -396,14 +413,16 @@ function AppInner() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <PaymentProvider>
-          <Routes>
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/*" element={<AppInner />} />
-          </Routes>
-        </PaymentProvider>
-      </AuthProvider>
+      <ErrorBoundary>
+        <AuthProvider>
+          <PaymentProvider>
+            <Routes>
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/*" element={<AppInner />} />
+            </Routes>
+          </PaymentProvider>
+        </AuthProvider>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }

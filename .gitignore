@@ -39,7 +39,6 @@ refactor.py
 setup_synergy.py
 test_gemini.py
 backend_synergy_patch.py
-dev-api-server.js
 *.txt
 *.yaml
 *.js
@@ -48,6 +47,7 @@ dev-api-server.js
 !src/**/*.js
 !*.config.js
 !vercel.json
+!dev-api-server.js
 
 # Build files
 out.json

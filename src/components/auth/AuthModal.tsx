@@ -18,11 +18,21 @@ export default function AuthModal({ onClose }: AuthModalProps) {
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
 
   const configured = isConfigured();
+  // Local admin emails can sign in without Supabase (bypass in AuthContext).
+  const ADMIN_EMAILS = ['taina@ant3na.com'];
+  const isAdminEmail = ADMIN_EMAILS.includes(email.trim().toLowerCase());
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!configured) {
-      setMessage({ type: 'error', text: 'Supabase 환경변수를 설정해주세요.' });
+    // Gate Supabase-dependent flows (signup, password reset, non-admin login)
+    // but let the admin local-bypass through even without Supabase.
+    if (!configured && !(tab === 'login' && isAdminEmail)) {
+      setMessage({
+        type: 'error',
+        text: tab === 'login'
+          ? 'Supabase가 설정되지 않았습니다. 관리자 계정(taina@ant3na.com)으로만 로그인 가능합니다.'
+          : 'Supabase 환경변수를 설정해주세요.',
+      });
       return;
     }
     setLoading(true);
@@ -129,14 +139,18 @@ export default function AuthModal({ onClose }: AuthModalProps) {
             </div>
           )}
 
-          {/* Not configured warning */}
+          {/* Not configured warning — friendlier tone when admin can still log in. */}
           {!configured && (
             <div style={{
               padding: '10px 14px', borderRadius: '10px', marginBottom: '16px',
-              background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
-              fontSize: '12px', color: '#f87171',
+              background: isAdminEmail ? 'rgba(212,175,55,0.08)' : 'rgba(239,68,68,0.08)',
+              border: `1px solid ${isAdminEmail ? 'rgba(212,175,55,0.25)' : 'rgba(239,68,68,0.2)'}`,
+              fontSize: '12px',
+              color: isAdminEmail ? 'var(--gold)' : '#f87171',
             }}>
-              ⚠️ Supabase 환경변수(VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)가 설정되지 않았습니다.
+              {isAdminEmail
+                ? '🔑 관리자 계정 로컬 로그인 모드 (Supabase 미설정)'
+                : '⚠️ Supabase 미설정 — 관리자 계정(taina@ant3na.com)으로만 로그인 가능합니다.'}
             </div>
           )}
 

@@ -25,11 +25,11 @@ function genYears() {
   return years;
 }
 
-const TOTAL_STEPS = 2;
+const TOTAL_STEPS = 3;
 
 export default function InputForm({ onSubmit, onBack }: InputFormProps) {
   const { t, lang } = useLang();
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [form, setForm] = useState<Partial<UserInput>>({
     birthYear: 1990,
     birthMonth: 1,
@@ -39,6 +39,8 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
     birthPlace: '',
     mbti: '모름',
     gender: 'male',
+    specialty: '',
+    currentSituation: '',
   });
 
   const set = (key: keyof UserInput, value: UserInput[keyof UserInput]) => {
@@ -47,6 +49,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
 
   const handleNext = () => {
     if (step === 1) setStep(2);
+    else if (step === 2) setStep(3);
   };
 
   const handleSubmit = () => {
@@ -171,14 +174,22 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
         >
           {step === 1 ? (
             <span className="gold-text">{t.input.step1Title}</span>
-          ) : (
+          ) : step === 2 ? (
             <span className="gold-text">{t.input.step2Title}</span>
+          ) : (
+            <span className="gold-text">
+              {lang === 'ko' ? '커리어 맥락' : 'Career Context'}
+            </span>
           )}
         </h1>
         <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.6 }}>
           {step === 1
             ? (lang === 'ko' ? '정확할수록 분석이 더 정밀해집니다' : 'More precise input = more accurate analysis')
-            : (lang === 'ko' ? '출생지와 MBTI로 더 깊은 분석이 가능합니다' : 'Birthplace and MBTI enable deeper analysis')}
+            : step === 2
+            ? (lang === 'ko' ? '출생지와 MBTI로 더 깊은 분석이 가능합니다' : 'Birthplace and MBTI enable deeper analysis')
+            : (lang === 'ko'
+                ? '전문 분야와 현재 상황을 알려주면 맞춤형 성장 전략이 나옵니다'
+                : 'Share your field and situation for tailored growth guidance')}
         </p>
       </div>
 
@@ -315,7 +326,7 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                 </p>
               </div>
             </motion.div>
-          ) : (
+          ) : step === 2 ? (
             <motion.div
               key="step2"
               initial={{ opacity: 0, x: 20 }}
@@ -433,26 +444,79 @@ export default function InputForm({ onSubmit, onBack }: InputFormProps) {
                 </button>
               </div>
             </motion.div>
+          ) : (
+            <motion.div
+              key="step3"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* Specialty */}
+              <div style={rowStyle}>
+                <label style={labelStyle as React.CSSProperties}>
+                  <span>💼</span> {lang === 'ko' ? '전문 분야' : 'Specialty / Field'}
+                </label>
+                <input
+                  className="input-field"
+                  type="text"
+                  placeholder={lang === 'ko'
+                    ? '예: UX 디자이너 5년차, 백엔드 개발, 콘텐츠 마케팅'
+                    : 'e.g., UX designer 5yr, backend dev, content marketing'}
+                  value={form.specialty ?? ''}
+                  onChange={(e) => set('specialty', e.target.value)}
+                  maxLength={80}
+                />
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '6px', lineHeight: 1.5 }}>
+                  {lang === 'ko'
+                    ? '전문 분야를 알려주면 그 분야에서의 성장 전략과 네트워킹 조언이 나옵니다'
+                    : 'Sharing your field enables targeted growth and networking guidance'}
+                </p>
+              </div>
+
+              {/* Current Situation */}
+              <div style={rowStyle}>
+                <label style={labelStyle as React.CSSProperties}>
+                  <span>📝</span> {lang === 'ko' ? '현재 상황' : 'Current Situation'}
+                </label>
+                <textarea
+                  className="input-field"
+                  placeholder={lang === 'ko'
+                    ? '예: 스타트업 이직 준비 중, 팀장 승진 후 번아웃, 프리랜서 전환 고민'
+                    : 'e.g., preparing job change, post-promotion burnout, considering freelance'}
+                  value={form.currentSituation ?? ''}
+                  onChange={(e) => set('currentSituation', e.target.value)}
+                  rows={3}
+                  maxLength={200}
+                  style={{ resize: 'vertical', minHeight: '80px', fontFamily: 'Noto Sans KR, sans-serif' }}
+                />
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '6px', lineHeight: 1.5 }}>
+                  {lang === 'ko'
+                    ? '지금 처한 상황을 구체적으로 쓸수록 맞춤 조언이 나옵니다 (선택)'
+                    : 'The more specific, the more tailored the advice (optional)'}
+                </p>
+              </div>
+            </motion.div>
           )}
         </AnimatePresence>
 
         {/* Action buttons */}
         <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
-          {step === 2 && (
+          {step > 1 && (
             <button
               className="btn-secondary"
-              onClick={() => setStep(1)}
+              onClick={() => setStep((step - 1) as 1 | 2 | 3)}
               style={{ flex: 1 }}
             >
               ← {t.input.backBtn}
             </button>
           )}
-          {step === 1 ? (
+          {step < TOTAL_STEPS ? (
             <button
               className="btn-primary"
               onClick={handleNext}
-              disabled={!isStep1Valid}
-              style={{ flex: 1, fontSize: '16px' }}
+              disabled={step === 1 && !isStep1Valid}
+              style={{ flex: step > 1 ? 2 : 1, fontSize: '16px' }}
             >
               {t.input.nextBtn} →
             </button>

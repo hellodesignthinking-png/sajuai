@@ -1,3 +1,212 @@
+// ── Career Strategist types (from src/types/index.ts) ──────────────────
+
+export interface UserInput {
+  birthYear: number;
+  birthMonth: number;
+  birthDay: number;
+  birthHour: number; // -1 = 모름
+  calendarType: 'solar' | 'lunar';
+  birthPlace: string;
+  mbti: string; // '모름' or one of 16 MBTI types
+  gender: 'male' | 'female';
+  // Career management inputs — used by Gemini prompts to personalize
+  // growth_missions, networking_guide, yearly_strategy to the user's reality.
+  specialty?: string;         // 전문 분야 (e.g., "UX 디자이너 5년차", "백엔드 개발")
+  currentSituation?: string;  // 현재 상황 (e.g., "이직 준비", "창업 2년차")
+}
+
+export interface GoldenYear {
+  year: number;
+  score: number;
+  reason: string;
+}
+
+export interface LifeCycleScore {
+  age_range: string;
+  score: number;
+  description: string;
+}
+
+export type CareerSeason = 'spring' | 'summer' | 'autumn' | 'winter';
+
+export interface SeasonDetails {
+  season: CareerSeason;
+  year_range: string;
+  advice: string;
+  warning: string;
+}
+
+export interface QuarterScore {
+  q: string;
+  score: number;
+  strategy: string;
+}
+
+export interface Mission {
+  type: string;
+  content: string;
+}
+
+export interface YearlyStrategy {
+  quarter_scores: QuarterScore[];
+  d_day: { date: string; description: string };
+  missions: Mission[];
+}
+
+export interface MBTIIntegration {
+  type: string;
+  career_synergy: string;
+  blind_spot: string;
+}
+
+export interface SeasonCycleItem {
+  season: CareerSeason;
+  start_year: number;
+  end_year: number;
+  label: string;
+  is_current: boolean;
+}
+
+export interface SeasonGuidance {
+  season_title: string;
+  core_message: string;
+  actions: string[];
+  warnings: string[];
+  transition_warning: string | null;
+  content_direction: string;
+  avoid_content: string;
+}
+
+export interface NetworkingPerson {
+  type: string;
+  reason: string;
+  how: string;
+}
+
+export interface NetworkingGuide {
+  current_season_tip: string;
+  people_to_meet: NetworkingPerson[];
+  avoid: string;
+}
+
+export interface GrowthMission {
+  type: 'crisis' | 'person' | 'skill';
+  label: string;
+  content: string;
+  action: string;
+}
+
+export interface FourPillar {
+  heavenly: string;
+  earthly: string;
+  meaning: string;
+}
+
+export interface SajuDetail {
+  four_pillars: {
+    year: FourPillar;
+    month: FourPillar;
+    day: FourPillar;
+    hour: FourPillar;
+  };
+  day_master: {
+    element: string;
+    character: string;
+    description: string;
+  };
+  five_elements: {
+    wood: number;
+    fire: number;
+    earth: number;
+    water: number;
+    metal: number;
+  };
+  favorable_element: string;
+  unfavorable_element: string;
+  personality_summary: string;
+  current_luck_period: {
+    period: string;
+    element: string;
+    influence: string;
+  };
+}
+
+export interface SeasonReasoning {
+  saju_basis: string;
+  astrology_basis: string;
+  numerology_basis: string;
+  overall_reasoning: string;
+}
+
+// ── V63: Oracle Genesis — 4 Seasons Career Synthesis ─────────────
+// Structured outputs that turn raw saju numbers into a career narrative.
+
+export interface Gyeokguk {
+  name: string;              // e.g., "정관격(正官格)", "식신생재격(食神生財格)"
+  reasoning: string;         // 월지 본기/지장간 근거 3-5문장
+  implication: string;       // 이 격국이 커리어·성격에 미치는 함의 3-5문장
+}
+
+export interface CareerSync {
+  season_label: string;      // e.g., "가을: 수확의 시기"
+  season_focus: string;      // 현재 계절에서 해야 할 일 3문장
+  recommended_majors: string[];  // 2-4개 전공
+  recommended_jobs: string[];    // 2-4개 직업군
+  reasoning: string;         // 왜 이 전공·직업인지 (오행 + 십성 근거) 3-5문장
+}
+
+export interface RelationshipCode {
+  leadership_style: string;      // 리더십 특성 2-3문장
+  partnership_style: string;     // 파트너십/협업 스타일 2-3문장
+  political_navigation: string;  // 조직 내 정치력·처세 2-3문장
+  ten_gods_balance: string;      // 비겁·식상·재성·관성·인성 균형 진단 3-5문장
+  synergy_people: string;        // 시너지 내는 사람 유형 2-3문장
+  friction_people: string;       // 충돌하는 사람 유형 2-3문장
+}
+
+export interface SurvivalStrategy {
+  habits_to_abandon: string[];   // 버려야 할 습관 3-5개
+  energy_to_embrace: string[];   // 취해야 할 에너지 3-5개
+  immediate_action: string;      // 지금 당장 실행 2-3문장
+  ninety_day_plan: string;       // 90일 생존·성장 계획 3문장
+  one_year_vision: string;       // 1년 후 되어야 할 모습 3문장
+}
+
+export interface CareerPentagon {
+  leadership: number;  // 0-100
+  execution: number;
+  analysis: number;
+  creativity: number;
+  empathy: number;
+  notes: string;       // 오각형 해석 2-3문장
+}
+
+export interface AnalysisResult {
+  top5_golden_years: GoldenYear[];
+  life_cycle_scores: LifeCycleScore[];
+  current_season: CareerSeason;
+  season_details: SeasonDetails;
+  yearly_strategy: YearlyStrategy;
+  mbti_integration: MBTIIntegration;
+  sharp_feedback: string;
+  season_cycle: SeasonCycleItem[];
+  season_guidance: SeasonGuidance;
+  networking_guide: NetworkingGuide;
+  growth_missions: GrowthMission[];
+  saju_detail?: SajuDetail;
+  season_reasoning?: SeasonReasoning;
+  saju_summary?: string;
+  yearly_fortune?: string;
+  // V63 additions
+  gyeokguk?: Gyeokguk;
+  career_sync?: CareerSync;
+  relationship_code?: RelationshipCode;
+  survival_strategy?: SurvivalStrategy;
+  career_pentagon?: CareerPentagon;
+}
+
+// ── Fate / Saju app types ───────────────────────────────────────────────
+
 export type FateStep = 'LANDING' | 'MODE_SELECT' | 'LOGIN' | 'SIGNUP' | 'SAJU' | 'FACE' | 'MBTI' | 'PALM' | 'WORRY' | 'TAROT' | 'ANALYZING' | 'REPORT';
 
 export type AnalysisMode = 'INDIVIDUAL' | 'COMPAT_LOVE' | 'COMPAT_BUSINESS';

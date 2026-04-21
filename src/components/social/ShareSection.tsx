@@ -70,7 +70,8 @@ async function generateShareCard(
   const canvas = document.createElement('canvas');
   canvas.width = W;
   canvas.height = H;
-  const ctx = canvas.getContext('2d')!;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Canvas 2D context를 생성할 수 없습니다.');
 
   const FONT = '"Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
   const GOLD = '#D4AF37';
@@ -187,7 +188,7 @@ export default function ShareSection({ result, userInput, peakYear }: Props) {
   useEffect(() => {
     const kakaoKey = import.meta.env.VITE_KAKAO_JS_KEY as string | undefined;
     if (!kakaoKey) return;
-    const Kakao = (window as Record<string, unknown>).Kakao as
+    const Kakao = (window as unknown as Record<string, unknown>).Kakao as
       | { isInitialized?: () => boolean; init?: (key: string) => void }
       | undefined;
     if (Kakao && typeof Kakao.isInitialized === 'function' && !Kakao.isInitialized()) {
@@ -204,7 +205,7 @@ export default function ShareSection({ result, userInput, peakYear }: Props) {
 
   // ── Kakao share
   const handleKakaoShare = () => {
-    const Kakao = (window as Record<string, unknown>).Kakao as
+    const Kakao = (window as unknown as Record<string, unknown>).Kakao as
       | {
           isInitialized?: () => boolean;
           Share?: {

@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import {
+  ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis,
+  PolarRadiusAxis, Radar,
+} from 'recharts';
 import type { AnalysisResult, UserInput } from '../../types';
 import GoldenYearsChart from '../charts/GoldenYearsChart';
 import LifeCycleChart from '../charts/LifeCycleChart';
@@ -13,6 +17,7 @@ import NetworkingGuide from './NetworkingGuide';
 import GrowthMissions from './GrowthMissions';
 import SajuDetail from './SajuDetail';
 import SeasonReasoning from './SeasonReasoning';
+import OracleChat from './OracleChat';
 import VirtueChallenge from '../social/VirtueChallenge';
 import ShareSection from '../social/ShareSection';
 import PaywallOverlay from '../payment/PaywallOverlay';
@@ -105,6 +110,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
   const { user } = useAuth();
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [chatOpen, setChatOpen] = useState(false);
 
   const age = new Date().getFullYear() - userInput.birthYear;
   const sortedYears = [...(result.top5_golden_years ?? [])].sort((a, b) => b.score - a.score);
@@ -177,6 +183,34 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         >
           사주 · 점성술 · 수비학 종합 분석
         </motion.p>
+        {(userInput.specialty || userInput.currentSituation) && (
+          <motion.div
+            {...fadeUp}
+            transition={{ duration: 0.5, delay: 0.25 }}
+            style={{
+              marginTop: '18px',
+              display: 'inline-flex',
+              flexDirection: 'column',
+              gap: '6px',
+              padding: '10px 16px',
+              background: 'rgba(212,175,55,0.06)',
+              border: '1px solid rgba(212,175,55,0.18)',
+              borderRadius: '12px',
+              fontSize: '12px',
+              color: 'var(--text-muted)',
+              lineHeight: 1.5,
+              textAlign: 'left',
+              maxWidth: '92%',
+            }}
+          >
+            {userInput.specialty && (
+              <div><span style={{ color: 'var(--gold)' }}>💼 전문 분야:</span> {userInput.specialty}</div>
+            )}
+            {userInput.currentSituation && (
+              <div><span style={{ color: 'var(--gold)' }}>📝 현재 상황:</span> {userInput.currentSituation}</div>
+            )}
+          </motion.div>
+        )}
       </div>
 
       {/* Main Content */}
@@ -217,6 +251,51 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         )}
 
         {result.saju_summary && <SectionDivider />}
+
+        {/* ── FREE: 0-1b. 격국 (사주 구조의 본질) ─────────────── */}
+        {result.gyeokguk && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.06 }}>
+            <SectionTitle icon="🏛">격국 — 사주 구조의 본질</SectionTitle>
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #110e08 0%, #1d1608 100%)',
+                border: '1px solid rgba(212,175,55,0.35)',
+                borderRadius: '16px',
+                padding: '24px',
+                boxShadow: '0 4px 32px rgba(0,0,0,0.5)',
+              }}
+            >
+              <div style={{ marginBottom: '14px' }}>
+                <p style={{ fontSize: '11px', letterSpacing: '2px', color: 'rgba(212,175,55,0.7)', marginBottom: '6px' }}>
+                  THIS CHART'S STRUCTURAL NAME
+                </p>
+                <h3 style={{ fontSize: '22px', fontWeight: 900, color: 'var(--gold)', letterSpacing: '-0.3px' }}>
+                  {result.gyeokguk.name}
+                </h3>
+              </div>
+              <div style={{ display: 'grid', gap: '14px' }}>
+                <div>
+                  <p style={{ fontSize: '11px', color: 'rgba(212,175,55,0.55)', marginBottom: '6px', letterSpacing: '1px' }}>
+                    판정 근거
+                  </p>
+                  <p style={{ fontSize: '14px', lineHeight: 1.8, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
+                    {result.gyeokguk.reasoning}
+                  </p>
+                </div>
+                <div>
+                  <p style={{ fontSize: '11px', color: 'rgba(212,175,55,0.55)', marginBottom: '6px', letterSpacing: '1px' }}>
+                    커리어 함의
+                  </p>
+                  <p style={{ fontSize: '14px', lineHeight: 1.8, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
+                    {result.gyeokguk.implication}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.section>
+        )}
+
+        {result.gyeokguk && <SectionDivider />}
 
         {/* ── FREE: 0-2. 올해 운세 ─────────────────────────── */}
         {result.yearly_fortune && (
@@ -329,8 +408,87 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
 
         <SectionDivider />
 
+        {/* ── FREE: 3b. 운명의 계절 · 전공/천직 ───────────────── */}
+        {result.career_sync && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.23 }}>
+            <SectionTitle icon="🍂">운명의 계절 · 전공 & 천직</SectionTitle>
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #0a1012 0%, #091618 100%)',
+                border: '1px solid rgba(212,175,55,0.3)',
+                borderRadius: '16px',
+                padding: '24px',
+                boxShadow: '0 4px 24px rgba(0,0,0,0.45)',
+                display: 'grid',
+                gap: '18px',
+              }}
+            >
+              <div>
+                <p style={{ fontSize: '11px', color: 'rgba(212,175,55,0.6)', letterSpacing: '2px', marginBottom: '6px' }}>
+                  CURRENT SEASON
+                </p>
+                <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--gold)', marginBottom: '10px' }}>
+                  {result.career_sync.season_label}
+                </h3>
+                <p style={{ fontSize: '14px', lineHeight: 1.8, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
+                  {result.career_sync.season_focus}
+                </p>
+              </div>
+
+              {result.career_sync.recommended_majors?.length > 0 && (
+                <div>
+                  <p style={{ fontSize: '11px', color: 'rgba(212,175,55,0.55)', marginBottom: '8px', letterSpacing: '1px' }}>
+                    추천 전공
+                  </p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {result.career_sync.recommended_majors.map((m) => (
+                      <span key={m} style={{
+                        fontSize: '13px', color: 'var(--gold)',
+                        padding: '6px 12px',
+                        background: 'rgba(212,175,55,0.08)',
+                        border: '1px solid rgba(212,175,55,0.25)',
+                        borderRadius: '20px',
+                      }}>{m}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {result.career_sync.recommended_jobs?.length > 0 && (
+                <div>
+                  <p style={{ fontSize: '11px', color: 'rgba(212,175,55,0.55)', marginBottom: '8px', letterSpacing: '1px' }}>
+                    추천 직업군
+                  </p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {result.career_sync.recommended_jobs.map((j) => (
+                      <span key={j} style={{
+                        fontSize: '13px', color: 'var(--text)',
+                        padding: '6px 12px',
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid var(--border)',
+                        borderRadius: '20px',
+                      }}>{j}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <p style={{ fontSize: '11px', color: 'rgba(212,175,55,0.55)', marginBottom: '6px', letterSpacing: '1px' }}>
+                  추천 근거
+                </p>
+                <p style={{ fontSize: '13px', lineHeight: 1.8, color: 'var(--text-muted)', whiteSpace: 'pre-wrap' }}>
+                  {result.career_sync.reasoning}
+                </p>
+              </div>
+            </div>
+          </motion.section>
+        )}
+
+        {result.career_sync && <SectionDivider />}
+
         {/* ── PRICING CTA ─────────────────────────────────── */}
-        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.25 }}>
+        <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.25 }} className="no-print">
           <PricingCard />
         </motion.section>
 
@@ -529,6 +687,175 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
           </motion.section>
         )}
 
+        {/* ── PREMIUM: P3. 커리어 오각형 스탯 ──────────────── */}
+        {result.career_pentagon && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.45 }}>
+            <SectionTitle icon="⬟">커리어 오각형 스탯</SectionTitle>
+            <PaywallOverlay>
+              <div className="card-gold">
+                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                  일간·십성·오행을 조합해 도출한 커리어 역량 오각형
+                </p>
+                <div style={{ width: '100%', height: '280px' }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart cx="50%" cy="50%" outerRadius="70%" data={[
+                      { subject: '리더십', A: result.career_pentagon.leadership },
+                      { subject: '실행력', A: result.career_pentagon.execution },
+                      { subject: '분석력', A: result.career_pentagon.analysis },
+                      { subject: '창의성', A: result.career_pentagon.creativity },
+                      { subject: '공감력', A: result.career_pentagon.empathy },
+                    ]}>
+                      <PolarGrid stroke="rgba(212,175,55,0.15)" strokeDasharray="3 3" />
+                      <PolarAngleAxis
+                        dataKey="subject"
+                        tick={{ fill: 'rgba(255,255,255,0.75)', fontSize: 12, fontWeight: 700 }}
+                      />
+                      <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                      <Radar
+                        name="stat"
+                        dataKey="A"
+                        stroke="#D4AF37"
+                        strokeWidth={2}
+                        fill="#D4AF37"
+                        fillOpacity={0.35}
+                      />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div style={{
+                  marginTop: '12px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(5, 1fr)',
+                  gap: '6px',
+                  fontSize: '11px',
+                  color: 'var(--text-muted)',
+                  textAlign: 'center',
+                }}>
+                  <div>리더십<br/><strong style={{ color: 'var(--gold)' }}>{result.career_pentagon.leadership}</strong></div>
+                  <div>실행력<br/><strong style={{ color: 'var(--gold)' }}>{result.career_pentagon.execution}</strong></div>
+                  <div>분석력<br/><strong style={{ color: 'var(--gold)' }}>{result.career_pentagon.analysis}</strong></div>
+                  <div>창의성<br/><strong style={{ color: 'var(--gold)' }}>{result.career_pentagon.creativity}</strong></div>
+                  <div>공감력<br/><strong style={{ color: 'var(--gold)' }}>{result.career_pentagon.empathy}</strong></div>
+                </div>
+                {result.career_pentagon.notes && (
+                  <p style={{
+                    marginTop: '14px',
+                    fontSize: '13px',
+                    color: 'var(--text)',
+                    lineHeight: 1.8,
+                    whiteSpace: 'pre-wrap',
+                  }}>
+                    {result.career_pentagon.notes}
+                  </p>
+                )}
+              </div>
+            </PaywallOverlay>
+          </motion.section>
+        )}
+
+        {/* ── PREMIUM: P4. 인간관계 코드 ─────────────────────── */}
+        {result.relationship_code && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.46 }}>
+            <SectionTitle icon="🧬">인간관계 코드</SectionTitle>
+            <PaywallOverlay>
+              <div className="card-gold" style={{ display: 'grid', gap: '16px' }}>
+                {[
+                  { label: '리더십 스타일', value: result.relationship_code.leadership_style, color: '#D4AF37' },
+                  { label: '파트너십 스타일', value: result.relationship_code.partnership_style, color: '#b8882a' },
+                  { label: '조직 내 처세', value: result.relationship_code.political_navigation, color: '#a0522d' },
+                  { label: '십성 균형 진단', value: result.relationship_code.ten_gods_balance, color: '#D4AF37' },
+                  { label: '시너지 내는 사람', value: result.relationship_code.synergy_people, color: '#4ade80' },
+                  { label: '충돌하는 사람', value: result.relationship_code.friction_people, color: '#f87171' },
+                ].map((r) => (
+                  <div key={r.label} style={{
+                    padding: '14px 16px',
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(212,175,55,0.12)',
+                    borderLeft: `3px solid ${r.color}`,
+                    borderRadius: '10px',
+                  }}>
+                    <p style={{
+                      fontSize: '11px',
+                      letterSpacing: '1px',
+                      color: r.color,
+                      marginBottom: '6px',
+                      fontWeight: 700,
+                    }}>
+                      {r.label}
+                    </p>
+                    <p style={{ fontSize: '13px', lineHeight: 1.8, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
+                      {r.value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </PaywallOverlay>
+          </motion.section>
+        )}
+
+        {/* ── PREMIUM: P5. 생존 & 성장 전략 ──────────────────── */}
+        {result.survival_strategy && (
+          <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.47 }}>
+            <SectionTitle icon="⚔️">생존 & 성장 전략</SectionTitle>
+            <PaywallOverlay>
+              <div className="card-gold" style={{ display: 'grid', gap: '18px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div style={{
+                    padding: '14px',
+                    background: 'rgba(239,68,68,0.05)',
+                    border: '1px solid rgba(239,68,68,0.2)',
+                    borderRadius: '10px',
+                  }}>
+                    <p style={{ fontSize: '11px', color: '#f87171', fontWeight: 700, marginBottom: '10px', letterSpacing: '1px' }}>
+                      🗑 버려야 할 습관
+                    </p>
+                    <ul style={{ paddingLeft: '18px', margin: 0, display: 'grid', gap: '6px' }}>
+                      {(result.survival_strategy.habits_to_abandon ?? []).map((h, i) => (
+                        <li key={i} style={{ fontSize: '13px', lineHeight: 1.6, color: 'var(--text)' }}>{h}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div style={{
+                    padding: '14px',
+                    background: 'rgba(74,222,128,0.05)',
+                    border: '1px solid rgba(74,222,128,0.2)',
+                    borderRadius: '10px',
+                  }}>
+                    <p style={{ fontSize: '11px', color: '#4ade80', fontWeight: 700, marginBottom: '10px', letterSpacing: '1px' }}>
+                      ⚡ 취해야 할 에너지
+                    </p>
+                    <ul style={{ paddingLeft: '18px', margin: 0, display: 'grid', gap: '6px' }}>
+                      {(result.survival_strategy.energy_to_embrace ?? []).map((e, i) => (
+                        <li key={i} style={{ fontSize: '13px', lineHeight: 1.6, color: 'var(--text)' }}>{e}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {[
+                  { label: '지금 당장 (이번 주)', value: result.survival_strategy.immediate_action },
+                  { label: '90일 생존·성장 플랜', value: result.survival_strategy.ninety_day_plan },
+                  { label: '1년 후 비전', value: result.survival_strategy.one_year_vision },
+                ].map((r) => (
+                  <div key={r.label} style={{
+                    padding: '14px 16px',
+                    background: 'rgba(212,175,55,0.04)',
+                    border: '1px solid rgba(212,175,55,0.15)',
+                    borderRadius: '10px',
+                  }}>
+                    <p style={{ fontSize: '11px', color: 'var(--gold)', fontWeight: 700, marginBottom: '6px', letterSpacing: '1px' }}>
+                      {r.label}
+                    </p>
+                    <p style={{ fontSize: '13px', lineHeight: 1.8, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
+                      {r.value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </PaywallOverlay>
+          </motion.section>
+        )}
+
         <SectionDivider />
 
         {/* ── FREE: 12. 덕 쌓기 챌린지 ────────────────────── */}
@@ -543,8 +870,35 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
           <ShareSection result={result} userInput={userInput} peakYear={peakYear} />
         </motion.section>
 
+        {/* ── PDF Export (print to save as PDF) ────────────── */}
+        <motion.div {...fadeUp} transition={{ duration: 0.5, delay: 0.49 }} className="no-print">
+          <button
+            onClick={() => {
+              document.title = `운명 보고서 — ${userInput.birthYear}년생`;
+              setTimeout(() => window.print(), 50);
+            }}
+            style={{
+              width: '100%',
+              padding: '14px 0',
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(212,175,55,0.25)',
+              borderRadius: '12px',
+              fontSize: '14px',
+              fontWeight: 600,
+              color: 'var(--text)',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+          >
+            📄 운명 보고서 PDF로 저장
+          </button>
+          <p style={{ fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center', marginTop: '6px' }}>
+            브라우저 인쇄 창에서 "PDF로 저장"을 선택하세요
+          </p>
+        </motion.div>
+
         {/* ── Save Result Button ─────────────────────────── */}
-        <motion.div {...fadeUp} transition={{ duration: 0.5, delay: 0.50 }} style={{ paddingTop: '8px' }}>
+        <motion.div {...fadeUp} transition={{ duration: 0.5, delay: 0.50 }} className="no-print" style={{ paddingTop: '8px' }}>
           {saveState === 'saved' ? (
             <div style={{
               width: '100%', padding: '14px 0', textAlign: 'center',
@@ -581,12 +935,45 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
           )}
         </motion.div>
 
+        {/* ── Oracle Chat Button ─────────────────────────── */}
+        <motion.div {...fadeUp} transition={{ duration: 0.5, delay: 0.51 }} className="no-print">
+          <button
+            onClick={() => setChatOpen(true)}
+            style={{
+              width: '100%',
+              padding: '14px 0',
+              background: 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(184,136,42,0.14))',
+              border: '1px solid rgba(212,175,55,0.35)',
+              borderRadius: '12px',
+              fontSize: '14px',
+              fontWeight: 700,
+              color: 'var(--gold)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 16px rgba(212,175,55,0.15)',
+              transition: 'all 0.2s',
+            }}
+          >
+            🔮 마스터 오라클과 실시간 상담하기
+          </button>
+        </motion.div>
+
         {/* ── Reset Button ──────────────────────────────── */}
-        <motion.div {...fadeUp} transition={{ duration: 0.5, delay: 0.52 }}>
+        <motion.div {...fadeUp} transition={{ duration: 0.5, delay: 0.52 }} className="no-print">
           <button className="btn-secondary" onClick={onReset} style={{ width: '100%' }}>
             ↩ 처음부터 다시 분석하기
           </button>
         </motion.div>
+
+        <OracleChat
+          open={chatOpen}
+          onClose={() => setChatOpen(false)}
+          result={result}
+          userInput={userInput}
+        />
 
         <p
           style={{

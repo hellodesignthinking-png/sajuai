@@ -3,7 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
 } from 'recharts';
 
-const ADMIN_PASSWORD = 'sajuai2025';
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD as string ?? 'sajuai2025';
 
 interface AnalysisLog {
   time: string;

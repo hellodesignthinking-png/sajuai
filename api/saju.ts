@@ -208,18 +208,40 @@ Return ONLY valid JSON:
 }`;
   }
 
-  return `너는 커리어 전략가 제갈량이다. 아래 사주 데이터를 기반으로 JSON을 생성하라.
+  const situationText = (input.currentSituation ?? '').toString().trim() || (lang === 'ko' ? '(미입력)' : '(not provided)');
+  const specialtyText = (input.specialty ?? '').toString().trim() || (lang === 'ko' ? '(미입력)' : '(not provided)');
 
-사용자: ${input.birthYear}년 ${input.birthMonth}월 ${input.birthDay}일 ${hourText} (${calText}), ${genderText}, MBTI: ${mbtiText}, ${age}세
+  return `[V63: Oracle Genesis — 4계절 커리어 동기화]
+너는 명리학 마스터 오라클이다. 논문처럼 논리적이면서 장엄하고 실용적인 말투를 유지하라.
+이 리포트는 단순 점술이 아니라 "커리어 전략 보고서" 수준의 분석이어야 한다.
+
+[미션]
+1. 진짜 데이터만 사용: "당신은 운이 좋습니다" 같은 범용 문구 절대 금지. 반드시 연주·월주·일주·시주 만세력과 지장간(地藏干)의 합충변화(合冲變化)를 100% 반영하라.
+2. 격국(格局) 정밀 정의: 일간(${calc.dayMaster.heavenly})과 월지(${extractChar(calc.fourPillars.month.earthly)})의 관계, 지장간 본기·중기·여기를 근거로 격국을 도출하라 (정관격·편재격·식신생재격·건록격·양인격 등).
+3. 인생의 4계절 커리어 로드맵: 현재 대운과 세운을 분석해 사용자가 지금 "봄(씨앗)·여름(성장)·가을(수확)·겨울(내실)" 중 어디에 있는지 명시하고 전략을 제시하라.
+   - 봄(입춘~곡우): 전공 선택·새 기술 습득·진로 변경의 적기. 교육·기획·창의
+   - 여름(입하~대서): 사회활동 폭발·네트워크 확장. 마케팅·실행력
+   - 가을(입추~상강): 성과·승진·전문성 확립. 관리·금융·법률·전문 자격
+   - 겨울(입동~대한): 지식 심화·리스크 관리. 연구·전략·멘토링
+4. 커리어·전공 동기화: 오행 분포와 십성(비겁·식상·재성·관성·인성)으로 최적 전공·직업·조직 내 정치력을 진단하라.
+5. 생존·성장 전략: "성공한다"가 아니라 "버려야 할 습관"과 "취해야 할 에너지"를 구체적 Action Plan으로 제시하라.
+
+[사용자 입력]
+- 생년월일시: ${input.birthYear}년 ${input.birthMonth}월 ${input.birthDay}일 ${hourText} (${calText})
+- 성별: ${genderText}, MBTI: ${mbtiText}, 나이: ${age}세
+- 전문 분야: ${specialtyText}
+- 현재 상황: ${situationText}
+
 ${buildCalcDataBlock(calc, input.birthYear, 'ko')}
 
-규칙:
-1. current_season = "${calc.careerSeason}" 절대 변경 금지
-2. top5_golden_years 연도 = [${goldenYearsList}] 절대 변경 금지
-3. 모든 필드에 일간 ${calc.dayMaster.heavenly}(${calc.dayMaster.element}), 용신 ${calc.favorableElement}, 기신 ${calc.unfavorableElement} 인용
-
-모든 텍스트 필드는 최소 3문장 이상 작성하라. 돈을 받는 수준의 구체적이고 실용적인 내용이어야 한다.
-추상적 조언 금지. 구체적 행동, 날짜, 숫자를 포함하라.
+[고정 규칙 — 절대 위반 금지]
+1. current_season = "${calc.careerSeason}" 그대로 사용
+2. top5_golden_years 연도 = [${goldenYearsList}] 그대로 사용
+3. 모든 텍스트 필드에 일간 ${calc.dayMaster.heavenly}(${calc.dayMaster.element}), 용신 ${calc.favorableElement}, 기신 ${calc.unfavorableElement} 최소 1회 이상 직접 인용
+4. growth_missions, networking_guide, yearly_strategy, career_sync, relationship_code, survival_strategy는 반드시 "전문 분야(${specialtyText})"와 "현재 상황(${situationText})"을 구체적으로 반영. 일반론 금지.
+5. 점수(score)는 대운/세운 오행과 용신·기신 관계를 계산해 0-99 범위로 산출. 고정된 예시값 복사 금지.
+6. d_day.date는 올해 세운 중 용신이 가장 강해지는 월·일(YYYY-MM-DD)로 계산. 고정 날짜 금지.
+7. 모든 텍스트 필드 최소 3문장 이상. 구체적 행동·날짜·숫자 포함. 추상적 조언 금지.
 
 반드시 아래 JSON만 반환:
 {
@@ -241,11 +263,11 @@ ${buildCalcDataBlock(calc, input.birthYear, 'ko')}
     {"year": ${calc.goldenYears[4]?.year ?? currentYear + 18}, "score": ${calc.goldenYears[4]?.score ?? 70}, "reason": "대운 근거 3문장"}
   ],
   "life_cycle_scores": [
-    {"age_range": "20대", "score": 65, "description": "당시 대운 오행, 커리어에 미치는 영향, 핵심 행동 지침 3문장"},
-    {"age_range": "30대", "score": 80, "description": "대운 오행 + 커리어 영향 + 행동 지침 3문장"},
-    {"age_range": "40대", "score": 90, "description": "3문장"},
-    {"age_range": "50대", "score": 75, "description": "3문장"},
-    {"age_range": "60대", "score": 60, "description": "3문장"}
+    {"age_range": "20대", "score": <20대를 포함하는 대운의 천간지지 오행이 용신/기신과 어떤 관계인지 계산한 0-99 점수>, "description": "20대 대운 오행과 용신 관계를 명시하고 커리어에 미치는 영향, 핵심 행동 지침 3문장"},
+    {"age_range": "30대", "score": <같은 방식으로 계산>, "description": "30대 대운 오행 + 커리어 영향 + 행동 지침 3문장"},
+    {"age_range": "40대", "score": <계산값>, "description": "40대 대운 기반 3문장"},
+    {"age_range": "50대", "score": <계산값>, "description": "50대 대운 기반 3문장"},
+    {"age_range": "60대", "score": <계산값>, "description": "60대 대운 기반 3문장"}
   ],
   "season_cycle": ${JSON.stringify(calc.seasonCycle)},
   "season_guidance": {
@@ -259,30 +281,30 @@ ${buildCalcDataBlock(calc, input.birthYear, 'ko')}
   },
   "yearly_strategy": {
     "quarter_scores": [
-      {"q": "Q1 (1-3월)", "score": 72, "strategy": "오행 근거 + 구체적 행동 + 주의사항 3문장"},
-      {"q": "Q2 (4-6월)", "score": 85, "strategy": "오행 근거 + 구체적 행동 3문장"},
-      {"q": "Q3 (7-9월)", "score": 68, "strategy": "오행 근거 + 구체적 행동 3문장"},
-      {"q": "Q4 (10-12월)", "score": 90, "strategy": "오행 근거 + 구체적 행동 3문장"}
+      {"q": "Q1 (1-3월)", "score": <올해 세운 천간지지 + Q1 월령(寅卯辰) 오행을 용신/기신과 계산한 0-99 점수>, "strategy": "현재 전문 분야(${specialtyText})에서 Q1에 취할 구체적 행동 + 주의사항 3문장"},
+      {"q": "Q2 (4-6월)", "score": <같은 방식 계산>, "strategy": "현재 상황(${situationText})을 반영한 Q2 구체적 행동 3문장"},
+      {"q": "Q3 (7-9월)", "score": <계산값>, "strategy": "Q3 오행 근거 + 전문 분야 맞춤 행동 3문장"},
+      {"q": "Q4 (10-12월)", "score": <계산값>, "strategy": "Q4 오행 근거 + 현재 상황에 대한 실행 권고 3문장"}
     ],
-    "d_day": {"date": "${currentYear}-06-21", "description": "이 날짜가 이 원국에 특별한 이유 + 그날 해야 할 것 3문장"},
+    "d_day": {"date": "<올해 ${currentYear}년 중 용신이 가장 강해지는 월·일 YYYY-MM-DD>", "description": "이 날짜가 이 원국·전문 분야에 특별한 이유 + 그날 해야 할 것 3문장"},
     "missions": [
-      {"type": "즉시", "content": "이번 주 실행 미션 3문장. 구체적 행동+기한+기대효과"},
-      {"type": "단기", "content": "3개월 미션 3문장"},
-      {"type": "장기", "content": "12개월 프로젝트 3문장"}
+      {"type": "즉시", "content": "이번 주 실행 미션 3문장. 현재 상황(${situationText})과 전문 분야(${specialtyText})에 바로 적용 가능한 행동+기한+기대효과"},
+      {"type": "단기", "content": "3개월 미션 3문장. 전문 분야 성장 관점에서 제시"},
+      {"type": "장기", "content": "12개월 프로젝트 3문장. 커리어 전환/확장 관점"}
     ]
   },
   "networking_guide": {
-    "current_season_tip": "현재 계절에 맞는 네트워킹 전략 3문장",
+    "current_season_tip": "현재 계절(${calc.careerSeason})·현재 상황(${situationText})·전문 분야(${specialtyText})에 맞춘 네트워킹 전략 3문장",
     "people_to_meet": [
-      {"type": "부족 오행 체현 사람 유형", "reason": "왜 만나야 하는지 2-3문장", "how": "어떻게 만나는지 구체적 방법 2문장"},
-      {"type": "두 번째 부족 오행 유형", "reason": "2-3문장", "how": "2문장"}
+      {"type": "부족 오행을 체현하는 ${specialtyText} 연관 직군/역할", "reason": "전문 분야 성장에 왜 필요한지 2-3문장", "how": "현재 상황에서 접근 가능한 구체적 방법 2문장"},
+      {"type": "두 번째 부족 오행 + 전문 분야 인접 유형", "reason": "2-3문장", "how": "2문장"}
     ],
     "avoid": "기신 증폭 유형 + 왜 피해야 하는지 2-3문장"
   },
   "growth_missions": [
-    {"type": "crisis", "label": "극복할 위기", "content": "이 사주의 구조적 약점에서 오는 위기 3문장", "action": "구체적 극복 방법 2문장"},
-    {"type": "person", "label": "만나야 할 사람", "content": "부족한 오행을 보완해줄 사람의 특징 3문장", "action": "만나는 구체적 방법 2문장"},
-    {"type": "skill", "label": "배워야 할 것", "content": "용신 오행을 강화하는 스킬 3문장", "action": "학습 방법과 기한 2문장"}
+    {"type": "crisis", "label": "극복할 위기", "content": "이 사주의 구조적 약점 + 현재 상황(${situationText})에서 실제로 발생 가능한 위기 3문장", "action": "전문 분야 안에서 취할 구체적 극복 방법 2문장"},
+    {"type": "person", "label": "만나야 할 사람", "content": "부족한 오행을 보완해줄 ${specialtyText} 관련 사람의 특징 3문장", "action": "만나는 구체적 방법 2문장"},
+    {"type": "skill", "label": "배워야 할 것", "content": "용신 오행을 강화하면서 ${specialtyText} 커리어를 확장하는 스킬 3문장", "action": "학습 방법과 기한 2문장"}
   ],
   "mbti_integration": {
     "type": "${mbtiText}",
@@ -292,6 +314,41 @@ ${buildCalcDataBlock(calc, input.birthYear, 'ko')}
   "season_reasoning": {
     "saju_basis": "현재 대운 천간지지가 일간과 어떤 관계인지, 왜 이 계절인지 3-5문장",
     "overall_reasoning": "사주+점성술+수비학 종합 결론 3-5문장. 구체적 숫자와 연도 포함."
+  },
+  "gyeokguk": {
+    "name": "월지 본기·지장간 기반 격국명 (예: 정관격, 편재격, 식신생재격, 건록격, 양인격 등)",
+    "reasoning": "월지 ${extractChar(calc.fourPillars.month.earthly)}의 본기·중기·여기 지장간과 일간 ${calc.dayMaster.heavenly}의 관계를 3-5문장으로 근거 제시",
+    "implication": "이 격국이 커리어와 성격에 미치는 실질적 함의 3-5문장. 장점과 함정 모두 포함."
+  },
+  "career_sync": {
+    "season_label": "봄: 씨앗의 시기 / 여름: 성장의 시기 / 가을: 수확의 시기 / 겨울: 내실의 시기 중 하나를 current_season(${calc.careerSeason})에 맞춰 선택",
+    "season_focus": "현재 계절에서 이 사용자가 해야 할 일 3문장. 전문 분야(${specialtyText})와 연결.",
+    "recommended_majors": ["오행·십성 근거 전공 1", "전공 2", "전공 3"],
+    "recommended_jobs": ["직업군 1", "직업군 2", "직업군 3"],
+    "reasoning": "왜 이 전공·직업인지. 오행 분포와 십성(비겁/식상/재성/관성/인성) 근거로 3-5문장. 현재 전문 분야(${specialtyText})와의 연결 또는 전환 가능성 포함."
+  },
+  "relationship_code": {
+    "leadership_style": "일간·격국 기반 리더십 특성 2-3문장. 장점·약점 모두.",
+    "partnership_style": "협업·파트너십 스타일 2-3문장. 어떤 사람과 일할 때 빛나는지.",
+    "political_navigation": "조직 내 정치력·처세 진단 2-3문장. 현재 상황(${situationText})에 맞춘 조언.",
+    "ten_gods_balance": "비겁·식상·재성·관성·인성 중 어떤 십성이 강하고 약한지, 그것이 관계에 어떻게 드러나는지 3-5문장",
+    "synergy_people": "시너지 내는 사람 유형 2-3문장. 오행·십성 근거.",
+    "friction_people": "충돌하는 사람 유형 2-3문장. 기신 오행과 연결."
+  },
+  "survival_strategy": {
+    "habits_to_abandon": ["버려야 할 습관 1 (구체적 행동)", "습관 2", "습관 3"],
+    "energy_to_embrace": ["취해야 할 에너지 1 (용신 오행과 연결된 구체적 행동)", "에너지 2", "에너지 3"],
+    "immediate_action": "이번 주 당장 실행할 것 2-3문장. 현재 상황(${situationText})에서 실현 가능한 것.",
+    "ninety_day_plan": "90일 생존·성장 계획 3문장. 전문 분야(${specialtyText}) 안에서 측정 가능한 목표.",
+    "one_year_vision": "1년 후 되어야 할 모습 3문장. 현재 계절(${calc.careerSeason})에서 다음 계절로 넘어가는 준비 포함."
+  },
+  "career_pentagon": {
+    "leadership": <일간 강약·관성 기반 0-100 점수>,
+    "execution": <식상·재성 기반 0-100 점수>,
+    "analysis": <인성·수오행 기반 0-100 점수>,
+    "creativity": <식상·목화오행 기반 0-100 점수>,
+    "empathy": <인성·토수오행 기반 0-100 점수>,
+    "notes": "오각형의 강점 축과 약점 축을 해석해 커리어 포지셔닝 조언 2-3문장"
   }
 }`;
 }
@@ -407,6 +464,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         growth_missions: basicParsed.growth_missions ?? [],
         saju_detail: codeSajuDetail,
         season_reasoning: basicParsed.season_reasoning ?? null,
+        gyeokguk: basicParsed.gyeokguk ?? null,
+        career_sync: basicParsed.career_sync ?? null,
+        relationship_code: basicParsed.relationship_code ?? null,
+        survival_strategy: basicParsed.survival_strategy ?? null,
+        career_pentagon: basicParsed.career_pentagon ?? null,
         _calc_meta: {
           four_pillars_raw: {
             year: calcResult.fourPillars.year.heavenly + calcResult.fourPillars.year.earthly,
@@ -464,11 +526,12 @@ Independently recalculate if these values are valid per saju/astrology principle
           : `AI Cross-Validation Complete ✓ ${confidence}% Agreement`;
 
         return res.status(200).json({ confidence, validated, message });
-      } catch {
+      } catch (verr) {
+        console.warn('[api/saju] validate failed:', (verr as Error).message);
         const message = lang === 'ko'
-          ? 'AI 교차 검증 완료 ✓ 85% 일치'
-          : 'AI Cross-Validation Complete ✓ 85% Agreement';
-        return res.status(200).json({ confidence: 85, validated: true, message });
+          ? 'AI 교차 검증을 수행할 수 없습니다.'
+          : 'AI cross-validation unavailable.';
+        return res.status(200).json({ confidence: 0, validated: false, message });
       }
     }
 
