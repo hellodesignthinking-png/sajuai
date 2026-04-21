@@ -33,18 +33,20 @@ interface Props {
   onOpenAuth: () => void;
 }
 
-// V64 accent system — each section gets a distinct color for visual rhythm.
-type Accent = 'gold' | 'teal' | 'violet' | 'coral' | 'lime' | 'sky';
-const ACCENTS: Record<Accent, { main: string; soft: string; glow: string; grad: string }> = {
-  gold:   { main: '#D4AF37', soft: 'rgba(212,175,55,0.10)',  glow: 'rgba(212,175,55,0.35)',  grad: 'linear-gradient(135deg, #D4AF37, #b8882a)' },
-  teal:   { main: '#22d3ee', soft: 'rgba(34,211,238,0.10)',  glow: 'rgba(34,211,238,0.35)',  grad: 'linear-gradient(135deg, #22d3ee, #0891b2)' },
-  violet: { main: '#a78bfa', soft: 'rgba(167,139,250,0.10)', glow: 'rgba(167,139,250,0.35)', grad: 'linear-gradient(135deg, #a78bfa, #7c3aed)' },
-  coral:  { main: '#fb7185', soft: 'rgba(251,113,133,0.10)', glow: 'rgba(251,113,133,0.35)', grad: 'linear-gradient(135deg, #fb7185, #e11d48)' },
-  lime:   { main: '#a3e635', soft: 'rgba(163,230,53,0.10)',  glow: 'rgba(163,230,53,0.35)',  grad: 'linear-gradient(135deg, #a3e635, #65a30d)' },
-  sky:    { main: '#7dd3fc', soft: 'rgba(125,211,252,0.10)', glow: 'rgba(125,211,252,0.35)', grad: 'linear-gradient(135deg, #7dd3fc, #0284c7)' },
+// V65 Careet-style light palette — lime primary + editorial supporting accents.
+type Accent = 'lime' | 'gold' | 'slate' | 'blue' | 'rose' | 'amber' | 'violet' | 'teal';
+const ACCENTS: Record<Accent, { main: string; soft: string; ink: string }> = {
+  lime:   { main: '#84cc16', soft: '#ecfccb', ink: '#3f6212' },
+  gold:   { main: '#b8860b', soft: '#fef3c7', ink: '#78350f' },
+  slate:  { main: '#64748b', soft: '#f1f5f9', ink: '#334155' },
+  blue:   { main: '#3b82f6', soft: '#dbeafe', ink: '#1e40af' },
+  rose:   { main: '#f43f5e', soft: '#ffe4e6', ink: '#9f1239' },
+  amber:  { main: '#f59e0b', soft: '#fef3c7', ink: '#92400e' },
+  violet: { main: '#8b5cf6', soft: '#ede9fe', ink: '#5b21b6' },
+  teal:   { main: '#14b8a6', soft: '#ccfbf1', ink: '#115e59' },
 };
 
-function SectionTitle({ children, icon, accent = 'gold', kicker }: {
+function SectionTitle({ children, icon, accent = 'lime', kicker }: {
   children: React.ReactNode;
   icon?: string;
   accent?: Accent;
@@ -52,63 +54,58 @@ function SectionTitle({ children, icon, accent = 'gold', kicker }: {
 }) {
   const a = ACCENTS[accent];
   return (
-    <div style={{ marginBottom: '18px' }}>
+    <div style={{ marginBottom: '20px' }}>
       {kicker && (
-        <p style={{
-          fontSize: '11px',
-          letterSpacing: '3px',
-          color: a.main,
-          fontWeight: 700,
-          textTransform: 'uppercase',
-          marginBottom: '6px',
-          opacity: 0.85,
-        }}>
-          {kicker}
-        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+          <span style={{
+            display: 'inline-block',
+            width: '4px', height: '16px',
+            background: a.main, borderRadius: '2px',
+          }} />
+          <span style={{
+            fontSize: '11px',
+            letterSpacing: '2.5px',
+            color: a.ink,
+            fontWeight: 800,
+            textTransform: 'uppercase',
+          }}>
+            {kicker}
+          </span>
+        </div>
       )}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         {icon && (
           <span style={{
             fontSize: '22px',
-            width: '44px',
-            height: '44px',
+            width: '42px',
+            height: '42px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             background: a.soft,
-            border: `1px solid ${a.main}33`,
             borderRadius: '12px',
             flexShrink: 0,
-            boxShadow: `0 4px 16px ${a.main}1a`,
           }}>
             {icon}
           </span>
         )}
         <h2 style={{
-          fontSize: 'clamp(20px, 4vw, 24px)',
-          fontWeight: 800,
+          fontSize: 'clamp(22px, 4.5vw, 26px)',
+          fontWeight: 900,
           color: 'var(--text)',
           flex: 1,
-          letterSpacing: '-0.3px',
+          letterSpacing: '-0.5px',
           lineHeight: 1.2,
         }}>
           {children}
         </h2>
-        <div style={{
-          height: '2px',
-          width: '40px',
-          background: a.grad,
-          borderRadius: '2px',
-          flexShrink: 0,
-          boxShadow: `0 0 12px ${a.main}80`,
-        }} />
       </div>
     </div>
   );
 }
 
-// Shared themed card wrapper — use instead of inline gradient/border.
-function ThemeCard({ accent = 'gold', children, style }: {
+// Editorial white card — soft shadow, thin border, rounded corners.
+function ThemeCard({ accent = 'lime', children, style }: {
   accent?: Accent;
   children: React.ReactNode;
   style?: React.CSSProperties;
@@ -116,11 +113,11 @@ function ThemeCard({ accent = 'gold', children, style }: {
   const a = ACCENTS[accent];
   return (
     <div style={{
-      background: `linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.0)), ${a.soft}`,
-      border: `1px solid ${a.main}26`,
+      background: 'var(--card)',
+      border: '1px solid var(--border)',
       borderRadius: '20px',
       padding: '24px',
-      boxShadow: `0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04)`,
+      boxShadow: 'var(--shadow)',
       position: 'relative',
       overflow: 'hidden',
       ...style,
@@ -129,28 +126,26 @@ function ThemeCard({ accent = 'gold', children, style }: {
       <div style={{
         position: 'absolute',
         top: 0, left: 0, right: 0,
-        height: '2px',
-        background: a.grad,
-        opacity: 0.6,
+        height: '3px',
+        background: a.main,
       }} />
       {children}
     </div>
   );
 }
 
-function WisdomBox({ accent = 'gold', children }: { accent?: Accent; children: React.ReactNode }) {
+function WisdomBox({ accent = 'lime', children }: { accent?: Accent; children: React.ReactNode }) {
   const a = ACCENTS[accent];
   return (
     <div style={{
-      marginBottom: '14px',
+      marginBottom: '16px',
       padding: '14px 18px',
       fontSize: 'var(--fs-base, 15px)',
       lineHeight: 1.7,
-      color: 'var(--text-secondary, #c8c8dc)',
+      color: 'var(--text-secondary)',
       background: a.soft,
-      border: `1px solid ${a.main}2e`,
       borderLeft: `3px solid ${a.main}`,
-      borderRadius: '12px',
+      borderRadius: '8px',
     }}>
       {children}
     </div>
@@ -160,16 +155,10 @@ function WisdomBox({ accent = 'gold', children }: { accent?: Accent; children: R
 function SectionDivider() {
   return (
     <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: '12px',
-      margin: '8px 0',
-      fontSize: '11px',
-    }}>
-      <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)' }} />
-      <span style={{ color: 'rgba(212,175,55,0.35)' }}>◆</span>
-      <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, rgba(255,255,255,0.08), transparent)' }} />
-    </div>
+      height: '1px',
+      background: 'var(--border)',
+      margin: '4px 0',
+    }} />
   );
 }
 
@@ -212,123 +201,109 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
 
   return (
     <div style={{ minHeight: '100vh', padding: '0 0 80px' }}>
-      {/* Hero Banner — V64 younger aesthetic */}
+      {/* Hero Banner — V65 careet-style editorial header */}
       <div style={{
         position: 'relative',
-        padding: '56px 16px 48px',
-        textAlign: 'center',
-        marginBottom: '56px',
-        overflow: 'hidden',
+        padding: '56px 16px 40px',
+        textAlign: 'left',
+        marginBottom: '40px',
+        maxWidth: '720px',
+        marginLeft: 'auto',
+        marginRight: 'auto',
       }}>
-        {/* Animated gradient orbs */}
-        <div style={{
-          position: 'absolute',
-          top: '-40%', left: '50%',
-          width: '540px', height: '540px',
-          transform: 'translateX(-50%)',
-          background: 'radial-gradient(circle, rgba(167,139,250,0.25) 0%, rgba(34,211,238,0.12) 40%, transparent 70%)',
-          filter: 'blur(60px)',
-          pointerEvents: 'none',
-        }} />
-        <div style={{
-          position: 'absolute',
-          bottom: '-20%', right: '20%',
-          width: '320px', height: '320px',
-          background: 'radial-gradient(circle, rgba(251,113,133,0.18) 0%, transparent 60%)',
-          filter: 'blur(50px)',
-          pointerEvents: 'none',
-        }} />
+        <motion.div
+          {...fadeUp}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '6px 14px',
+            marginBottom: '20px',
+            background: '#ecfccb',
+            border: '1px solid #84cc16',
+            borderRadius: '999px',
+            fontSize: '11px',
+            letterSpacing: '2px',
+            fontWeight: 800,
+            color: '#3f6212',
+            textTransform: 'uppercase',
+          }}
+        >
+          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#84cc16' }} />
+          AI 오라클 분석 완료
+        </motion.div>
 
-        <div style={{ position: 'relative', zIndex: 1 }}>
+        <motion.h1
+          {...fadeUp}
+          transition={{ duration: 0.5, delay: 0.08 }}
+          style={{
+            fontSize: 'clamp(30px, 7vw, 44px)',
+            fontWeight: 900,
+            marginBottom: '10px',
+            letterSpacing: '-1.2px',
+            lineHeight: 1.1,
+            color: 'var(--text)',
+          }}
+        >
+          <span style={{
+            display: 'block',
+            fontSize: '0.4em',
+            fontWeight: 600,
+            color: 'var(--text-muted)',
+            letterSpacing: '1.5px',
+            marginBottom: '10px',
+          }}>
+            {userInput.birthYear}년 · {calLabel} · {age}세
+          </span>
+          나의 커리어{' '}
+          <span style={{ color: 'var(--lime-hover)' }}>전략 리포트</span>
+        </motion.h1>
+
+        <motion.p
+          {...fadeUp}
+          transition={{ duration: 0.5, delay: 0.18 }}
+          style={{
+            fontSize: 'var(--fs-base)',
+            color: 'var(--text-muted)',
+            fontWeight: 500,
+          }}
+        >
+          사주 · 격국 · 대운 · 십성 종합 분석
+        </motion.p>
+
+        {(userInput.specialty || userInput.currentSituation) && (
           <motion.div
             {...fadeUp}
+            transition={{ duration: 0.5, delay: 0.25 }}
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
+              marginTop: '20px',
+              display: 'flex',
+              flexDirection: 'column',
               gap: '8px',
-              padding: '6px 14px',
-              marginBottom: '20px',
-              background: 'linear-gradient(135deg, rgba(167,139,250,0.18), rgba(34,211,238,0.12))',
-              border: '1px solid rgba(167,139,250,0.4)',
-              borderRadius: '999px',
-              fontSize: '11px',
-              letterSpacing: '3px',
-              fontWeight: 800,
-              color: '#d4c9f9',
-              textTransform: 'uppercase',
+              padding: '14px 18px',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
+              borderRadius: '14px',
+              fontSize: 'var(--fs-sm)',
+              color: 'var(--text-secondary)',
+              lineHeight: 1.65,
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#a3e635', boxShadow: '0 0 8px #a3e635' }} />
-            AI Oracle Analysis Complete
+            {userInput.specialty && (
+              <div>
+                <span style={{ color: 'var(--lime-hover)', fontWeight: 700 }}>💼 전문 분야</span>
+                <span style={{ marginLeft: '10px' }}>{userInput.specialty}</span>
+              </div>
+            )}
+            {userInput.currentSituation && (
+              <div>
+                <span style={{ color: 'var(--accent-blue)', fontWeight: 700 }}>📝 현재 상황</span>
+                <span style={{ marginLeft: '10px' }}>{userInput.currentSituation}</span>
+              </div>
+            )}
           </motion.div>
-
-          <motion.h1
-            {...fadeUp}
-            transition={{ duration: 0.5, delay: 0.08 }}
-            style={{
-              fontSize: 'clamp(28px, 7vw, 44px)',
-              fontWeight: 900,
-              marginBottom: '12px',
-              letterSpacing: '-1px',
-              lineHeight: 1.1,
-            }}
-          >
-            <span style={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: '0.55em', display: 'block', marginBottom: '8px', letterSpacing: '2px' }}>
-              {userInput.birthYear}년 · {calLabel} · {age}세
-            </span>
-            <span style={{
-              background: 'linear-gradient(135deg, #f5d87d 0%, #D4AF37 35%, #a78bfa 70%, #22d3ee 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}>
-              나의 커리어 전략
-            </span>
-          </motion.h1>
-
-          <motion.p
-            {...fadeUp}
-            transition={{ duration: 0.5, delay: 0.18 }}
-            style={{
-              fontSize: 'var(--fs-base)',
-              color: 'var(--text-muted)',
-              letterSpacing: '0.5px',
-              fontWeight: 500,
-            }}
-          >
-            사주 · 격국 · 대운 · 십성 종합 분석
-          </motion.p>
-
-          {(userInput.specialty || userInput.currentSituation) && (
-            <motion.div
-              {...fadeUp}
-              transition={{ duration: 0.5, delay: 0.25 }}
-              style={{
-                marginTop: '24px',
-                display: 'inline-flex',
-                flexDirection: 'column',
-                gap: '8px',
-                padding: '14px 20px',
-                background: 'linear-gradient(135deg, rgba(167,139,250,0.08), rgba(34,211,238,0.06))',
-                border: '1px solid rgba(167,139,250,0.22)',
-                borderRadius: '16px',
-                fontSize: 'var(--fs-sm)',
-                color: 'var(--text-secondary)',
-                lineHeight: 1.6,
-                textAlign: 'left',
-                maxWidth: '92%',
-                backdropFilter: 'blur(6px)',
-              }}
-            >
-              {userInput.specialty && (
-                <div><span style={{ color: ACCENTS.teal.main, fontWeight: 700 }}>💼 전문 분야</span>  {userInput.specialty}</div>
-              )}
-              {userInput.currentSituation && (
-                <div><span style={{ color: ACCENTS.violet.main, fontWeight: 700 }}>📝 현재 상황</span>  {userInput.currentSituation}</div>
-              )}
-            </motion.div>
-          )}
-        </div>
+        )}
       </div>
 
       {/* Main Content */}
@@ -368,26 +343,17 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
             <WisdomBox accent="violet">
               🔮 위 원국 데이터를 AI 마스터 오라클이 읽고 해석한 종합 평가입니다. <strong style={{ color: 'var(--text)' }}>일간(Identity) × 격국(Career Type) × 대운(Season)</strong>을 상관 관계로 엮어 "당신이 어떤 사람인지"를 서술합니다.
             </WisdomBox>
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #1a1233 0%, #0f0a20 100%)',
-                border: '1px solid rgba(167,139,250,0.28)',
-                borderRadius: '16px',
-                padding: '24px',
-                boxShadow: '0 4px 32px rgba(0,0,0,0.5)',
-              }}
-            >
-              <p
-                style={{
-                  fontSize: '15px',
-                  lineHeight: 1.9,
-                  color: 'var(--text)',
-                  whiteSpace: 'pre-wrap',
-                }}
-              >
+            <ThemeCard accent="violet">
+              <p style={{
+                fontSize: 'var(--fs-lg)',
+                lineHeight: 1.95,
+                color: 'var(--text)',
+                whiteSpace: 'pre-wrap',
+                fontWeight: 500,
+              }}>
                 {result.saju_summary}
               </p>
-            </div>
+            </ThemeCard>
           </motion.section>
         )}
 
@@ -403,25 +369,26 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
               💡 격국은 당신의 <strong style={{ color: 'var(--text)' }}>커리어 유형(Career Type)</strong>을 결정합니다. 일간이 "나는 누구인가"라면, 격국은 "나는 어떻게 일하는 사람인가"예요.
             </WisdomBox>
             <ThemeCard accent="gold">
-              <div style={{ marginBottom: '18px' }}>
-                <p style={{ fontSize: '10px', letterSpacing: '2.5px', color: 'var(--gold)', marginBottom: '8px', fontWeight: 700, opacity: 0.7 }}>
-                  THIS CHART'S STRUCTURAL NAME
+              <div style={{ marginBottom: '20px' }}>
+                <p style={{ fontSize: '11px', letterSpacing: '2px', color: ACCENTS.gold.ink, marginBottom: '8px', fontWeight: 700, textTransform: 'uppercase' }}>
+                  Structural Pattern
                 </p>
-                <h3 style={{ fontSize: 'clamp(26px, 6vw, 34px)', fontWeight: 900, letterSpacing: '-0.5px', background: 'linear-gradient(135deg, #F0D060, #D4AF37)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: 1.1 }}>
+                <h3 style={{ fontSize: 'clamp(28px, 6vw, 36px)', fontWeight: 900, letterSpacing: '-0.8px', color: ACCENTS.gold.ink, lineHeight: 1.1 }}>
                   {result.gyeokguk.name}
                 </h3>
               </div>
-              <div style={{ display: 'grid', gap: '16px' }}>
+              <div style={{ display: 'grid', gap: '20px' }}>
                 <div>
-                  <p style={{ fontSize: '11px', color: 'var(--gold)', marginBottom: '8px', letterSpacing: '1.5px', fontWeight: 700, opacity: 0.7 }}>
+                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px', letterSpacing: '1.5px', fontWeight: 700, textTransform: 'uppercase' }}>
                     판정 근거
                   </p>
                   <p style={{ fontSize: 'var(--fs-base)', lineHeight: 1.85, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
                     {result.gyeokguk.reasoning}
                   </p>
                 </div>
+                <div style={{ height: '1px', background: 'var(--border)' }} />
                 <div>
-                  <p style={{ fontSize: '11px', color: 'var(--gold)', marginBottom: '8px', letterSpacing: '1.5px', fontWeight: 700, opacity: 0.7 }}>
+                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px', letterSpacing: '1.5px', fontWeight: 700, textTransform: 'uppercase' }}>
                     커리어 함의
                   </p>
                   <p style={{ fontSize: 'var(--fs-base)', lineHeight: 1.85, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
@@ -454,7 +421,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── FREE: 1. 책사의 한마디 ─────────────────────── */}
         {result.sharp_feedback && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.1 }}>
-            <SectionTitle icon="🔮" accent="coral" kicker="SHARP · 책사의 직언">
+            <SectionTitle icon="🔮" accent="rose" kicker="SHARP · 책사의 직언">
               책사의 한마디
             </SectionTitle>
             <SharpFeedback feedback={result.sharp_feedback} />
@@ -479,61 +446,45 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
             <SectionTitle icon="🏆" accent="gold" kicker="PEAK · 전성기">
               나의 최고 전성기
             </SectionTitle>
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #0f0e0a 0%, #1a1500 100%)',
-                border: '1px solid rgba(212,175,55,0.3)',
-                borderRadius: '16px',
-                padding: '24px',
-                boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                <div
-                  style={{
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #D4AF37 0%, #b8882a 100%)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '26px',
-                    flexShrink: 0,
-                    boxShadow: '0 4px 16px rgba(212,175,55,0.3)',
-                  }}
-                >
+            <ThemeCard accent="gold">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+                <div style={{
+                  width: '68px', height: '68px',
+                  borderRadius: '18px',
+                  background: ACCENTS.gold.soft,
+                  border: `1px solid ${ACCENTS.gold.main}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '30px', flexShrink: 0,
+                }}>
                   👑
                 </div>
-                <div>
-                  <p style={{ fontSize: '12px', color: 'rgba(212,175,55,0.6)', marginBottom: '4px', letterSpacing: '1px' }}>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '2px', letterSpacing: '1.5px', fontWeight: 700, textTransform: 'uppercase' }}>
                     커리어 최정점 해
                   </p>
-                  <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--gold)', lineHeight: 1 }}>
+                  <p style={{ fontSize: 'clamp(30px, 6vw, 38px)', fontWeight: 900, color: ACCENTS.gold.ink, lineHeight: 1, letterSpacing: '-1px' }}>
                     {topYear.year}년
-                  </p>
-                  <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '6px', lineHeight: 1.6 }}>
-                    {topYear.reason}
                   </p>
                 </div>
               </div>
-              <div
-                style={{
-                  marginTop: '18px',
-                  padding: '12px 16px',
-                  background: 'rgba(212,175,55,0.05)',
-                  borderRadius: '10px',
-                  border: '1px solid rgba(212,175,55,0.12)',
-                  fontSize: '13px',
-                  color: 'var(--text-muted)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                }}
-              >
+              <p style={{ fontSize: 'var(--fs-base)', color: 'var(--text-secondary)', marginTop: '16px', lineHeight: 1.8 }}>
+                {topYear.reason}
+              </p>
+              <div style={{
+                marginTop: '16px',
+                padding: '12px 16px',
+                background: 'var(--bg)',
+                borderRadius: '12px',
+                border: '1px solid var(--border)',
+                fontSize: 'var(--fs-sm)',
+                color: 'var(--text-muted)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}>
                 🔒 <span>Top 2~5 전성기 + 상세 분석은 프리미엄에서 확인하세요</span>
               </div>
-            </div>
+            </ThemeCard>
           </motion.section>
         )}
 
@@ -601,7 +552,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
 
               <div style={{
                 padding: '14px 16px',
-                background: 'rgba(0,0,0,0.25)',
+                background: 'var(--bg)',
                 borderRadius: '12px',
                 border: '1px solid rgba(255,255,255,0.05)',
               }}>
@@ -625,11 +576,11 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
             transition={{ duration: 0.5, delay: 0.24 }}
             className="no-print"
             style={{
-              padding: '14px 18px',
+              padding: '16px 20px',
               borderRadius: '14px',
-              background: 'linear-gradient(135deg, rgba(212,175,55,0.10), rgba(184,136,42,0.06))',
-              border: '1px dashed rgba(212,175,55,0.45)',
-              fontSize: '13px',
+              background: '#ecfccb',
+              border: '1px dashed #84cc16',
+              fontSize: 'var(--fs-sm)',
               lineHeight: 1.7,
               color: 'var(--text)',
               display: 'flex',
@@ -637,14 +588,14 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
               gap: '6px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, color: 'var(--gold)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, color: '#3f6212' }}>
               <span style={{ fontSize: '14px' }}>🧪</span>
               테스트 모드 — 결제 없이 모든 프리미엄 섹션 공개 중
             </div>
-            <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
+            <p style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)', margin: 0 }}>
               ⬆ 위 섹션까지는 <strong style={{ color: 'var(--text)' }}>무료(FREE)</strong> ·
-              ⬇ 아래 💎 PREMIUM 뱃지가 붙은 섹션은 결제 출시 후 <strong style={{ color: 'var(--gold)' }}>유료 전환</strong>됩니다.
-              카드 모듈 연결 후 <code style={{ fontSize: '11px', background: 'rgba(0,0,0,0.3)', padding: '1px 5px', borderRadius: '4px' }}>TEST_MODE_SHOW_ALL = false</code>로 전환하면 자동 게이팅 됩니다.
+              ⬇ 아래 💎 PREMIUM 뱃지가 붙은 섹션은 결제 출시 후 <strong style={{ color: '#3f6212' }}>유료 전환</strong>됩니다.
+              카드 모듈 연결 후 <code style={{ fontSize: '11px', background: '#fff', padding: '1px 5px', borderRadius: '4px', border: '1px solid var(--border)' }}>TEST_MODE_SHOW_ALL = false</code>로 전환하면 자동 게이팅 됩니다.
             </p>
           </motion.div>
         )}
@@ -675,55 +626,55 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                 </p>
                 <GoldenYearsChart data={result.top5_golden_years || []} />
                 <div style={{ marginTop: '24px', display: 'grid', gap: '12px' }}>
-                  {sortedYears.map((y, i) => (
-                    <div key={y.year} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                      <span
-                        style={{
-                          width: '28px',
-                          height: '28px',
-                          borderRadius: '50%',
-                          background:
-                            i === 0 ? 'linear-gradient(135deg,#D4AF37,#b8882a)'
-                            : i === 1 ? '#888'
-                            : i === 2 ? '#a0522d'
-                            : 'var(--border)',
+                  {sortedYears.map((y, i) => {
+                    const rankColor = i === 0 ? ACCENTS.gold.main : i === 1 ? ACCENTS.slate.main : i === 2 ? ACCENTS.amber.main : '#cbd5e1';
+                    const rankBg = i === 0 ? ACCENTS.gold.soft : i === 1 ? ACCENTS.slate.soft : i === 2 ? ACCENTS.amber.soft : '#f1f5f9';
+                    return (
+                      <div key={y.year} style={{
+                        display: 'flex', alignItems: 'flex-start', gap: '14px',
+                        padding: '12px 14px',
+                        background: 'var(--bg)',
+                        borderRadius: '12px',
+                        border: '1px solid var(--border)',
+                      }}>
+                        <span style={{
+                          width: '32px', height: '32px',
+                          borderRadius: '10px',
+                          background: rankBg,
+                          border: `1px solid ${rankColor}`,
+                          color: rankColor,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          color: i < 3 ? '#000' : 'var(--text-muted)',
+                          fontSize: 'var(--fs-sm)',
+                          fontWeight: 800,
                           flexShrink: 0,
-                          marginTop: '2px',
-                          boxShadow: i === 0 ? '0 2px 8px rgba(212,175,55,0.4)' : 'none',
-                        }}
-                      >
-                        {i + 1}
-                      </span>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                          <span style={{ fontSize: '15px', fontWeight: 700, color: i === 0 ? 'var(--gold)' : 'var(--text)' }}>
-                            {y.year}년
-                          </span>
-                          <span
-                            style={{
-                              fontSize: '12px',
-                              color: 'rgba(212,175,55,0.7)',
-                              background: 'rgba(212,175,55,0.08)',
-                              padding: '1px 8px',
-                              borderRadius: '10px',
-                              border: '1px solid rgba(212,175,55,0.15)',
-                            }}
-                          >
-                            {y.score}점
-                          </span>
+                        }}>
+                          {i + 1}
+                        </span>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: 'var(--fs-lg)', fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.3px' }}>
+                              {y.year}년
+                            </span>
+                            <span style={{
+                              fontSize: '11px',
+                              color: rankColor,
+                              background: rankBg,
+                              padding: '2px 10px',
+                              borderRadius: '999px',
+                              fontWeight: 700,
+                            }}>
+                              {y.score}점
+                            </span>
+                          </div>
+                          <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+                            {y.reason}
+                          </p>
                         </div>
-                        <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.6 }}>
-                          {y.reason}
-                        </p>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </PaywallOverlay>
@@ -742,28 +693,30 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                 <LifeCycleChart data={result.life_cycle_scores || []} currentAge={age} />
                 <div style={{ marginTop: '24px', display: 'grid', gap: '12px' }}>
                   {(result.life_cycle_scores ?? []).map((l) => (
-                    <div key={l.age_range} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                      <span
-                        style={{
-                          fontSize: '13px',
-                          fontWeight: 700,
-                          color: 'var(--gold)',
-                          minWidth: '40px',
-                          marginTop: '3px',
-                        }}
-                      >
+                    <div key={l.age_range} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px 14px', background: 'var(--bg)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                      <span style={{
+                        fontSize: 'var(--fs-sm)',
+                        fontWeight: 800,
+                        color: ACCENTS.teal.ink,
+                        background: ACCENTS.teal.soft,
+                        padding: '6px 10px',
+                        borderRadius: '8px',
+                        minWidth: '52px',
+                        textAlign: 'center',
+                        marginTop: '2px',
+                      }}>
                         {l.age_range}
                       </span>
                       <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
                           <div className="score-bar" style={{ flex: 1 }}>
                             <div className="score-bar-fill" style={{ width: `${l.score}%` }} />
                           </div>
-                          <span style={{ fontSize: '12px', color: 'var(--text-muted)', minWidth: '30px' }}>
+                          <span style={{ fontSize: 'var(--fs-sm)', fontWeight: 800, color: 'var(--text)', minWidth: '32px' }}>
                             {l.score}
                           </span>
                         </div>
-                        <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                        <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
                           {l.description}
                         </p>
                       </div>
@@ -778,7 +731,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: 6. 12년 계절 주기 ──────────────────── */}
         {result.season_cycle?.length > 0 && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.34 }}>
-            <SectionTitle icon="🔄" accent="sky" kicker="CYCLE · 12년 주기">커리어 12년 주기</SectionTitle>
+            <SectionTitle icon="🔄" accent="blue" kicker="CYCLE · 12년 주기">커리어 12년 주기</SectionTitle>
             <PaywallOverlay>
               <SeasonCycle cycle={result.season_cycle} peakYear={peakYear} />
             </PaywallOverlay>
@@ -810,7 +763,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: 9. 성장 미션 3종 ───────────────────── */}
         {result.growth_missions?.length > 0 && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.4 }}>
-            <SectionTitle icon="🚀" accent="coral" kicker="MISSIONS · 성장 액션">성장 미션 3종</SectionTitle>
+            <SectionTitle icon="🚀" accent="rose" kicker="MISSIONS · 성장 액션">성장 미션 3종</SectionTitle>
             <PaywallOverlay>
               <GrowthMissions missions={result.growth_missions} />
             </PaywallOverlay>
@@ -832,7 +785,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: 11. MBTI 시너지 ─────────────────────── */}
         {result.mbti_integration && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.44 }}>
-            <SectionTitle icon="🧠" accent="sky" kicker="MBTI × SAJU">MBTI 시너지 분석</SectionTitle>
+            <SectionTitle icon="🧠" accent="blue" kicker="MBTI × SAJU">MBTI 시너지 분석</SectionTitle>
             <PaywallOverlay>
               <MBTICard data={result.mbti_integration} />
             </PaywallOverlay>
@@ -857,19 +810,13 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                       { subject: '창의성', A: result.career_pentagon.creativity },
                       { subject: '공감력', A: result.career_pentagon.empathy },
                     ]}>
-                      <defs>
-                        <linearGradient id="pentagonGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#a78bfa" stopOpacity={0.8} />
-                          <stop offset="100%" stopColor="#22d3ee" stopOpacity={0.5} />
-                        </linearGradient>
-                      </defs>
-                      <PolarGrid stroke="rgba(167,139,250,0.2)" strokeDasharray="3 3" />
+                      <PolarGrid stroke="#e7e5e4" strokeDasharray="3 3" />
                       <PolarAngleAxis
                         dataKey="subject"
-                        tick={{ fill: '#c8c8dc', fontSize: 13, fontWeight: 700 }}
+                        tick={{ fill: '#44403c', fontSize: 13, fontWeight: 700 }}
                       />
                       <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                      <Radar name="stat" dataKey="A" stroke="#a78bfa" strokeWidth={2.5} fill="url(#pentagonGrad)" fillOpacity={0.7} />
+                      <Radar name="stat" dataKey="A" stroke="#8b5cf6" strokeWidth={2.5} fill="#8b5cf6" fillOpacity={0.25} />
                     </RadarChart>
                   </ResponsiveContainer>
                 </div>
@@ -880,21 +827,21 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                   gap: '8px',
                 }}>
                   {([
-                    ['리더십', result.career_pentagon.leadership, '#a78bfa'],
-                    ['실행력', result.career_pentagon.execution, '#22d3ee'],
-                    ['분석력', result.career_pentagon.analysis, '#7dd3fc'],
-                    ['창의성', result.career_pentagon.creativity, '#fb7185'],
-                    ['공감력', result.career_pentagon.empathy, '#a3e635'],
-                  ] as const).map(([label, val, color]) => (
+                    ['리더십', result.career_pentagon.leadership, ACCENTS.violet],
+                    ['실행력', result.career_pentagon.execution, ACCENTS.teal],
+                    ['분석력', result.career_pentagon.analysis, ACCENTS.blue],
+                    ['창의성', result.career_pentagon.creativity, ACCENTS.rose],
+                    ['공감력', result.career_pentagon.empathy, ACCENTS.lime],
+                  ] as const).map(([label, val, a]) => (
                     <div key={label} style={{
-                      padding: '10px 6px',
-                      background: `${color}12`,
-                      border: `1px solid ${color}30`,
-                      borderRadius: '10px',
+                      padding: '12px 6px',
+                      background: a.soft,
+                      border: `1px solid ${a.main}`,
+                      borderRadius: '12px',
                       textAlign: 'center',
                     }}>
-                      <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '4px', letterSpacing: '0.5px' }}>{label}</div>
-                      <div style={{ fontSize: '18px', fontWeight: 900, color }}>{val}</div>
+                      <div style={{ fontSize: '10px', color: a.ink, marginBottom: '4px', letterSpacing: '0.5px', fontWeight: 700 }}>{label}</div>
+                      <div style={{ fontSize: '22px', fontWeight: 900, color: a.ink }}>{val}</div>
                     </div>
                   ))}
                 </div>
@@ -924,23 +871,23 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
             <PaywallOverlay>
               <ThemeCard accent="violet" style={{ display: 'grid', gap: '12px' }}>
                 {[
-                  { label: '리더십 스타일',     value: result.relationship_code.leadership_style,    color: ACCENTS.violet.main, icon: '🎯' },
-                  { label: '파트너십 스타일',   value: result.relationship_code.partnership_style,   color: ACCENTS.sky.main,    icon: '🤝' },
-                  { label: '조직 내 처세',      value: result.relationship_code.political_navigation, color: ACCENTS.gold.main,  icon: '⚖️' },
-                  { label: '십성 균형 진단',    value: result.relationship_code.ten_gods_balance,    color: ACCENTS.teal.main,   icon: '🔮' },
-                  { label: '시너지 내는 사람',  value: result.relationship_code.synergy_people,      color: ACCENTS.lime.main,   icon: '✨' },
-                  { label: '충돌하는 사람',     value: result.relationship_code.friction_people,     color: ACCENTS.coral.main,  icon: '⚠️' },
+                  { label: '리더십 스타일',     value: result.relationship_code.leadership_style,    a: ACCENTS.violet, icon: '🎯' },
+                  { label: '파트너십 스타일',   value: result.relationship_code.partnership_style,   a: ACCENTS.blue,   icon: '🤝' },
+                  { label: '조직 내 처세',      value: result.relationship_code.political_navigation, a: ACCENTS.gold,  icon: '⚖️' },
+                  { label: '십성 균형 진단',    value: result.relationship_code.ten_gods_balance,    a: ACCENTS.teal,   icon: '🔮' },
+                  { label: '시너지 내는 사람',  value: result.relationship_code.synergy_people,      a: ACCENTS.lime,   icon: '✨' },
+                  { label: '충돌하는 사람',     value: result.relationship_code.friction_people,     a: ACCENTS.rose,   icon: '⚠️' },
                 ].map((r) => (
                   <div key={r.label} style={{
                     padding: '16px 18px',
-                    background: 'rgba(255,255,255,0.02)',
-                    border: '1px solid rgba(255,255,255,0.06)',
-                    borderLeft: `3px solid ${r.color}`,
+                    background: 'var(--bg)',
+                    border: '1px solid var(--border)',
+                    borderLeft: `3px solid ${r.a.main}`,
                     borderRadius: '12px',
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                      <span style={{ fontSize: '15px' }}>{r.icon}</span>
-                      <p style={{ fontSize: '12px', letterSpacing: '1.5px', color: r.color, fontWeight: 800 }}>
+                      <span style={{ fontSize: '16px' }}>{r.icon}</span>
+                      <p style={{ fontSize: '11px', letterSpacing: '1.5px', color: r.a.ink, fontWeight: 800, textTransform: 'uppercase' }}>
                         {r.label}
                       </p>
                     </div>
@@ -957,12 +904,12 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: P5. 생존 & 성장 전략 ──────────────────── */}
         {result.survival_strategy && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.47 }}>
-            <SectionTitle icon="⚔️" accent="coral" kicker="SURVIVAL · 액션 플랜">생존 & 성장 전략</SectionTitle>
-            <WisdomBox accent="coral">
+            <SectionTitle icon="⚔️" accent="rose" kicker="SURVIVAL · 액션 플랜">생존 & 성장 전략</SectionTitle>
+            <WisdomBox accent="rose">
               💡 "성공한다"가 아니라 "지금 이 계절에서 <strong style={{ color: 'var(--text)' }}>무엇을 버리고 무엇을 취할지</strong>"에 대한 Action Plan입니다.
             </WisdomBox>
             <PaywallOverlay>
-              <ThemeCard accent="coral" style={{ display: 'grid', gap: '18px' }}>
+              <ThemeCard accent="rose" style={{ display: 'grid', gap: '18px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div style={{
                     padding: '14px',
@@ -1003,8 +950,8 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                 ].map((r) => (
                   <div key={r.label} style={{
                     padding: '14px 16px',
-                    background: 'rgba(212,175,55,0.04)',
-                    border: '1px solid rgba(212,175,55,0.15)',
+                    background: 'var(--lime-soft)',
+                    border: '1px solid var(--border)',
                     borderRadius: '10px',
                   }}>
                     <p style={{ fontSize: '11px', color: 'var(--gold)', fontWeight: 700, marginBottom: '6px', letterSpacing: '1px' }}>
@@ -1030,7 +977,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
 
         {/* ── FREE: 13. 공유 카드 ──────────────────────────── */}
         <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.5 }}>
-          <SectionTitle icon="✨" accent="sky" kicker="SHARE · 기운 나누기">좋은 기운 나누기</SectionTitle>
+          <SectionTitle icon="✨" accent="blue" kicker="SHARE · 기운 나누기">좋은 기운 나누기</SectionTitle>
           <ShareSection result={result} userInput={userInput} peakYear={peakYear} />
         </motion.section>
 
@@ -1044,14 +991,15 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
             style={{
               width: '100%',
               padding: '14px 0',
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(212,175,55,0.25)',
+              background: 'var(--card)',
+              border: '1px solid var(--border-strong)',
               borderRadius: '12px',
-              fontSize: '14px',
-              fontWeight: 600,
-              color: 'var(--text)',
+              fontSize: 'var(--fs-sm)',
+              fontWeight: 700,
+              color: 'var(--text-secondary)',
               cursor: 'pointer',
               transition: 'all 0.2s',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
             📄 운명 보고서 PDF로 저장
@@ -1066,8 +1014,8 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
           {saveState === 'saved' ? (
             <div style={{
               width: '100%', padding: '14px 0', textAlign: 'center',
-              background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)',
-              borderRadius: '12px', fontSize: '14px', color: '#4ade80',
+              background: ACCENTS.lime.soft, border: `1px solid ${ACCENTS.lime.main}`,
+              borderRadius: '12px', fontSize: 'var(--fs-sm)', color: ACCENTS.lime.ink, fontWeight: 700,
             }}>
               ✓ 결과가 저장되었습니다 (1년 보관)
             </div>
@@ -1078,20 +1026,19 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                 disabled={saveState === 'saving'}
                 style={{
                   width: '100%', padding: '14px 0',
-                  background: user
-                    ? 'linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.08))'
-                    : 'rgba(212,175,55,0.06)',
-                  border: '1px solid rgba(212,175,55,0.3)',
-                  borderRadius: '12px', fontSize: '14px', fontWeight: 600,
-                  color: 'var(--gold)', cursor: saveState === 'saving' ? 'not-allowed' : 'pointer',
+                  background: 'var(--card)',
+                  border: '1px solid var(--border-strong)',
+                  borderRadius: '12px', fontSize: 'var(--fs-sm)', fontWeight: 700,
+                  color: 'var(--text-secondary)', cursor: saveState === 'saving' ? 'not-allowed' : 'pointer',
                   opacity: saveState === 'saving' ? 0.7 : 1,
                   transition: 'all 0.2s',
+                  boxShadow: 'var(--shadow-sm)',
                 }}
               >
                 {saveState === 'saving' ? '저장 중...' : user ? '💾 결과 저장하기 (1년 보관)' : '🔐 로그인 후 결과 저장하기'}
               </button>
               {saveState === 'error' && saveError && (
-                <p style={{ fontSize: '12px', color: '#f87171', textAlign: 'center', marginTop: '6px' }}>
+                <p style={{ fontSize: 'var(--fs-xs)', color: ACCENTS.rose.main, textAlign: 'center', marginTop: '6px' }}>
                   {saveError}
                 </p>
               )}
@@ -1099,27 +1046,29 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
           )}
         </motion.div>
 
-        {/* ── Oracle Chat Button ─────────────────────────── */}
+        {/* ── Oracle Chat Button — lime primary CTA ───────── */}
         <motion.div {...fadeUp} transition={{ duration: 0.5, delay: 0.51 }} className="no-print">
           <button
             onClick={() => setChatOpen(true)}
             style={{
               width: '100%',
-              padding: '14px 0',
-              background: 'linear-gradient(135deg, rgba(212,175,55,0.18), rgba(184,136,42,0.14))',
-              border: '1px solid rgba(212,175,55,0.35)',
+              padding: '16px 0',
+              background: ACCENTS.lime.main,
+              border: 'none',
               borderRadius: '12px',
-              fontSize: '14px',
-              fontWeight: 700,
-              color: 'var(--gold)',
+              fontSize: 'var(--fs-base)',
+              fontWeight: 800,
+              color: '#1a1a1a',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '8px',
-              boxShadow: '0 4px 16px rgba(212,175,55,0.15)',
+              gap: '10px',
               transition: 'all 0.2s',
+              letterSpacing: '-0.2px',
             }}
+            onMouseOver={(e) => { e.currentTarget.style.background = ACCENTS.lime.ink; e.currentTarget.style.color = '#fff'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = ACCENTS.lime.main; e.currentTarget.style.color = '#1a1a1a'; }}
           >
             🔮 마스터 오라클과 실시간 상담하기
           </button>

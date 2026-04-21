@@ -89,9 +89,9 @@ function AuthButton({
         style={{
           position: 'fixed', top: '16px', left: '16px', zIndex: 1000,
           padding: '7px 14px', fontSize: '13px', fontWeight: 600,
-          background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.3)',
-          borderRadius: '20px', color: 'var(--gold)', cursor: 'pointer',
-          backdropFilter: 'blur(8px)',
+          background: '#ffffff', border: '1px solid #e7e5e4',
+          borderRadius: '999px', color: '#3f6212', cursor: 'pointer',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
         }}
       >
         로그인
@@ -105,9 +105,9 @@ function AuthButton({
         onClick={() => setMenuOpen((v) => !v)}
         style={{
           padding: '6px 12px', fontSize: '13px', fontWeight: 600,
-          background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.3)',
-          borderRadius: '20px', color: 'var(--gold)', cursor: 'pointer',
-          backdropFilter: 'blur(8px)',
+          background: '#ffffff', border: '1px solid #e7e5e4',
+          borderRadius: '999px', color: '#3f6212', cursor: 'pointer',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
           display: 'flex', alignItems: 'center', gap: '6px',
         }}
       >
@@ -126,9 +126,9 @@ function AuthButton({
         <div
           style={{
             position: 'absolute', top: '40px', left: 0,
-            background: '#111', border: '1px solid var(--border)',
-            borderRadius: '10px', minWidth: '160px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+            background: '#fff', border: '1px solid var(--border)',
+            borderRadius: '12px', minWidth: '180px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
             overflow: 'hidden',
           }}
         >

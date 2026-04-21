@@ -41,12 +41,12 @@ export default function PaywallOverlay({ children }: Props) {
             fontSize: '10px',
             fontWeight: 800,
             letterSpacing: '2px',
-            padding: '4px 10px',
+            padding: '5px 12px',
             marginBottom: '10px',
             borderRadius: '999px',
-            background: 'linear-gradient(135deg, rgba(212,175,55,0.22), rgba(184,136,42,0.18))',
-            border: '1px solid rgba(212,175,55,0.4)',
-            color: 'var(--gold)',
+            background: '#fef3c7',
+            border: '1px solid #b8860b',
+            color: '#78350f',
             textTransform: 'uppercase',
           }}
         >

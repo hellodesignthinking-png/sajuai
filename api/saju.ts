@@ -256,7 +256,7 @@ Return ONLY valid JSON matching this shape (CORE analysis only):
     {"age_range": "50대", "score": <계산>, "description": "2문장"},
     {"age_range": "60대", "score": <계산>, "description": "2문장"}
   ],
-  "season_reasoning": {"saju_basis": "현재 대운 × 일간 관계, 왜 이 계절인지 2-3문장", "overall_reasoning": "종합 결론 2-3문장. 숫자·연도 포함."},
+  "season_reasoning": {"saju_basis": "현재 대운 × 일간 관계, 왜 이 계절인지 2-3문장 (명리학 관점)", "astrology_basis": "서양 점성술(태양궁·월성·행성 transit) 관점에서 왜 이 계절인지 2-3문장. 생년월일과 현재 년도 기반.", "numerology_basis": "수비학 관점 2-3문장. 생년월일 숫자 합(Life Path Number), 올해(${currentYear}) 개인 년도 숫자와 커리어 계절 연결.", "overall_reasoning": "사주+점성술+수비학 3개 관점 종합 결론 2-3문장. 숫자·연도 포함."},
   "mbti_integration": {"type": "${ctx.mbtiText}", "career_synergy": "일간+MBTI 시너지 2-3문장. 직업·분야 포함.", "blind_spot": "그림자 × 약점 충돌 2문장."},
   "gyeokguk": {"name": "격국명 (정관격·편재격·식신생재격·건록격·양인격 등)", "reasoning": "월지 ${extractChar(calc.fourPillars.month.earthly)} × 일간 ${calc.dayMaster.heavenly} 2-3문장 근거.", "implication": "커리어·성격 함의 2-3문장."}
 }`;
