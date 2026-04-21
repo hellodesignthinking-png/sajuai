@@ -33,70 +33,142 @@ interface Props {
   onOpenAuth: () => void;
 }
 
-function SectionTitle({ children, icon }: { children: React.ReactNode; icon?: string }) {
+// V64 accent system — each section gets a distinct color for visual rhythm.
+type Accent = 'gold' | 'teal' | 'violet' | 'coral' | 'lime' | 'sky';
+const ACCENTS: Record<Accent, { main: string; soft: string; glow: string; grad: string }> = {
+  gold:   { main: '#D4AF37', soft: 'rgba(212,175,55,0.10)',  glow: 'rgba(212,175,55,0.35)',  grad: 'linear-gradient(135deg, #D4AF37, #b8882a)' },
+  teal:   { main: '#22d3ee', soft: 'rgba(34,211,238,0.10)',  glow: 'rgba(34,211,238,0.35)',  grad: 'linear-gradient(135deg, #22d3ee, #0891b2)' },
+  violet: { main: '#a78bfa', soft: 'rgba(167,139,250,0.10)', glow: 'rgba(167,139,250,0.35)', grad: 'linear-gradient(135deg, #a78bfa, #7c3aed)' },
+  coral:  { main: '#fb7185', soft: 'rgba(251,113,133,0.10)', glow: 'rgba(251,113,133,0.35)', grad: 'linear-gradient(135deg, #fb7185, #e11d48)' },
+  lime:   { main: '#a3e635', soft: 'rgba(163,230,53,0.10)',  glow: 'rgba(163,230,53,0.35)',  grad: 'linear-gradient(135deg, #a3e635, #65a30d)' },
+  sky:    { main: '#7dd3fc', soft: 'rgba(125,211,252,0.10)', glow: 'rgba(125,211,252,0.35)', grad: 'linear-gradient(135deg, #7dd3fc, #0284c7)' },
+};
+
+function SectionTitle({ children, icon, accent = 'gold', kicker }: {
+  children: React.ReactNode;
+  icon?: string;
+  accent?: Accent;
+  kicker?: string;
+}) {
+  const a = ACCENTS[accent];
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '10px',
-        marginBottom: '16px',
-      }}
-    >
-      {icon && (
-        <span
-          style={{
-            fontSize: '20px',
-            width: '36px',
-            height: '36px',
+    <div style={{ marginBottom: '18px' }}>
+      {kicker && (
+        <p style={{
+          fontSize: '11px',
+          letterSpacing: '3px',
+          color: a.main,
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          marginBottom: '6px',
+          opacity: 0.85,
+        }}>
+          {kicker}
+        </p>
+      )}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {icon && (
+          <span style={{
+            fontSize: '22px',
+            width: '44px',
+            height: '44px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'rgba(212,175,55,0.08)',
-            borderRadius: '10px',
+            background: a.soft,
+            border: `1px solid ${a.main}33`,
+            borderRadius: '12px',
             flexShrink: 0,
-          }}
-        >
-          {icon}
-        </span>
-      )}
-      <h2
-        style={{
-          fontSize: '18px',
+            boxShadow: `0 4px 16px ${a.main}1a`,
+          }}>
+            {icon}
+          </span>
+        )}
+        <h2 style={{
+          fontSize: 'clamp(20px, 4vw, 24px)',
           fontWeight: 800,
           color: 'var(--text)',
           flex: 1,
-          letterSpacing: '-0.2px',
-        }}
-      >
-        {children}
-      </h2>
-      <div
-        style={{
-          height: '1px',
-          flex: 1,
-          background: 'linear-gradient(90deg, rgba(212,175,55,0.25), transparent)',
-        }}
-      />
+          letterSpacing: '-0.3px',
+          lineHeight: 1.2,
+        }}>
+          {children}
+        </h2>
+        <div style={{
+          height: '2px',
+          width: '40px',
+          background: a.grad,
+          borderRadius: '2px',
+          flexShrink: 0,
+          boxShadow: `0 0 12px ${a.main}80`,
+        }} />
+      </div>
+    </div>
+  );
+}
+
+// Shared themed card wrapper — use instead of inline gradient/border.
+function ThemeCard({ accent = 'gold', children, style }: {
+  accent?: Accent;
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+}) {
+  const a = ACCENTS[accent];
+  return (
+    <div style={{
+      background: `linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.0)), ${a.soft}`,
+      border: `1px solid ${a.main}26`,
+      borderRadius: '20px',
+      padding: '24px',
+      boxShadow: `0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04)`,
+      position: 'relative',
+      overflow: 'hidden',
+      ...style,
+    }}>
+      {/* Top accent strip */}
+      <div style={{
+        position: 'absolute',
+        top: 0, left: 0, right: 0,
+        height: '2px',
+        background: a.grad,
+        opacity: 0.6,
+      }} />
+      {children}
+    </div>
+  );
+}
+
+function WisdomBox({ accent = 'gold', children }: { accent?: Accent; children: React.ReactNode }) {
+  const a = ACCENTS[accent];
+  return (
+    <div style={{
+      marginBottom: '14px',
+      padding: '14px 18px',
+      fontSize: 'var(--fs-base, 15px)',
+      lineHeight: 1.7,
+      color: 'var(--text-secondary, #c8c8dc)',
+      background: a.soft,
+      border: `1px solid ${a.main}2e`,
+      borderLeft: `3px solid ${a.main}`,
+      borderRadius: '12px',
+    }}>
+      {children}
     </div>
   );
 }
 
 function SectionDivider() {
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        margin: '4px 0',
-        color: 'rgba(212,175,55,0.2)',
-        fontSize: '12px',
-      }}
-    >
-      <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent)' }} />
-      <span>◆</span>
-      <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, rgba(212,175,55,0.15), transparent)' }} />
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+      margin: '8px 0',
+      fontSize: '11px',
+    }}>
+      <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)' }} />
+      <span style={{ color: 'rgba(212,175,55,0.35)' }}>◆</span>
+      <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, rgba(255,255,255,0.08), transparent)' }} />
     </div>
   );
 }
@@ -139,80 +211,124 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
   }, [result, userInput]);
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)', padding: '0 0 80px' }}>
-      {/* Hero Banner */}
-      <div
-        style={{
-          background: 'linear-gradient(180deg, rgba(212,175,55,0.10) 0%, rgba(212,175,55,0.03) 60%, transparent 100%)',
-          borderBottom: '1px solid rgba(212,175,55,0.12)',
-          padding: '36px 16px 28px',
-          textAlign: 'center',
-          marginBottom: '44px',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Subtle top line */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '200px',
-            height: '2px',
-            background: 'linear-gradient(90deg, transparent, var(--gold), transparent)',
-          }}
-        />
-        <motion.p
-          {...fadeUp}
-          style={{ fontSize: '11px', letterSpacing: '4px', color: 'var(--gold)', marginBottom: '12px', fontWeight: 600 }}
-        >
-          ✦ AI 책사 분석 완료
-        </motion.p>
-        <motion.h1
-          {...fadeUp}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          style={{ fontSize: 'clamp(22px, 5vw, 34px)', fontWeight: 900, marginBottom: '10px', letterSpacing: '-0.5px' }}
-        >
-          {userInput.birthYear}년생 ({calLabel}){' '}
-          <span className="gold-text">{age}세의 커리어 전략</span>
-        </motion.h1>
-        <motion.p
-          {...fadeUp}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          style={{ fontSize: '14px', color: 'var(--text-muted)', letterSpacing: '0.5px' }}
-        >
-          사주 · 점성술 · 수비학 종합 분석
-        </motion.p>
-        {(userInput.specialty || userInput.currentSituation) && (
+    <div style={{ minHeight: '100vh', padding: '0 0 80px' }}>
+      {/* Hero Banner — V64 younger aesthetic */}
+      <div style={{
+        position: 'relative',
+        padding: '56px 16px 48px',
+        textAlign: 'center',
+        marginBottom: '56px',
+        overflow: 'hidden',
+      }}>
+        {/* Animated gradient orbs */}
+        <div style={{
+          position: 'absolute',
+          top: '-40%', left: '50%',
+          width: '540px', height: '540px',
+          transform: 'translateX(-50%)',
+          background: 'radial-gradient(circle, rgba(167,139,250,0.25) 0%, rgba(34,211,238,0.12) 40%, transparent 70%)',
+          filter: 'blur(60px)',
+          pointerEvents: 'none',
+        }} />
+        <div style={{
+          position: 'absolute',
+          bottom: '-20%', right: '20%',
+          width: '320px', height: '320px',
+          background: 'radial-gradient(circle, rgba(251,113,133,0.18) 0%, transparent 60%)',
+          filter: 'blur(50px)',
+          pointerEvents: 'none',
+        }} />
+
+        <div style={{ position: 'relative', zIndex: 1 }}>
           <motion.div
             {...fadeUp}
-            transition={{ duration: 0.5, delay: 0.25 }}
             style={{
-              marginTop: '18px',
               display: 'inline-flex',
-              flexDirection: 'column',
-              gap: '6px',
-              padding: '10px 16px',
-              background: 'rgba(212,175,55,0.06)',
-              border: '1px solid rgba(212,175,55,0.18)',
-              borderRadius: '12px',
-              fontSize: '12px',
-              color: 'var(--text-muted)',
-              lineHeight: 1.5,
-              textAlign: 'left',
-              maxWidth: '92%',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '6px 14px',
+              marginBottom: '20px',
+              background: 'linear-gradient(135deg, rgba(167,139,250,0.18), rgba(34,211,238,0.12))',
+              border: '1px solid rgba(167,139,250,0.4)',
+              borderRadius: '999px',
+              fontSize: '11px',
+              letterSpacing: '3px',
+              fontWeight: 800,
+              color: '#d4c9f9',
+              textTransform: 'uppercase',
             }}
           >
-            {userInput.specialty && (
-              <div><span style={{ color: 'var(--gold)' }}>💼 전문 분야:</span> {userInput.specialty}</div>
-            )}
-            {userInput.currentSituation && (
-              <div><span style={{ color: 'var(--gold)' }}>📝 현재 상황:</span> {userInput.currentSituation}</div>
-            )}
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#a3e635', boxShadow: '0 0 8px #a3e635' }} />
+            AI Oracle Analysis Complete
           </motion.div>
-        )}
+
+          <motion.h1
+            {...fadeUp}
+            transition={{ duration: 0.5, delay: 0.08 }}
+            style={{
+              fontSize: 'clamp(28px, 7vw, 44px)',
+              fontWeight: 900,
+              marginBottom: '12px',
+              letterSpacing: '-1px',
+              lineHeight: 1.1,
+            }}
+          >
+            <span style={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: '0.55em', display: 'block', marginBottom: '8px', letterSpacing: '2px' }}>
+              {userInput.birthYear}년 · {calLabel} · {age}세
+            </span>
+            <span style={{
+              background: 'linear-gradient(135deg, #f5d87d 0%, #D4AF37 35%, #a78bfa 70%, #22d3ee 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>
+              나의 커리어 전략
+            </span>
+          </motion.h1>
+
+          <motion.p
+            {...fadeUp}
+            transition={{ duration: 0.5, delay: 0.18 }}
+            style={{
+              fontSize: 'var(--fs-base)',
+              color: 'var(--text-muted)',
+              letterSpacing: '0.5px',
+              fontWeight: 500,
+            }}
+          >
+            사주 · 격국 · 대운 · 십성 종합 분석
+          </motion.p>
+
+          {(userInput.specialty || userInput.currentSituation) && (
+            <motion.div
+              {...fadeUp}
+              transition={{ duration: 0.5, delay: 0.25 }}
+              style={{
+                marginTop: '24px',
+                display: 'inline-flex',
+                flexDirection: 'column',
+                gap: '8px',
+                padding: '14px 20px',
+                background: 'linear-gradient(135deg, rgba(167,139,250,0.08), rgba(34,211,238,0.06))',
+                border: '1px solid rgba(167,139,250,0.22)',
+                borderRadius: '16px',
+                fontSize: 'var(--fs-sm)',
+                color: 'var(--text-secondary)',
+                lineHeight: 1.6,
+                textAlign: 'left',
+                maxWidth: '92%',
+                backdropFilter: 'blur(6px)',
+              }}
+            >
+              {userInput.specialty && (
+                <div><span style={{ color: ACCENTS.teal.main, fontWeight: 700 }}>💼 전문 분야</span>  {userInput.specialty}</div>
+              )}
+              {userInput.currentSituation && (
+                <div><span style={{ color: ACCENTS.violet.main, fontWeight: 700 }}>📝 현재 상황</span>  {userInput.currentSituation}</div>
+              )}
+            </motion.div>
+          )}
+        </div>
       </div>
 
       {/* Main Content */}
@@ -225,25 +341,18 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
           gap: '36px',
         }}
       >
-        {/* ── FREE: 0-0. 내 사주 원국 (Foundation — 가장 먼저 노출) ── */}
+        {/* ── FREE: 0-0. 내 사주 원국 ────────────────────── */}
         {result.saju_detail && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.03 }}>
-            <SectionTitle icon="☯">내 사주 원국 · 四柱原局</SectionTitle>
-            <div style={{
-              marginBottom: '12px',
-              padding: '12px 16px',
-              fontSize: '16px',
-              lineHeight: 1.7,
-              color: 'var(--text-muted)',
-              background: 'rgba(212,175,55,0.04)',
-              border: '1px solid rgba(212,175,55,0.15)',
-              borderRadius: '12px',
-            }}>
+            <SectionTitle icon="☯" accent="gold" kicker="FOUNDATION · 四柱原局">
+              내 사주 원국
+            </SectionTitle>
+            <WisdomBox accent="gold">
               💡 이것이 바로 <strong style={{ color: 'var(--text)' }}>당신의 사주 팔자(여덟 글자)</strong>입니다.
               일간(日干)은 당신의 본질, 천간·지지·지장간의 관계로 도출되는 <strong style={{ color: 'var(--text)' }}>십신(十神)</strong>이
               당신이 세상과 맺는 역할(재물·명예·인연·창의)을 결정합니다.
               아래 모든 해석은 이 원국에서 나왔습니다.
-            </div>
+            </WisdomBox>
             <SajuDetail data={result.saju_detail} />
           </motion.section>
         )}
@@ -253,23 +362,16 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── FREE: 0-1. 사주 총평 ─────────────────────────── */}
         {result.saju_summary && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.05 }}>
-            <SectionTitle icon="📜">사주 총평 · 그래서 어떻게 해석되었나</SectionTitle>
-            <div style={{
-              marginBottom: '12px',
-              padding: '12px 16px',
-              fontSize: '14px',
-              lineHeight: 1.7,
-              color: 'var(--text-muted)',
-              background: 'rgba(212,175,55,0.04)',
-              border: '1px solid rgba(212,175,55,0.15)',
-              borderRadius: '12px',
-            }}>
+            <SectionTitle icon="📜" accent="violet" kicker="NARRATIVE · 오라클 해석">
+              사주 총평 · 그래서 어떻게 해석되었나
+            </SectionTitle>
+            <WisdomBox accent="violet">
               🔮 위 원국 데이터를 AI 마스터 오라클이 읽고 해석한 종합 평가입니다. <strong style={{ color: 'var(--text)' }}>일간(Identity) × 격국(Career Type) × 대운(Season)</strong>을 상관 관계로 엮어 "당신이 어떤 사람인지"를 서술합니다.
-            </div>
+            </WisdomBox>
             <div
               style={{
-                background: 'linear-gradient(135deg, #0f0e0a 0%, #1a1400 100%)',
-                border: '1px solid rgba(212,175,55,0.35)',
+                background: 'linear-gradient(135deg, #1a1233 0%, #0f0a20 100%)',
+                border: '1px solid rgba(167,139,250,0.28)',
                 borderRadius: '16px',
                 padding: '24px',
                 boxShadow: '0 4px 32px rgba(0,0,0,0.5)',
@@ -294,55 +396,40 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── FREE: 0-1b. 격국 (사주 구조의 본질) ─────────────── */}
         {result.gyeokguk && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.06 }}>
-            <SectionTitle icon="🏛">격국 — 사주 구조의 본질</SectionTitle>
-            <div style={{
-              marginBottom: '12px',
-              padding: '12px 16px',
-              fontSize: '16px',
-              lineHeight: 1.7,
-              color: 'var(--text-muted)',
-              background: 'rgba(212,175,55,0.04)',
-              border: '1px solid rgba(212,175,55,0.15)',
-              borderRadius: '12px',
-            }}>
-              💡 격국은 당신의 <strong style={{ color: 'var(--text)' }}>커리어 유형(Career Type)</strong>을 결정합니다. 일간이 "나는 누구인가"라면, 격국은 "나는 어떻게 일하는 사람인가"예요. 아래 격국명이 곧 당신의 일하는 스타일 · 성공 패턴의 뿌리입니다.
-            </div>
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #110e08 0%, #1d1608 100%)',
-                border: '1px solid rgba(212,175,55,0.35)',
-                borderRadius: '16px',
-                padding: '24px',
-                boxShadow: '0 4px 32px rgba(0,0,0,0.5)',
-              }}
-            >
-              <div style={{ marginBottom: '14px' }}>
-                <p style={{ fontSize: '11px', letterSpacing: '2px', color: 'rgba(212,175,55,0.7)', marginBottom: '6px' }}>
+            <SectionTitle icon="🏛" accent="gold" kicker="STRUCTURE · 격국">
+              격국 — 사주 구조의 본질
+            </SectionTitle>
+            <WisdomBox accent="gold">
+              💡 격국은 당신의 <strong style={{ color: 'var(--text)' }}>커리어 유형(Career Type)</strong>을 결정합니다. 일간이 "나는 누구인가"라면, 격국은 "나는 어떻게 일하는 사람인가"예요.
+            </WisdomBox>
+            <ThemeCard accent="gold">
+              <div style={{ marginBottom: '18px' }}>
+                <p style={{ fontSize: '10px', letterSpacing: '2.5px', color: 'var(--gold)', marginBottom: '8px', fontWeight: 700, opacity: 0.7 }}>
                   THIS CHART'S STRUCTURAL NAME
                 </p>
-                <h3 style={{ fontSize: '22px', fontWeight: 900, color: 'var(--gold)', letterSpacing: '-0.3px' }}>
+                <h3 style={{ fontSize: 'clamp(26px, 6vw, 34px)', fontWeight: 900, letterSpacing: '-0.5px', background: 'linear-gradient(135deg, #F0D060, #D4AF37)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: 1.1 }}>
                   {result.gyeokguk.name}
                 </h3>
               </div>
-              <div style={{ display: 'grid', gap: '14px' }}>
+              <div style={{ display: 'grid', gap: '16px' }}>
                 <div>
-                  <p style={{ fontSize: '11px', color: 'rgba(212,175,55,0.55)', marginBottom: '6px', letterSpacing: '1px' }}>
+                  <p style={{ fontSize: '11px', color: 'var(--gold)', marginBottom: '8px', letterSpacing: '1.5px', fontWeight: 700, opacity: 0.7 }}>
                     판정 근거
                   </p>
-                  <p style={{ fontSize: '14px', lineHeight: 1.8, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
+                  <p style={{ fontSize: 'var(--fs-base)', lineHeight: 1.85, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
                     {result.gyeokguk.reasoning}
                   </p>
                 </div>
                 <div>
-                  <p style={{ fontSize: '11px', color: 'rgba(212,175,55,0.55)', marginBottom: '6px', letterSpacing: '1px' }}>
+                  <p style={{ fontSize: '11px', color: 'var(--gold)', marginBottom: '8px', letterSpacing: '1.5px', fontWeight: 700, opacity: 0.7 }}>
                     커리어 함의
                   </p>
-                  <p style={{ fontSize: '14px', lineHeight: 1.8, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
+                  <p style={{ fontSize: 'var(--fs-base)', lineHeight: 1.85, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
                     {result.gyeokguk.implication}
                   </p>
                 </div>
               </div>
-            </div>
+            </ThemeCard>
           </motion.section>
         )}
 
@@ -351,27 +438,14 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── FREE: 0-2. 올해 운세 ─────────────────────────── */}
         {result.yearly_fortune && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.08 }}>
-            <SectionTitle icon="🌟">올해 운세</SectionTitle>
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #0a0f10 0%, #001a14 100%)',
-                border: '1px solid rgba(212,175,55,0.35)',
-                borderRadius: '16px',
-                padding: '24px',
-                boxShadow: '0 4px 32px rgba(0,0,0,0.5)',
-              }}
-            >
-              <p
-                style={{
-                  fontSize: '15px',
-                  lineHeight: 1.9,
-                  color: 'var(--text)',
-                  whiteSpace: 'pre-wrap',
-                }}
-              >
+            <SectionTitle icon="🌟" accent="teal" kicker="YEARLY · 올해 운세">
+              올해 운세
+            </SectionTitle>
+            <ThemeCard accent="teal">
+              <p style={{ fontSize: 'var(--fs-lg)', lineHeight: 1.9, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
                 {result.yearly_fortune}
               </p>
-            </div>
+            </ThemeCard>
           </motion.section>
         )}
 
@@ -380,7 +454,9 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── FREE: 1. 책사의 한마디 ─────────────────────── */}
         {result.sharp_feedback && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.1 }}>
-            <SectionTitle icon="🔮">책사의 한마디</SectionTitle>
+            <SectionTitle icon="🔮" accent="coral" kicker="SHARP · 책사의 직언">
+              책사의 한마디
+            </SectionTitle>
             <SharpFeedback feedback={result.sharp_feedback} />
           </motion.section>
         )}
@@ -390,7 +466,9 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── FREE: 2. 현재 커리어 계절 ───────────────────── */}
         {result.current_season && result.season_details && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.15 }}>
-            <SectionTitle icon="🌸">현재 커리어 계절</SectionTitle>
+            <SectionTitle icon="🌸" accent="lime" kicker="NOW · 현재 계절">
+              현재 커리어 계절
+            </SectionTitle>
             <SeasonCard season={result.current_season} details={result.season_details} />
           </motion.section>
         )}
@@ -398,7 +476,9 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── FREE: 3. 전성기 #1 티저 ─────────────────────── */}
         {topYear && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.2 }}>
-            <SectionTitle icon="🏆">나의 최고 전성기</SectionTitle>
+            <SectionTitle icon="🏆" accent="gold" kicker="PEAK · 전성기">
+              나의 최고 전성기
+            </SectionTitle>
             <div
               style={{
                 background: 'linear-gradient(135deg, #0f0e0a 0%, #1a1500 100%)',
@@ -462,55 +542,38 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── FREE: 3b. 운명의 계절 · 전공/천직 ───────────────── */}
         {result.career_sync && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.23 }}>
-            <SectionTitle icon="🍂">운명의 계절 · 전공 & 천직</SectionTitle>
-            <div style={{
-              marginBottom: '12px',
-              padding: '12px 16px',
-              fontSize: '16px',
-              lineHeight: 1.7,
-              color: 'var(--text-muted)',
-              background: 'rgba(212,175,55,0.04)',
-              border: '1px solid rgba(212,175,55,0.15)',
-              borderRadius: '12px',
-            }}>
-              💡 인생의 4계절(봄 씨앗 · 여름 성장 · 가을 수확 · 겨울 내실)은 대운의 흐름을 의미합니다. 지금 당신이 <strong style={{ color: 'var(--text)' }}>어느 계절에 있느냐</strong>에 따라 '확장할 때'인지 '수축할 때'인지가 갈려요. 아래 추천 전공·직업군은 당신의 오행과 십성에서 유도된 결과입니다.
-            </div>
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #0a1012 0%, #091618 100%)',
-                border: '1px solid rgba(212,175,55,0.3)',
-                borderRadius: '16px',
-                padding: '24px',
-                boxShadow: '0 4px 24px rgba(0,0,0,0.45)',
-                display: 'grid',
-                gap: '18px',
-              }}
-            >
+            <SectionTitle icon="🍂" accent="lime" kicker="SEASON · 4계절 로드맵">
+              운명의 계절 · 전공 & 천직
+            </SectionTitle>
+            <WisdomBox accent="lime">
+              💡 인생의 4계절(봄 씨앗 · 여름 성장 · 가을 수확 · 겨울 내실)은 <strong style={{ color: 'var(--text)' }}>대운의 흐름</strong>을 의미합니다. 지금이 '확장할 때'인지 '수축할 때'인지에 따라 전략이 갈립니다.
+            </WisdomBox>
+            <ThemeCard accent="lime" style={{ display: 'grid', gap: '22px' }}>
               <div>
-                <p style={{ fontSize: '11px', color: 'rgba(212,175,55,0.6)', letterSpacing: '2px', marginBottom: '6px' }}>
+                <p style={{ fontSize: '10px', color: ACCENTS.lime.main, letterSpacing: '2.5px', marginBottom: '8px', fontWeight: 700, opacity: 0.75 }}>
                   CURRENT SEASON
                 </p>
-                <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--gold)', marginBottom: '10px' }}>
+                <h3 style={{ fontSize: 'clamp(22px, 5vw, 28px)', fontWeight: 900, color: ACCENTS.lime.main, marginBottom: '12px', lineHeight: 1.25 }}>
                   {result.career_sync.season_label}
                 </h3>
-                <p style={{ fontSize: '14px', lineHeight: 1.8, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
+                <p style={{ fontSize: 'var(--fs-base)', lineHeight: 1.85, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
                   {result.career_sync.season_focus}
                 </p>
               </div>
 
               {result.career_sync.recommended_majors?.length > 0 && (
                 <div>
-                  <p style={{ fontSize: '11px', color: 'rgba(212,175,55,0.55)', marginBottom: '8px', letterSpacing: '1px' }}>
-                    추천 전공
+                  <p style={{ fontSize: '11px', color: ACCENTS.lime.main, marginBottom: '10px', letterSpacing: '1.5px', fontWeight: 700, opacity: 0.7 }}>
+                    📚 추천 전공
                   </p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                     {result.career_sync.recommended_majors.map((m) => (
                       <span key={m} style={{
-                        fontSize: '13px', color: 'var(--gold)',
-                        padding: '6px 12px',
-                        background: 'rgba(212,175,55,0.08)',
-                        border: '1px solid rgba(212,175,55,0.25)',
-                        borderRadius: '20px',
+                        fontSize: 'var(--fs-sm)', color: ACCENTS.lime.main, fontWeight: 600,
+                        padding: '8px 14px',
+                        background: ACCENTS.lime.soft,
+                        border: `1px solid ${ACCENTS.lime.main}50`,
+                        borderRadius: '999px',
                       }}>{m}</span>
                     ))}
                   </div>
@@ -519,32 +582,37 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
 
               {result.career_sync.recommended_jobs?.length > 0 && (
                 <div>
-                  <p style={{ fontSize: '11px', color: 'rgba(212,175,55,0.55)', marginBottom: '8px', letterSpacing: '1px' }}>
-                    추천 직업군
+                  <p style={{ fontSize: '11px', color: ACCENTS.teal.main, marginBottom: '10px', letterSpacing: '1.5px', fontWeight: 700, opacity: 0.75 }}>
+                    💼 추천 직업군
                   </p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                     {result.career_sync.recommended_jobs.map((j) => (
                       <span key={j} style={{
-                        fontSize: '13px', color: 'var(--text)',
-                        padding: '6px 12px',
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid var(--border)',
-                        borderRadius: '20px',
+                        fontSize: 'var(--fs-sm)', color: ACCENTS.teal.main, fontWeight: 600,
+                        padding: '8px 14px',
+                        background: ACCENTS.teal.soft,
+                        border: `1px solid ${ACCENTS.teal.main}50`,
+                        borderRadius: '999px',
                       }}>{j}</span>
                     ))}
                   </div>
                 </div>
               )}
 
-              <div>
-                <p style={{ fontSize: '11px', color: 'rgba(212,175,55,0.55)', marginBottom: '6px', letterSpacing: '1px' }}>
+              <div style={{
+                padding: '14px 16px',
+                background: 'rgba(0,0,0,0.25)',
+                borderRadius: '12px',
+                border: '1px solid rgba(255,255,255,0.05)',
+              }}>
+                <p style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '6px', letterSpacing: '1.5px', fontWeight: 700 }}>
                   추천 근거
                 </p>
-                <p style={{ fontSize: '13px', lineHeight: 1.8, color: 'var(--text-muted)', whiteSpace: 'pre-wrap' }}>
+                <p style={{ fontSize: 'var(--fs-sm)', lineHeight: 1.8, color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>
                   {result.career_sync.reasoning}
                 </p>
               </div>
-            </div>
+            </ThemeCard>
           </motion.section>
         )}
 
@@ -589,7 +657,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: P2. 커리어 계절의 근거 ─────────────── */}
         {result.season_reasoning && result.current_season && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.29 }}>
-            <SectionTitle icon="🔍">왜 지금이 이 계절인가</SectionTitle>
+            <SectionTitle icon="🔍" accent="lime" kicker="REASONING">왜 지금이 이 계절인가</SectionTitle>
             <PaywallOverlay>
               <SeasonReasoning data={result.season_reasoning} season={result.current_season} />
             </PaywallOverlay>
@@ -599,7 +667,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: 4. 전성기 Top 5 전체 ───────────────── */}
         {sortedYears.length > 0 && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.3 }}>
-            <SectionTitle icon="🏆">전성기 Top 5 상세 분석</SectionTitle>
+            <SectionTitle icon="🏆" accent="gold" kicker="TOP 5 · 전성기">전성기 Top 5 상세 분석</SectionTitle>
             <PaywallOverlay>
               <div className="card-gold">
                 <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
@@ -665,7 +733,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: 5. 생애 주기 그래프 ────────────────── */}
         {(result.life_cycle_scores ?? []).length > 0 && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.32 }}>
-            <SectionTitle icon="📊">생애 주기 운 그래프</SectionTitle>
+            <SectionTitle icon="📊" accent="teal" kicker="LIFECYCLE · 생애 주기">생애 주기 운 그래프</SectionTitle>
             <PaywallOverlay>
               <div className="card-gold">
                 <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
@@ -710,7 +778,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: 6. 12년 계절 주기 ──────────────────── */}
         {result.season_cycle?.length > 0 && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.34 }}>
-            <SectionTitle icon="🔄">커리어 12년 주기</SectionTitle>
+            <SectionTitle icon="🔄" accent="sky" kicker="CYCLE · 12년 주기">커리어 12년 주기</SectionTitle>
             <PaywallOverlay>
               <SeasonCycle cycle={result.season_cycle} peakYear={peakYear} />
             </PaywallOverlay>
@@ -720,7 +788,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: 7. 계절 심층 가이드 ────────────────── */}
         {result.season_guidance && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.36 }}>
-            <SectionTitle icon="📖">계절별 심층 가이드</SectionTitle>
+            <SectionTitle icon="📖" accent="lime" kicker="DEEP GUIDE">계절별 심층 가이드</SectionTitle>
             <PaywallOverlay>
               <SeasonGuidance guidance={result.season_guidance} season={result.current_season} />
             </PaywallOverlay>
@@ -732,7 +800,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: 8. 올해 분기별 전략 ────────────────── */}
         {result.yearly_strategy && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.38 }}>
-            <SectionTitle icon="📅">올해 분기별 전략</SectionTitle>
+            <SectionTitle icon="📅" accent="teal" kicker="QUARTERLY · 분기 전략">올해 분기별 전략</SectionTitle>
             <PaywallOverlay>
               <YearlyStrategy data={result.yearly_strategy} />
             </PaywallOverlay>
@@ -742,7 +810,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: 9. 성장 미션 3종 ───────────────────── */}
         {result.growth_missions?.length > 0 && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.4 }}>
-            <SectionTitle icon="🚀">성장 미션 3종</SectionTitle>
+            <SectionTitle icon="🚀" accent="coral" kicker="MISSIONS · 성장 액션">성장 미션 3종</SectionTitle>
             <PaywallOverlay>
               <GrowthMissions missions={result.growth_missions} />
             </PaywallOverlay>
@@ -754,7 +822,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: 10. 네트워킹 가이드 ────────────────── */}
         {result.networking_guide && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.42 }}>
-            <SectionTitle icon="🤝">지금 만나야 할 사람</SectionTitle>
+            <SectionTitle icon="🤝" accent="violet" kicker="NETWORKING">지금 만나야 할 사람</SectionTitle>
             <PaywallOverlay>
               <NetworkingGuide guide={result.networking_guide} season={result.current_season} />
             </PaywallOverlay>
@@ -764,7 +832,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: 11. MBTI 시너지 ─────────────────────── */}
         {result.mbti_integration && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.44 }}>
-            <SectionTitle icon="🧠">MBTI 시너지 분석</SectionTitle>
+            <SectionTitle icon="🧠" accent="sky" kicker="MBTI × SAJU">MBTI 시너지 분석</SectionTitle>
             <PaywallOverlay>
               <MBTICard data={result.mbti_integration} />
             </PaywallOverlay>
@@ -774,52 +842,61 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: P3. 커리어 오각형 스탯 ──────────────── */}
         {result.career_pentagon && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.45 }}>
-            <SectionTitle icon="⬟">커리어 오각형 스탯</SectionTitle>
+            <SectionTitle icon="⬟" accent="violet" kicker="PENTAGON · 역량 레이더">커리어 오각형 스탯</SectionTitle>
             <PaywallOverlay>
-              <div className="card-gold">
-                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px' }}>
-                  일간·십성·오행을 조합해 도출한 커리어 역량 오각형
+              <ThemeCard accent="violet">
+                <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+                  일간 · 십성 · 오행을 조합해 도출한 커리어 역량 오각형
                 </p>
-                <div style={{ width: '100%', height: '280px' }}>
+                <div style={{ width: '100%', height: '320px' }}>
                   <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart cx="50%" cy="50%" outerRadius="70%" data={[
+                    <RadarChart cx="50%" cy="50%" outerRadius="72%" data={[
                       { subject: '리더십', A: result.career_pentagon.leadership },
                       { subject: '실행력', A: result.career_pentagon.execution },
                       { subject: '분석력', A: result.career_pentagon.analysis },
                       { subject: '창의성', A: result.career_pentagon.creativity },
                       { subject: '공감력', A: result.career_pentagon.empathy },
                     ]}>
-                      <PolarGrid stroke="rgba(212,175,55,0.15)" strokeDasharray="3 3" />
+                      <defs>
+                        <linearGradient id="pentagonGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#a78bfa" stopOpacity={0.8} />
+                          <stop offset="100%" stopColor="#22d3ee" stopOpacity={0.5} />
+                        </linearGradient>
+                      </defs>
+                      <PolarGrid stroke="rgba(167,139,250,0.2)" strokeDasharray="3 3" />
                       <PolarAngleAxis
                         dataKey="subject"
-                        tick={{ fill: 'rgba(255,255,255,0.75)', fontSize: 12, fontWeight: 700 }}
+                        tick={{ fill: '#c8c8dc', fontSize: 13, fontWeight: 700 }}
                       />
                       <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                      <Radar
-                        name="stat"
-                        dataKey="A"
-                        stroke="#D4AF37"
-                        strokeWidth={2}
-                        fill="#D4AF37"
-                        fillOpacity={0.35}
-                      />
+                      <Radar name="stat" dataKey="A" stroke="#a78bfa" strokeWidth={2.5} fill="url(#pentagonGrad)" fillOpacity={0.7} />
                     </RadarChart>
                   </ResponsiveContainer>
                 </div>
                 <div style={{
-                  marginTop: '12px',
+                  marginTop: '16px',
                   display: 'grid',
                   gridTemplateColumns: 'repeat(5, 1fr)',
-                  gap: '6px',
-                  fontSize: '11px',
-                  color: 'var(--text-muted)',
-                  textAlign: 'center',
+                  gap: '8px',
                 }}>
-                  <div>리더십<br/><strong style={{ color: 'var(--gold)' }}>{result.career_pentagon.leadership}</strong></div>
-                  <div>실행력<br/><strong style={{ color: 'var(--gold)' }}>{result.career_pentagon.execution}</strong></div>
-                  <div>분석력<br/><strong style={{ color: 'var(--gold)' }}>{result.career_pentagon.analysis}</strong></div>
-                  <div>창의성<br/><strong style={{ color: 'var(--gold)' }}>{result.career_pentagon.creativity}</strong></div>
-                  <div>공감력<br/><strong style={{ color: 'var(--gold)' }}>{result.career_pentagon.empathy}</strong></div>
+                  {([
+                    ['리더십', result.career_pentagon.leadership, '#a78bfa'],
+                    ['실행력', result.career_pentagon.execution, '#22d3ee'],
+                    ['분석력', result.career_pentagon.analysis, '#7dd3fc'],
+                    ['창의성', result.career_pentagon.creativity, '#fb7185'],
+                    ['공감력', result.career_pentagon.empathy, '#a3e635'],
+                  ] as const).map(([label, val, color]) => (
+                    <div key={label} style={{
+                      padding: '10px 6px',
+                      background: `${color}12`,
+                      border: `1px solid ${color}30`,
+                      borderRadius: '10px',
+                      textAlign: 'center',
+                    }}>
+                      <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '4px', letterSpacing: '0.5px' }}>{label}</div>
+                      <div style={{ fontSize: '18px', fontWeight: 900, color }}>{val}</div>
+                    </div>
+                  ))}
                 </div>
                 {result.career_pentagon.notes && (
                   <p style={{
@@ -832,7 +909,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                     {result.career_pentagon.notes}
                   </p>
                 )}
-              </div>
+              </ThemeCard>
             </PaywallOverlay>
           </motion.section>
         )}
@@ -840,51 +917,39 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: P4. 인간관계 코드 ─────────────────────── */}
         {result.relationship_code && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.46 }}>
-            <SectionTitle icon="🧬">인간관계 코드</SectionTitle>
-            <div style={{
-              marginBottom: '12px',
-              padding: '12px 16px',
-              fontSize: '16px',
-              lineHeight: 1.7,
-              color: 'var(--text-muted)',
-              background: 'rgba(212,175,55,0.04)',
-              border: '1px solid rgba(212,175,55,0.15)',
-              borderRadius: '12px',
-            }}>
-              💡 사주의 <strong style={{ color: 'var(--text)' }}>십성(비겁 · 식상 · 재성 · 관성 · 인성)</strong>은 당신이 조직과 관계 속에서 자연스럽게 맡는 역할을 알려줍니다. 이 섹션은 당신이 빛나는 파트너 유형, 피해야 할 충돌 유형, 조직 내 정치력을 진단합니다.
-            </div>
+            <SectionTitle icon="🧬" accent="violet" kicker="TEN GODS · 관계 DNA">인간관계 코드</SectionTitle>
+            <WisdomBox accent="violet">
+              💡 사주의 <strong style={{ color: 'var(--text)' }}>십성(비겁·식상·재성·관성·인성)</strong>은 당신이 조직·관계에서 자연스럽게 맡는 역할을 알려줍니다. 빛나는 파트너, 피해야 할 충돌, 정치력까지 진단합니다.
+            </WisdomBox>
             <PaywallOverlay>
-              <div className="card-gold" style={{ display: 'grid', gap: '16px' }}>
+              <ThemeCard accent="violet" style={{ display: 'grid', gap: '12px' }}>
                 {[
-                  { label: '리더십 스타일', value: result.relationship_code.leadership_style, color: '#D4AF37' },
-                  { label: '파트너십 스타일', value: result.relationship_code.partnership_style, color: '#b8882a' },
-                  { label: '조직 내 처세', value: result.relationship_code.political_navigation, color: '#a0522d' },
-                  { label: '십성 균형 진단', value: result.relationship_code.ten_gods_balance, color: '#D4AF37' },
-                  { label: '시너지 내는 사람', value: result.relationship_code.synergy_people, color: '#4ade80' },
-                  { label: '충돌하는 사람', value: result.relationship_code.friction_people, color: '#f87171' },
+                  { label: '리더십 스타일',     value: result.relationship_code.leadership_style,    color: ACCENTS.violet.main, icon: '🎯' },
+                  { label: '파트너십 스타일',   value: result.relationship_code.partnership_style,   color: ACCENTS.sky.main,    icon: '🤝' },
+                  { label: '조직 내 처세',      value: result.relationship_code.political_navigation, color: ACCENTS.gold.main,  icon: '⚖️' },
+                  { label: '십성 균형 진단',    value: result.relationship_code.ten_gods_balance,    color: ACCENTS.teal.main,   icon: '🔮' },
+                  { label: '시너지 내는 사람',  value: result.relationship_code.synergy_people,      color: ACCENTS.lime.main,   icon: '✨' },
+                  { label: '충돌하는 사람',     value: result.relationship_code.friction_people,     color: ACCENTS.coral.main,  icon: '⚠️' },
                 ].map((r) => (
                   <div key={r.label} style={{
-                    padding: '14px 16px',
-                    background: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(212,175,55,0.12)',
+                    padding: '16px 18px',
+                    background: 'rgba(255,255,255,0.02)',
+                    border: '1px solid rgba(255,255,255,0.06)',
                     borderLeft: `3px solid ${r.color}`,
-                    borderRadius: '10px',
+                    borderRadius: '12px',
                   }}>
-                    <p style={{
-                      fontSize: '11px',
-                      letterSpacing: '1px',
-                      color: r.color,
-                      marginBottom: '6px',
-                      fontWeight: 700,
-                    }}>
-                      {r.label}
-                    </p>
-                    <p style={{ fontSize: '13px', lineHeight: 1.8, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                      <span style={{ fontSize: '15px' }}>{r.icon}</span>
+                      <p style={{ fontSize: '12px', letterSpacing: '1.5px', color: r.color, fontWeight: 800 }}>
+                        {r.label}
+                      </p>
+                    </div>
+                    <p style={{ fontSize: 'var(--fs-base)', lineHeight: 1.85, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
                       {r.value}
                     </p>
                   </div>
                 ))}
-              </div>
+              </ThemeCard>
             </PaywallOverlay>
           </motion.section>
         )}
@@ -892,21 +957,12 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
         {/* ── PREMIUM: P5. 생존 & 성장 전략 ──────────────────── */}
         {result.survival_strategy && (
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.47 }}>
-            <SectionTitle icon="⚔️">생존 & 성장 전략</SectionTitle>
-            <div style={{
-              marginBottom: '12px',
-              padding: '12px 16px',
-              fontSize: '16px',
-              lineHeight: 1.7,
-              color: 'var(--text-muted)',
-              background: 'rgba(212,175,55,0.04)',
-              border: '1px solid rgba(212,175,55,0.15)',
-              borderRadius: '12px',
-            }}>
-              💡 "성공한다"가 아니라 "지금 이 계절에서 <strong style={{ color: 'var(--text)' }}>무엇을 버리고 무엇을 취할지</strong>"에 대한 Action Plan입니다. 용신(유리한 오행)과 연결된 습관은 취하고, 기신(불리한 오행)을 증폭하는 습관은 버리세요.
-            </div>
+            <SectionTitle icon="⚔️" accent="coral" kicker="SURVIVAL · 액션 플랜">생존 & 성장 전략</SectionTitle>
+            <WisdomBox accent="coral">
+              💡 "성공한다"가 아니라 "지금 이 계절에서 <strong style={{ color: 'var(--text)' }}>무엇을 버리고 무엇을 취할지</strong>"에 대한 Action Plan입니다.
+            </WisdomBox>
             <PaywallOverlay>
-              <div className="card-gold" style={{ display: 'grid', gap: '18px' }}>
+              <ThemeCard accent="coral" style={{ display: 'grid', gap: '18px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div style={{
                     padding: '14px',
@@ -959,7 +1015,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                     </p>
                   </div>
                 ))}
-              </div>
+              </ThemeCard>
             </PaywallOverlay>
           </motion.section>
         )}
@@ -968,13 +1024,13 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
 
         {/* ── FREE: 12. 덕 쌓기 챌린지 ────────────────────── */}
         <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.48 }}>
-          <SectionTitle icon="🌿">덕 쌓기 챌린지</SectionTitle>
+          <SectionTitle icon="🌿" accent="lime" kicker="KARMA · 덕 쌓기">덕 쌓기 챌린지</SectionTitle>
           <VirtueChallenge />
         </motion.section>
 
         {/* ── FREE: 13. 공유 카드 ──────────────────────────── */}
         <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.5 }}>
-          <SectionTitle icon="✨">좋은 기운 나누기</SectionTitle>
+          <SectionTitle icon="✨" accent="sky" kicker="SHARE · 기운 나누기">좋은 기운 나누기</SectionTitle>
           <ShareSection result={result} userInput={userInput} peakYear={peakYear} />
         </motion.section>
 
