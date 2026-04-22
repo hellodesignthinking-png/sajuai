@@ -13,20 +13,20 @@ const MISSION_CONFIG: Record<'crisis' | 'person' | 'skill', {
 }> = {
   crisis: {
     icon: '⚡',
-    color: '#ef4444',
-    bg: 'rgba(239,68,68,0.07)',
+    color: '#737373',
+    bg: 'var(--bg)',
     label: '극복할 위기',
   },
   person: {
     icon: '🤝',
-    color: '#f97316',
-    bg: 'rgba(249,115,22,0.07)',
+    color: '#404040',
+    bg: 'var(--bg)',
     label: '만나야 할 사람',
   },
   skill: {
     icon: '🎯',
-    color: '#16a34a',
-    bg: 'rgba(74,222,128,0.07)',
+    color: '#404040',
+    bg: 'var(--bg)',
     label: '배워야 할 것',
   },
 };
@@ -103,7 +103,7 @@ export default function GrowthMissions({ missions }: Props) {
             {/* Action */}
             <div
               style={{
-                background: 'rgba(0,0,0,0.2)',
+                background: 'var(--bg)',
                 borderRadius: '8px',
                 padding: '10px 14px',
                 borderLeft: `3px solid ${config.color}`,

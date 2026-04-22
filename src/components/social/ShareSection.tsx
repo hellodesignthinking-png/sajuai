@@ -301,7 +301,7 @@ export default function ShareSection({ result, userInput, peakYear }: Props) {
       <div
         className="card"
         style={{
-          background: 'linear-gradient(135deg, #f7fee7 0%, rgba(0,0,0,0) 100%)',
+          background: '#f7fee7',
           border: '1px solid rgba(132,204,22,0.22)',
           padding: '24px',
         }}
@@ -498,7 +498,7 @@ export default function ShareSection({ result, userInput, peakYear }: Props) {
               height: '100%',
               background:
                 shareCount >= 3
-                  ? 'linear-gradient(90deg, #D4AF37, #F0D060)'
+                  ? '#84cc16'
                   : '#60a5fa',
               borderRadius: '100px',
             }}

@@ -214,7 +214,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
               disabled={loading}
               style={{
                 width: '100%', padding: '11px 0',
-                background: 'linear-gradient(135deg, #65a30d, #65a30d)',
+                background: '#84cc16',
                 border: 'none', borderRadius: '10px',
                 fontSize: '14px', fontWeight: 700, color: '#000',
                 cursor: loading ? 'not-allowed' : 'pointer',

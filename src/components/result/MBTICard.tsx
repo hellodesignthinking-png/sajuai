@@ -71,8 +71,8 @@ export default function MBTICard({ data }: Props) {
           {/* Blind Spot */}
           <div
             style={{
-              background: 'rgba(239,68,68,0.05)',
-              border: '1px solid rgba(239,68,68,0.15)',
+              background: 'var(--bg)',
+              border: '1px solid var(--border)',
               borderRadius: '10px',
               padding: '14px 16px',
             }}
@@ -80,7 +80,7 @@ export default function MBTICard({ data }: Props) {
             <p
               style={{
                 fontSize: '12px',
-                color: '#ef4444',
+                color: '#737373',
                 fontWeight: 600,
                 marginBottom: '8px',
                 letterSpacing: '0.5px',

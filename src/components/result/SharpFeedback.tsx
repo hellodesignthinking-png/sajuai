@@ -4,96 +4,74 @@ interface Props {
   feedback: string;
 }
 
+// V67 minimal — flat white card, left lime accent bar, oversized quote mark.
 export default function SharpFeedback({ feedback }: Props) {
   return (
-    <div
-      style={{
-        position: 'relative',
-        background: 'linear-gradient(135deg, #0f0f0f, #161208)',
-        border: '1px solid rgba(212, 175, 55, 0.4)',
-        borderRadius: '16px',
-        padding: '32px',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Background glow */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '-40px',
-          right: '-40px',
-          width: '200px',
-          height: '200px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, #ecfccb 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }}
-      />
-
+    <div style={{
+      position: 'relative',
+      background: 'var(--card)',
+      border: '1px solid var(--border)',
+      borderLeft: '3px solid #84cc16',
+      borderRadius: '20px',
+      padding: '32px 28px',
+    }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
         <motion.div
           animate={{ rotate: [0, 5, -5, 0] }}
           transition={{ duration: 3, repeat: Infinity }}
-          style={{ fontSize: '28px' }}
+          style={{ fontSize: '22px' }}
         >
           ⚔️
         </motion.div>
-        <div>
-          <p style={{ fontSize: '11px', letterSpacing: '3px', color: '#65a30d', fontWeight: 600 }}>
-            핵심 인사이트
-          </p>
-          <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-            핵심 커리어 인사이트
-          </p>
-        </div>
+        <p style={{
+          fontSize: '11px',
+          letterSpacing: '2.5px',
+          color: 'var(--text-muted)',
+          fontWeight: 800,
+          textTransform: 'uppercase',
+        }}>
+          Sharp Insight · 핵심 인사이트
+        </p>
       </div>
 
-      {/* Quote mark */}
-      <div
-        style={{
-          fontSize: '60px',
-          color: '#d9f99d',
-          lineHeight: 1,
-          marginBottom: '-10px',
-          fontFamily: 'Georgia, serif',
-        }}
-      >
+      {/* Oversized quote mark — typography-first accent */}
+      <div className="display-font" style={{
+        fontSize: '96px',
+        color: '#e7e5e4',
+        lineHeight: 0.8,
+        marginBottom: '-20px',
+        marginLeft: '-6px',
+      }}>
         "
       </div>
 
       {/* Feedback text */}
-      <p
-        style={{
-          fontSize: 'clamp(15px, 2.5vw, 17px)',
-          lineHeight: 1.9,
-          color: 'var(--text)',
-          fontStyle: 'italic',
-          position: 'relative',
-          zIndex: 1,
-        }}
-      >
+      <p style={{
+        fontSize: 'clamp(16px, 2.5vw, 18px)',
+        lineHeight: 1.9,
+        color: 'var(--text)',
+        fontWeight: 500,
+        position: 'relative',
+        zIndex: 1,
+      }}>
         {feedback}
       </p>
 
-      {/* Divider */}
-      <div
-        style={{
-          height: '1px',
-          background: 'linear-gradient(90deg, transparent, #84cc16, transparent)',
-          margin: '20px 0 16px',
-        }}
-      />
+      <div style={{
+        height: '1px',
+        background: 'var(--border)',
+        margin: '24px 0 14px',
+      }} />
 
-      {/* Signature */}
-      <p
-        style={{
-          fontSize: '13px',
-          color: '#65a30d',
-          textAlign: 'right',
-          fontFamily: 'Noto Serif KR, serif',
-        }}
-      >
+      <p style={{
+        fontSize: '12px',
+        color: 'var(--text-muted)',
+        textAlign: 'right',
+        letterSpacing: '1.5px',
+        fontWeight: 700,
+        textTransform: 'uppercase',
+      }}>
         — 너튜유니온 SAJU
       </p>
     </div>

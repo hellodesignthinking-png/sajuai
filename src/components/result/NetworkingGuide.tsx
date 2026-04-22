@@ -6,10 +6,10 @@ interface Props {
 }
 
 const SEASON_COLOR: Record<CareerSeason, string> = {
-  spring: '#4ade80',
-  summer: '#f97316',
-  autumn: '#D4AF37',
-  winter: '#60a5fa',
+  spring: '#737373',
+  summer: '#404040',
+  autumn: '#1a1a1a',
+  winter: '#737373',
 };
 
 const SEASON_NETWORKING: Record<CareerSeason, string> = {
@@ -79,7 +79,7 @@ export default function NetworkingGuide({ guide, season }: Props) {
             </p>
             <div
               style={{
-                background: 'rgba(255,255,255,0.04)',
+                background: 'var(--bg)',
                 borderRadius: '8px',
                 padding: '8px 12px',
                 display: 'flex',
@@ -98,8 +98,8 @@ export default function NetworkingGuide({ guide, season }: Props) {
       {guide.avoid && (
         <div
           style={{
-            background: 'rgba(239,68,68,0.04)',
-            border: '1px solid rgba(239,68,68,0.15)',
+            background: 'var(--bg)',
+            border: '1px solid var(--border)',
             borderRadius: '12px',
             padding: '14px 18px',
             display: 'flex',
@@ -109,7 +109,7 @@ export default function NetworkingGuide({ guide, season }: Props) {
         >
           <span style={{ fontSize: '18px', flexShrink: 0 }}>🙅</span>
           <div>
-            <p style={{ fontSize: '12px', color: '#ef4444', fontWeight: 700, marginBottom: '4px' }}>
+            <p style={{ fontSize: '12px', color: '#737373', fontWeight: 700, marginBottom: '4px' }}>
               지금 피해야 할 사람
             </p>
             <p style={{ fontSize: '13px', color: 'var(--text)', lineHeight: 1.6 }}>{guide.avoid}</p>

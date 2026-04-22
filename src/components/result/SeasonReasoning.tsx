@@ -8,10 +8,10 @@ interface Props {
 }
 
 const SEASON_LABELS: Record<CareerSeason, { label: string; emoji: string; color: string }> = {
-  spring: { label: '봄', emoji: '🌱', color: '#16a34a' },
-  summer: { label: '여름', emoji: '🔥', color: '#f97316' },
+  spring: { label: '봄', emoji: '🌱', color: '#404040' },
+  summer: { label: '여름', emoji: '🔥', color: '#404040' },
   autumn: { label: '가을', emoji: '🍂', color: '#84cc16' },
-  winter: { label: '겨울', emoji: '❄️', color: '#60a5fa' },
+  winter: { label: '겨울', emoji: '❄️', color: '#737373' },
 };
 
 type Tab = 'saju' | 'astrology' | 'numerology';
@@ -73,8 +73,8 @@ export default function SeasonReasoning({ data, season }: Props) {
         style={{
           padding: '16px 18px',
           borderRadius: '12px',
-          background: 'rgba(255,255,255,0.03)',
-          border: '1px solid rgba(255,255,255,0.07)',
+          background: 'var(--bg)',
+          border: '1px solid var(--border)',
         }}
       >
         <p style={{ fontSize: '11px', color: '#65a30d', marginBottom: '10px', fontWeight: 700, letterSpacing: '2px' }}>
@@ -94,10 +94,10 @@ export default function SeasonReasoning({ data, season }: Props) {
             gridTemplateColumns: 'repeat(3, 1fr)',
             gap: '6px',
             marginBottom: '14px',
-            background: 'rgba(255,255,255,0.02)',
+            background: 'var(--bg)',
             padding: '4px',
             borderRadius: '12px',
-            border: '1px solid rgba(255,255,255,0.05)',
+            border: '1px solid var(--border)',
           }}
         >
           {TABS.map((tab) => (

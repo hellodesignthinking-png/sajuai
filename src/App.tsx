@@ -113,7 +113,7 @@ function AuthButton({
       >
         <span style={{
           width: '22px', height: '22px', borderRadius: '50%',
-          background: 'linear-gradient(135deg, #65a30d, #65a30d)',
+          background: '#84cc16',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: '11px', color: '#000', fontWeight: 800,
         }}>

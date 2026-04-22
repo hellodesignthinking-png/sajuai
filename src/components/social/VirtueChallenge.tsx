@@ -186,7 +186,7 @@ export default function VirtueChallenge() {
               top: '24px',
               left: '50%',
               transform: 'translateX(-50%)',
-              background: 'linear-gradient(135deg, #D4AF37, #F0D060)',
+              background: '#84cc16',
               color: '#000',
               padding: '12px 28px',
               borderRadius: '100px',

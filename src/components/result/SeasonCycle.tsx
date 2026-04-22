@@ -6,11 +6,11 @@ interface Props {
   peakYear: number; // Top1 golden year
 }
 
-const SEASON_META: Record<CareerSeason, { icon: string; label: string; color: string; bg: string }> = {
-  spring: { icon: '🌱', label: '봄', color: '#16a34a', bg: 'rgba(74,222,128,0.08)' },
-  summer: { icon: '🔥', label: '여름', color: '#f97316', bg: 'rgba(249,115,22,0.08)' },
-  autumn: { icon: '🍂', label: '가을', color: '#84cc16', bg: '#ecfccb' },
-  winter: { icon: '❄️', label: '겨울', color: '#60a5fa', bg: 'rgba(96,165,250,0.08)' },
+const SEASON_META: Record<CareerSeason, { icon: string; label: string }> = {
+  spring: { icon: '🌱', label: '봄' },
+  summer: { icon: '🔥', label: '여름' },
+  autumn: { icon: '🍂', label: '가을' },
+  winter: { icon: '❄️', label: '겨울' },
 };
 
 const SEASON_DESC: Record<CareerSeason, string> = {
@@ -24,28 +24,26 @@ export default function SeasonCycle({ cycle, peakYear }: Props) {
   if (!cycle?.length) return null;
 
   return (
-    <div
-      style={{
-        background: 'var(--card)',
-        border: '1px solid var(--border)',
-        borderRadius: '16px',
-        padding: '24px',
-        overflow: 'hidden',
-      }}
-    >
-      <div style={{ marginBottom: '20px' }}>
-        <p style={{ fontSize: '11px', letterSpacing: '2px', color: 'var(--text-muted)', marginBottom: '4px' }}>
+    <div style={{
+      background: 'var(--card)',
+      border: '1px solid var(--border)',
+      borderRadius: '20px',
+      padding: '24px',
+    }}>
+      <div style={{ marginBottom: '22px' }}>
+        <p style={{ fontSize: '11px', letterSpacing: '2px', color: 'var(--text-muted)', marginBottom: '6px', fontWeight: 800, textTransform: 'uppercase' }}>
           커리어 12년 주기
         </p>
-        <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-          Top 전성기 <strong style={{ color: '#65a30d' }}>{peakYear}년</strong>을 가을(황금기)로 역산한 12년 사이클
+        <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+          Top 전성기 <strong style={{ color: 'var(--text)' }}>{peakYear}년</strong>을 가을(황금기)로 역산한 12년 사이클
         </p>
       </div>
 
-      {/* Timeline */}
-      <div style={{ display: 'flex', gap: '0', overflowX: 'auto', paddingBottom: '4px' }}>
+      {/* Horizontal timeline — minimal neutral with lime current marker */}
+      <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '4px' }}>
         {cycle.map((item, i) => {
           const meta = SEASON_META[item.season];
+          const active = item.is_current;
           return (
             <motion.div
               key={i}
@@ -53,90 +51,60 @@ export default function SeasonCycle({ cycle, peakYear }: Props) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
               style={{
-                flex: '0 0 auto',
-                minWidth: '120px',
-                maxWidth: '160px',
-                padding: '14px 12px',
-                background: item.is_current ? meta.bg : 'transparent',
-                border: item.is_current
-                  ? `1px solid ${meta.color}40`
-                  : '1px solid transparent',
-                borderRadius: '12px',
-                marginRight: i < cycle.length - 1 ? '4px' : '0',
+                flex: '1 1 0',
+                minWidth: '110px',
+                padding: '16px 12px',
+                background: active ? '#ecfccb' : 'var(--bg)',
+                border: `1px solid ${active ? '#84cc16' : 'var(--border)'}`,
+                borderRadius: '14px',
                 position: 'relative',
               }}
             >
-              {/* Current indicator */}
-              {item.is_current && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '-1px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    background: meta.color,
-                    color: '#000',
-                    fontSize: '9px',
-                    fontWeight: 800,
-                    padding: '2px 8px',
-                    borderRadius: '0 0 6px 6px',
-                    letterSpacing: '1px',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  현재
+              {active && (
+                <div style={{
+                  position: 'absolute',
+                  top: '-8px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  background: '#84cc16',
+                  color: '#1a1a1a',
+                  fontSize: '9px',
+                  fontWeight: 800,
+                  padding: '3px 10px',
+                  borderRadius: '999px',
+                  letterSpacing: '1.5px',
+                  whiteSpace: 'nowrap',
+                }}>
+                  NOW
                 </div>
               )}
 
-              {/* Arrow connector */}
-              {i < cycle.length - 1 && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    right: '-10px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: 'var(--border)',
-                    fontSize: '16px',
-                    zIndex: 1,
-                  }}
-                >
-                  →
-                </div>
-              )}
-
-              <div style={{ textAlign: 'center', marginTop: item.is_current ? '8px' : '0' }}>
-                <span style={{ fontSize: '24px', display: 'block', marginBottom: '6px' }}>
+              <div style={{ textAlign: 'center', marginTop: active ? '6px' : '0' }}>
+                <span style={{ fontSize: '28px', display: 'block', marginBottom: '8px', filter: active ? 'none' : 'grayscale(0.4)', opacity: active ? 1 : 0.7 }}>
                   {meta.icon}
                 </span>
-                <p
-                  style={{
-                    fontSize: '14px',
-                    fontWeight: item.is_current ? 700 : 500,
-                    color: item.is_current ? meta.color : 'var(--text-muted)',
-                    marginBottom: '2px',
-                  }}
-                >
+                <p className="display-font" style={{
+                  fontSize: '18px',
+                  fontWeight: 400,
+                  color: 'var(--text)',
+                  marginBottom: '4px',
+                  letterSpacing: '-0.5px',
+                }}>
                   {meta.label}
                 </p>
-                <p
-                  style={{
-                    fontSize: '11px',
-                    color: item.is_current ? 'var(--text)' : 'var(--text-muted)',
-                    marginBottom: '4px',
-                    opacity: item.is_current ? 1 : 0.6,
-                  }}
-                >
+                <p style={{
+                  fontSize: '11px',
+                  color: 'var(--text-muted)',
+                  marginBottom: '4px',
+                  fontWeight: 600,
+                }}>
                   {item.start_year}–{item.end_year}
                 </p>
-                <p
-                  style={{
-                    fontSize: '10px',
-                    color: 'var(--text-muted)',
-                    lineHeight: 1.4,
-                    opacity: item.is_current ? 1 : 0.5,
-                  }}
-                >
+                <p style={{
+                  fontSize: '10px',
+                  color: 'var(--text-muted)',
+                  lineHeight: 1.4,
+                }}>
                   {SEASON_DESC[item.season]}
                 </p>
               </div>

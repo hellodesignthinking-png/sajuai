@@ -6,10 +6,10 @@ interface Props {
 }
 
 const SEASON_COLOR: Record<CareerSeason, string> = {
-  spring: '#4ade80',
-  summer: '#f97316',
-  autumn: '#D4AF37',
-  winter: '#60a5fa',
+  spring: '#737373',
+  summer: '#404040',
+  autumn: '#1a1a1a',
+  winter: '#737373',
 };
 
 const SEASON_ICON: Record<CareerSeason, string> = {
@@ -101,7 +101,7 @@ export default function SeasonGuidance({ guidance, season }: Props) {
             padding: '18px',
           }}
         >
-          <p style={{ fontSize: '12px', color: '#ef4444', fontWeight: 700, marginBottom: '12px', letterSpacing: '1px' }}>
+          <p style={{ fontSize: '12px', color: '#737373', fontWeight: 700, marginBottom: '12px', letterSpacing: '1px' }}>
             ⚠️ 피해야 할 것
           </p>
           <div style={{ display: 'grid', gap: '10px' }}>
@@ -119,8 +119,8 @@ export default function SeasonGuidance({ guidance, season }: Props) {
       {guidance.transition_warning && (
         <div
           style={{
-            background: 'rgba(239,68,68,0.05)',
-            border: '1px solid rgba(239,68,68,0.2)',
+            background: 'var(--bg)',
+            border: '1px solid var(--border)',
             borderRadius: '12px',
             padding: '14px 18px',
             display: 'flex',
@@ -130,7 +130,7 @@ export default function SeasonGuidance({ guidance, season }: Props) {
         >
           <span style={{ fontSize: '20px', flexShrink: 0 }}>🔔</span>
           <div>
-            <p style={{ fontSize: '12px', color: '#ef4444', fontWeight: 700, marginBottom: '4px', letterSpacing: '1px' }}>
+            <p style={{ fontSize: '12px', color: '#737373', fontWeight: 700, marginBottom: '4px', letterSpacing: '1px' }}>
               계절 전환 경고
             </p>
             <p style={{ fontSize: '13px', color: 'var(--text)', lineHeight: 1.6 }}>
@@ -166,7 +166,7 @@ export default function SeasonGuidance({ guidance, season }: Props) {
         <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
           <span style={{ fontSize: '18px', flexShrink: 0 }}>🚫</span>
           <div>
-            <p style={{ fontSize: '12px', color: '#ef4444', fontWeight: 600, marginBottom: '4px' }}>
+            <p style={{ fontSize: '12px', color: '#737373', fontWeight: 600, marginBottom: '4px' }}>
               피해야 할 콘텐츠 방향
             </p>
             <p style={{ fontSize: '13px', color: 'var(--text)', lineHeight: 1.6 }}>

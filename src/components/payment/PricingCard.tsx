@@ -24,7 +24,7 @@ export default function PricingCard() {
       style={{
         borderRadius: '16px',
         border: '1px solid #84cc16',
-        background: 'linear-gradient(135deg, #f7fee7 0%, #fafaf9 100%)',
+        background: '#f7fee7',
         padding: '28px 24px',
         textAlign: 'center',
       }}

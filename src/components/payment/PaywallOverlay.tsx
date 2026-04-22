@@ -82,7 +82,7 @@ export default function PaywallOverlay({ children }: Props) {
           left: 0,
           right: 0,
           height: '70%',
-          background: 'linear-gradient(to bottom, transparent, #080808)',
+          background: 'linear-gradient(to bottom, transparent, var(--card))',
           pointerEvents: 'none',
         }}
       />

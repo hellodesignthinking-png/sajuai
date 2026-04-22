@@ -222,7 +222,7 @@ export default function OracleChat({ open, onClose, result, userInput }: Props) 
                   padding: '10px 14px',
                   borderRadius: m.role === 'user' ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
                   background: m.role === 'user'
-                    ? 'linear-gradient(135deg, #d9f99d, rgba(132,204,22,0.10))'
+                    ? '#ecfccb'
                     : '#fafaf9',
                   border: `1px solid ${m.role === 'user' ? '#84cc16' : 'rgba(255,255,255,0.08)'}`,
                   fontSize: '14px',
@@ -260,7 +260,7 @@ export default function OracleChat({ open, onClose, result, userInput }: Props) 
                 fontSize: '12px',
                 color: '#e11d48',
                 background: '#ffe4e6',
-                border: '1px solid rgba(239,68,68,0.2)',
+                border: '1px solid var(--border)',
                 borderRadius: '10px',
               }}>
                 {error}
@@ -309,7 +309,7 @@ export default function OracleChat({ open, onClose, result, userInput }: Props) 
                 padding: '10px 16px',
                 borderRadius: '12px',
                 background: input.trim() && !sending
-                  ? 'linear-gradient(135deg, #D4AF37, #b8882a)'
+                  ? '#1a1a1a'
                   : '#f5f5f4',
                 color: input.trim() && !sending ? '#000' : 'var(--text-muted)',
                 border: 'none',

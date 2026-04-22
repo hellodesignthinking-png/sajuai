@@ -145,7 +145,7 @@ export default function MyResults({ onClose, onRestore }: MyResultsProps) {
                         onClick={() => { onRestore(input, r.result as AnalysisResult); onClose(); }}
                         style={{
                           padding: '6px 14px', fontSize: '13px', fontWeight: 600,
-                          background: 'linear-gradient(135deg, #65a30d, #65a30d)',
+                          background: '#84cc16',
                           border: 'none', borderRadius: '8px', color: '#000', cursor: 'pointer',
                         }}
                       >
