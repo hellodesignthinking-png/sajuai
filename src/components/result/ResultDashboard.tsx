@@ -33,65 +33,64 @@ interface Props {
   onOpenAuth: () => void;
 }
 
-// V65 Careet-style light palette — lime primary + editorial supporting accents.
+// V67 minimal palette — single lime accent, everything else neutral grayscale.
+// The old Accent enum stays for type compatibility but all "colors" now map
+// to the same neutral tokens. Lime is reserved for CTA / active states only.
 type Accent = 'lime' | 'gold' | 'slate' | 'blue' | 'rose' | 'amber' | 'violet' | 'teal';
+const NEUTRAL = { main: '#1a1a1a', soft: '#fafaf9', ink: '#404040' };
+const LIME    = { main: '#84cc16', soft: '#ecfccb', ink: '#3f6212' };
 const ACCENTS: Record<Accent, { main: string; soft: string; ink: string }> = {
-  lime:   { main: '#84cc16', soft: '#ecfccb', ink: '#3f6212' },
-  gold:   { main: '#b8860b', soft: '#fef3c7', ink: '#78350f' },
-  slate:  { main: '#64748b', soft: '#f1f5f9', ink: '#334155' },
-  blue:   { main: '#3b82f6', soft: '#dbeafe', ink: '#1e40af' },
-  rose:   { main: '#f43f5e', soft: '#ffe4e6', ink: '#9f1239' },
-  amber:  { main: '#f59e0b', soft: '#fef3c7', ink: '#92400e' },
-  violet: { main: '#8b5cf6', soft: '#ede9fe', ink: '#5b21b6' },
-  teal:   { main: '#14b8a6', soft: '#ccfbf1', ink: '#115e59' },
+  lime:   LIME,       // only used intentionally (CTA, active, live dots)
+  gold:   NEUTRAL,
+  slate:  NEUTRAL,
+  blue:   NEUTRAL,
+  rose:   NEUTRAL,
+  amber:  NEUTRAL,
+  violet: NEUTRAL,
+  teal:   NEUTRAL,
 };
 
-function SectionTitle({ children, icon, accent = 'lime', kicker }: {
+function SectionTitle({ children, icon, kicker }: {
   children: React.ReactNode;
   icon?: string;
-  accent?: Accent;
+  accent?: Accent;        // kept for API compat, ignored in V67 minimal mode
   kicker?: string;
 }) {
-  const a = ACCENTS[accent];
   return (
-    <div style={{ marginBottom: '20px' }}>
+    <div style={{ marginBottom: '24px' }}>
       {kicker && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-          <span style={{
-            display: 'inline-block',
-            width: '4px', height: '16px',
-            background: a.main, borderRadius: '2px',
-          }} />
+        <div style={{ marginBottom: '12px' }}>
           <span style={{
             fontSize: '11px',
             letterSpacing: '2.5px',
-            color: a.ink,
-            fontWeight: 800,
+            color: 'var(--text-muted)',
+            fontWeight: 700,
             textTransform: 'uppercase',
           }}>
             {kicker}
           </span>
         </div>
       )}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
         {icon && (
           <span style={{
-            fontSize: '22px',
-            width: '42px',
-            height: '42px',
+            fontSize: '24px',
+            width: '46px',
+            height: '46px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: a.soft,
-            borderRadius: '12px',
+            background: 'var(--bg)',
+            border: '1px solid var(--border)',
+            borderRadius: '14px',
             flexShrink: 0,
           }}>
             {icon}
           </span>
         )}
-        <h2 style={{
-          fontSize: 'clamp(22px, 4.5vw, 26px)',
-          fontWeight: 900,
+        <h2 className="display-font" style={{
+          fontSize: 'clamp(24px, 5vw, 30px)',
+          fontWeight: 400,
           color: 'var(--text)',
           flex: 1,
           letterSpacing: '-0.5px',
@@ -110,32 +109,21 @@ function ThemeCard({ accent = 'lime', children, style }: {
   children: React.ReactNode;
   style?: React.CSSProperties;
 }) {
-  const a = ACCENTS[accent];
+  // V67 minimal: flat white card, thin border, no top accent strip.
   return (
     <div style={{
       background: 'var(--card)',
       border: '1px solid var(--border)',
       borderRadius: '20px',
-      padding: '24px',
-      boxShadow: 'var(--shadow)',
-      position: 'relative',
-      overflow: 'hidden',
+      padding: '28px 24px',
       ...style,
     }}>
-      {/* Top accent strip */}
-      <div style={{
-        position: 'absolute',
-        top: 0, left: 0, right: 0,
-        height: '3px',
-        background: a.main,
-      }} />
       {children}
     </div>
   );
 }
 
-function WisdomBox({ accent = 'lime', children }: { accent?: Accent; children: React.ReactNode }) {
-  const a = ACCENTS[accent];
+function WisdomBox({ children }: { accent?: Accent; children: React.ReactNode }) {
   return (
     <div style={{
       marginBottom: '16px',
@@ -143,9 +131,9 @@ function WisdomBox({ accent = 'lime', children }: { accent?: Accent; children: R
       fontSize: 'var(--fs-base, 15px)',
       lineHeight: 1.7,
       color: 'var(--text-secondary)',
-      background: a.soft,
-      borderLeft: `3px solid ${a.main}`,
-      borderRadius: '8px',
+      background: 'var(--bg)',
+      border: '1px solid var(--border)',
+      borderRadius: '10px',
     }}>
       {children}
     </div>
@@ -257,8 +245,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
           }}>
             {userInput.birthYear}년 · {calLabel} · {age}세
           </span>
-          나의 커리어{' '}
-          <span style={{ color: 'var(--lime-hover)' }}>전략 리포트</span>
+          나의 커리어 전략 리포트
         </motion.h1>
 
         <motion.p
@@ -294,14 +281,14 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
           >
             {userInput.specialty && (
               <div>
-                <span style={{ color: 'var(--lime-hover)', fontWeight: 700 }}>💼 전문 분야</span>
-                <span style={{ marginLeft: '10px' }}>{userInput.specialty}</span>
+                <span style={{ color: 'var(--text-muted)', fontWeight: 700, fontSize: '11px', letterSpacing: '1.5px', textTransform: 'uppercase' }}>전문 분야</span>
+                <span style={{ marginLeft: '12px', color: 'var(--text)', fontWeight: 600 }}>{userInput.specialty}</span>
               </div>
             )}
             {userInput.currentSituation && (
               <div>
-                <span style={{ color: 'var(--accent-blue)', fontWeight: 700 }}>📝 현재 상황</span>
-                <span style={{ marginLeft: '10px' }}>{userInput.currentSituation}</span>
+                <span style={{ color: 'var(--text-muted)', fontWeight: 700, fontSize: '11px', letterSpacing: '1.5px', textTransform: 'uppercase' }}>현재 상황</span>
+                <span style={{ marginLeft: '12px', color: 'var(--text)', fontWeight: 600 }}>{userInput.currentSituation}</span>
               </div>
             )}
           </motion.div>
@@ -370,12 +357,12 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
             <WisdomBox accent="gold">
               💡 격국은 당신의 <strong style={{ color: 'var(--text)' }}>커리어 유형(Career Type)</strong>을 결정합니다. 일간이 "나는 누구인가"라면, 격국은 "나는 어떻게 일하는 사람인가"예요.
             </WisdomBox>
-            <ThemeCard accent="gold">
-              <div style={{ marginBottom: '20px' }}>
-                <p style={{ fontSize: '11px', letterSpacing: '2px', color: ACCENTS.gold.ink, marginBottom: '8px', fontWeight: 700, textTransform: 'uppercase' }}>
+            <ThemeCard>
+              <div style={{ marginBottom: '22px' }}>
+                <p style={{ fontSize: '11px', letterSpacing: '2px', color: 'var(--text-muted)', marginBottom: '10px', fontWeight: 700, textTransform: 'uppercase' }}>
                   Structural Pattern
                 </p>
-                <h3 style={{ fontSize: 'clamp(28px, 6vw, 36px)', fontWeight: 900, letterSpacing: '-0.8px', color: ACCENTS.gold.ink, lineHeight: 1.1 }}>
+                <h3 className="display-font" style={{ fontSize: 'clamp(30px, 7vw, 42px)', fontWeight: 400, letterSpacing: '-1px', color: 'var(--text)', lineHeight: 1.05 }}>
                   {result.gyeokguk.name}
                 </h3>
               </div>
@@ -448,24 +435,23 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
             <SectionTitle icon="🏆" accent="gold" kicker="PEAK · 전성기">
               나의 최고 전성기
             </SectionTitle>
-            <ThemeCard accent="gold">
+            <ThemeCard style={{ borderLeft: `3px solid ${LIME.main}` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
                 <div style={{
-                  width: '68px', height: '68px',
-                  borderRadius: '18px',
-                  background: ACCENTS.gold.soft,
-                  border: `1px solid ${ACCENTS.gold.main}`,
+                  width: '64px', height: '64px',
+                  borderRadius: '16px',
+                  background: LIME.soft,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '30px', flexShrink: 0,
                 }}>
                   👑
                 </div>
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '2px', letterSpacing: '1.5px', fontWeight: 700, textTransform: 'uppercase' }}>
+                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', letterSpacing: '1.5px', fontWeight: 700, textTransform: 'uppercase' }}>
                     커리어 최정점 해
                   </p>
-                  <p style={{ fontSize: 'clamp(30px, 6vw, 38px)', fontWeight: 900, color: ACCENTS.gold.ink, lineHeight: 1, letterSpacing: '-1px' }}>
-                    {topYear.year}년
+                  <p className="display-font" style={{ fontSize: 'clamp(36px, 7vw, 48px)', fontWeight: 400, color: 'var(--text)', lineHeight: 1, letterSpacing: '-1.5px' }}>
+                    {topYear.year}
                   </p>
                 </div>
               </div>
@@ -501,31 +487,34 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
             <WisdomBox accent="lime">
               💡 인생의 4계절(봄 씨앗 · 여름 성장 · 가을 수확 · 겨울 내실)은 <strong style={{ color: 'var(--text)' }}>대운의 흐름</strong>을 의미합니다. 지금이 '확장할 때'인지 '수축할 때'인지에 따라 전략이 갈립니다.
             </WisdomBox>
-            <ThemeCard accent="lime" style={{ display: 'grid', gap: '22px' }}>
+            <ThemeCard style={{ display: 'grid', gap: '24px' }}>
               <div>
-                <p style={{ fontSize: '10px', color: ACCENTS.lime.main, letterSpacing: '2.5px', marginBottom: '8px', fontWeight: 700, opacity: 0.75 }}>
-                  CURRENT SEASON
-                </p>
-                <h3 style={{ fontSize: 'clamp(22px, 5vw, 28px)', fontWeight: 900, color: ACCENTS.lime.main, marginBottom: '12px', lineHeight: 1.25 }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: LIME.main }} />
+                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', letterSpacing: '2px', fontWeight: 700, textTransform: 'uppercase' }}>
+                    Current Season
+                  </p>
+                </div>
+                <h3 className="display-font" style={{ fontSize: 'clamp(26px, 5.5vw, 32px)', fontWeight: 400, color: 'var(--text)', marginBottom: '14px', lineHeight: 1.15, letterSpacing: '-0.5px' }}>
                   {result.career_sync.season_label}
                 </h3>
-                <p style={{ fontSize: 'var(--fs-base)', lineHeight: 1.85, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
+                <p style={{ fontSize: 'var(--fs-base)', lineHeight: 1.85, color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>
                   {result.career_sync.season_focus}
                 </p>
               </div>
 
               {result.career_sync.recommended_majors?.length > 0 && (
                 <div>
-                  <p style={{ fontSize: '11px', color: ACCENTS.lime.main, marginBottom: '10px', letterSpacing: '1.5px', fontWeight: 700, opacity: 0.7 }}>
-                    📚 추천 전공
+                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px', letterSpacing: '1.5px', fontWeight: 700, textTransform: 'uppercase' }}>
+                    추천 전공
                   </p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                     {result.career_sync.recommended_majors.map((m) => (
                       <span key={m} style={{
-                        fontSize: 'var(--fs-sm)', color: ACCENTS.lime.main, fontWeight: 600,
-                        padding: '8px 14px',
-                        background: ACCENTS.lime.soft,
-                        border: `1px solid ${ACCENTS.lime.main}50`,
+                        fontSize: 'var(--fs-sm)', color: 'var(--text)', fontWeight: 600,
+                        padding: '7px 14px',
+                        background: 'var(--bg)',
+                        border: '1px solid var(--border-strong)',
                         borderRadius: '999px',
                       }}>{m}</span>
                     ))}
@@ -535,16 +524,16 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
 
               {result.career_sync.recommended_jobs?.length > 0 && (
                 <div>
-                  <p style={{ fontSize: '11px', color: ACCENTS.teal.main, marginBottom: '10px', letterSpacing: '1.5px', fontWeight: 700, opacity: 0.75 }}>
-                    💼 추천 직업군
+                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px', letterSpacing: '1.5px', fontWeight: 700, textTransform: 'uppercase' }}>
+                    추천 직업군
                   </p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                     {result.career_sync.recommended_jobs.map((j) => (
                       <span key={j} style={{
-                        fontSize: 'var(--fs-sm)', color: ACCENTS.teal.main, fontWeight: 600,
-                        padding: '8px 14px',
-                        background: ACCENTS.teal.soft,
-                        border: `1px solid ${ACCENTS.teal.main}50`,
+                        fontSize: 'var(--fs-sm)', color: 'var(--text)', fontWeight: 600,
+                        padding: '7px 14px',
+                        background: 'var(--bg)',
+                        border: '1px solid var(--border-strong)',
                         borderRadius: '999px',
                       }}>{j}</span>
                     ))}
@@ -553,12 +542,12 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
               )}
 
               <div style={{
-                padding: '14px 16px',
+                padding: '16px 18px',
                 background: 'var(--bg)',
                 borderRadius: '12px',
-                border: '1px solid rgba(255,255,255,0.05)',
+                border: '1px solid var(--border)',
               }}>
-                <p style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '6px', letterSpacing: '1.5px', fontWeight: 700 }}>
+                <p style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '6px', letterSpacing: '1.5px', fontWeight: 700, textTransform: 'uppercase' }}>
                   추천 근거
                 </p>
                 <p style={{ fontSize: 'var(--fs-sm)', lineHeight: 1.8, color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>
@@ -629,22 +618,22 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                 <GoldenYearsChart data={result.top5_golden_years || []} />
                 <div style={{ marginTop: '24px', display: 'grid', gap: '12px' }}>
                   {sortedYears.map((y, i) => {
-                    const rankColor = i === 0 ? ACCENTS.gold.main : i === 1 ? ACCENTS.slate.main : i === 2 ? ACCENTS.amber.main : '#cbd5e1';
-                    const rankBg = i === 0 ? ACCENTS.gold.soft : i === 1 ? ACCENTS.slate.soft : i === 2 ? ACCENTS.amber.soft : '#f1f5f9';
+                    const isTop = i === 0;
                     return (
                       <div key={y.year} style={{
                         display: 'flex', alignItems: 'flex-start', gap: '14px',
-                        padding: '12px 14px',
+                        padding: '14px 16px',
                         background: 'var(--bg)',
                         borderRadius: '12px',
                         border: '1px solid var(--border)',
+                        borderLeft: isTop ? `3px solid ${LIME.main}` : '1px solid var(--border)',
                       }}>
                         <span style={{
                           width: '32px', height: '32px',
                           borderRadius: '10px',
-                          background: rankBg,
-                          border: `1px solid ${rankColor}`,
-                          color: rankColor,
+                          background: isTop ? LIME.main : 'var(--card)',
+                          border: isTop ? 'none' : '1px solid var(--border-strong)',
+                          color: isTop ? '#1a1a1a' : 'var(--text-muted)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -656,18 +645,18 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                         </span>
                         <div style={{ flex: 1 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
-                            <span style={{ fontSize: 'var(--fs-lg)', fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.3px' }}>
-                              {y.year}년
+                            <span className="display-font" style={{ fontSize: 'var(--fs-xl)', fontWeight: 400, color: 'var(--text)', letterSpacing: '-0.5px' }}>
+                              {y.year}
                             </span>
                             <span style={{
                               fontSize: '11px',
-                              color: rankColor,
-                              background: rankBg,
+                              color: 'var(--text-muted)',
                               padding: '2px 10px',
                               borderRadius: '999px',
                               fontWeight: 700,
+                              border: '1px solid var(--border)',
                             }}>
-                              {y.score}점
+                              {y.score}
                             </span>
                           </div>
                           <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
@@ -695,17 +684,19 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                 <LifeCycleChart data={result.life_cycle_scores || []} currentAge={age} />
                 <div style={{ marginTop: '24px', display: 'grid', gap: '12px' }}>
                   {(result.life_cycle_scores ?? []).map((l) => (
-                    <div key={l.age_range} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px 14px', background: 'var(--bg)', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                      <span style={{
-                        fontSize: 'var(--fs-sm)',
-                        fontWeight: 800,
-                        color: ACCENTS.teal.ink,
-                        background: ACCENTS.teal.soft,
+                    <div key={l.age_range} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '14px 16px', background: 'var(--bg)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                      <span className="display-font" style={{
+                        fontSize: 'var(--fs-base)',
+                        fontWeight: 400,
+                        color: 'var(--text)',
+                        background: 'var(--card)',
+                        border: '1px solid var(--border-strong)',
                         padding: '6px 10px',
                         borderRadius: '8px',
-                        minWidth: '52px',
+                        minWidth: '56px',
                         textAlign: 'center',
                         marginTop: '2px',
+                        letterSpacing: '-0.3px',
                       }}>
                         {l.age_range}
                       </span>
@@ -799,7 +790,7 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
           <motion.section {...fadeUp} transition={{ duration: 0.5, delay: 0.45 }}>
             <SectionTitle icon="⬟" accent="violet" kicker="PENTAGON · 역량 레이더">커리어 오각형 스탯</SectionTitle>
             <PaywallOverlay>
-              <ThemeCard accent="violet">
+              <ThemeCard>
                 <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)', marginBottom: '16px' }}>
                   일간 · 십성 · 오행을 조합해 도출한 커리어 역량 오각형
                 </p>
@@ -815,35 +806,35 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                       <PolarGrid stroke="#e7e5e4" strokeDasharray="3 3" />
                       <PolarAngleAxis
                         dataKey="subject"
-                        tick={{ fill: '#44403c', fontSize: 13, fontWeight: 700 }}
+                        tick={{ fill: '#404040', fontSize: 13, fontWeight: 700 }}
                       />
                       <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                      <Radar name="stat" dataKey="A" stroke="#8b5cf6" strokeWidth={2.5} fill="#8b5cf6" fillOpacity={0.25} />
+                      <Radar name="stat" dataKey="A" stroke="#1a1a1a" strokeWidth={2} fill="#1a1a1a" fillOpacity={0.08} />
                     </RadarChart>
                   </ResponsiveContainer>
                 </div>
                 <div style={{
-                  marginTop: '16px',
+                  marginTop: '20px',
                   display: 'grid',
                   gridTemplateColumns: 'repeat(5, 1fr)',
-                  gap: '8px',
+                  gap: '6px',
                 }}>
                   {([
-                    ['리더십', result.career_pentagon.leadership, ACCENTS.violet],
-                    ['실행력', result.career_pentagon.execution, ACCENTS.teal],
-                    ['분석력', result.career_pentagon.analysis, ACCENTS.blue],
-                    ['창의성', result.career_pentagon.creativity, ACCENTS.rose],
-                    ['공감력', result.career_pentagon.empathy, ACCENTS.lime],
-                  ] as const).map(([label, val, a]) => (
+                    ['리더십', result.career_pentagon.leadership],
+                    ['실행력', result.career_pentagon.execution],
+                    ['분석력', result.career_pentagon.analysis],
+                    ['창의성', result.career_pentagon.creativity],
+                    ['공감력', result.career_pentagon.empathy],
+                  ] as const).map(([label, val]) => (
                     <div key={label} style={{
-                      padding: '12px 6px',
-                      background: a.soft,
-                      border: `1px solid ${a.main}`,
+                      padding: '14px 6px',
+                      background: 'var(--bg)',
+                      border: '1px solid var(--border)',
                       borderRadius: '12px',
                       textAlign: 'center',
                     }}>
-                      <div style={{ fontSize: '10px', color: a.ink, marginBottom: '4px', letterSpacing: '0.5px', fontWeight: 700 }}>{label}</div>
-                      <div style={{ fontSize: '22px', fontWeight: 900, color: a.ink }}>{val}</div>
+                      <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '4px', letterSpacing: '0.5px', fontWeight: 700 }}>{label}</div>
+                      <div className="display-font" style={{ fontSize: '28px', fontWeight: 400, color: 'var(--text)' }}>{val}</div>
                     </div>
                   ))}
                 </div>
@@ -871,25 +862,24 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
               💡 사주의 <strong style={{ color: 'var(--text)' }}>십성(비겁·식상·재성·관성·인성)</strong>은 당신이 조직·관계에서 자연스럽게 맡는 역할을 알려줍니다. 빛나는 파트너, 피해야 할 충돌, 정치력까지 진단합니다.
             </WisdomBox>
             <PaywallOverlay>
-              <ThemeCard accent="violet" style={{ display: 'grid', gap: '12px' }}>
+              <ThemeCard style={{ display: 'grid', gap: '10px' }}>
                 {[
-                  { label: '리더십 스타일',     value: result.relationship_code.leadership_style,    a: ACCENTS.violet, icon: '🎯' },
-                  { label: '파트너십 스타일',   value: result.relationship_code.partnership_style,   a: ACCENTS.blue,   icon: '🤝' },
-                  { label: '조직 내 처세',      value: result.relationship_code.political_navigation, a: ACCENTS.gold,  icon: '⚖️' },
-                  { label: '십성 균형 진단',    value: result.relationship_code.ten_gods_balance,    a: ACCENTS.teal,   icon: '🔮' },
-                  { label: '시너지 내는 사람',  value: result.relationship_code.synergy_people,      a: ACCENTS.lime,   icon: '✨' },
-                  { label: '충돌하는 사람',     value: result.relationship_code.friction_people,     a: ACCENTS.rose,   icon: '⚠️' },
+                  { label: '리더십 스타일',     value: result.relationship_code.leadership_style,    icon: '🎯' },
+                  { label: '파트너십 스타일',   value: result.relationship_code.partnership_style,   icon: '🤝' },
+                  { label: '조직 내 처세',      value: result.relationship_code.political_navigation, icon: '⚖️' },
+                  { label: '십성 균형 진단',    value: result.relationship_code.ten_gods_balance,    icon: '🔮' },
+                  { label: '시너지 내는 사람',  value: result.relationship_code.synergy_people,      icon: '✨' },
+                  { label: '충돌하는 사람',     value: result.relationship_code.friction_people,     icon: '⚠️' },
                 ].map((r) => (
                   <div key={r.label} style={{
                     padding: '16px 18px',
                     background: 'var(--bg)',
                     border: '1px solid var(--border)',
-                    borderLeft: `3px solid ${r.a.main}`,
                     borderRadius: '12px',
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                      <span style={{ fontSize: '16px' }}>{r.icon}</span>
-                      <p style={{ fontSize: '11px', letterSpacing: '1.5px', color: r.a.ink, fontWeight: 800, textTransform: 'uppercase' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                      <span style={{ fontSize: '14px' }}>{r.icon}</span>
+                      <p style={{ fontSize: '11px', letterSpacing: '1.5px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
                         {r.label}
                       </p>
                     </div>
@@ -911,35 +901,36 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
               💡 "성공한다"가 아니라 "지금 이 계절에서 <strong style={{ color: 'var(--text)' }}>무엇을 버리고 무엇을 취할지</strong>"에 대한 Action Plan입니다.
             </WisdomBox>
             <PaywallOverlay>
-              <ThemeCard accent="rose" style={{ display: 'grid', gap: '18px' }}>
+              <ThemeCard style={{ display: 'grid', gap: '18px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div style={{
-                    padding: '14px',
-                    background: 'rgba(239,68,68,0.05)',
-                    border: '1px solid rgba(239,68,68,0.2)',
-                    borderRadius: '10px',
+                    padding: '16px',
+                    background: 'var(--bg)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '12px',
                   }}>
-                    <p style={{ fontSize: '11px', color: '#e11d48', fontWeight: 700, marginBottom: '10px', letterSpacing: '1px' }}>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 800, marginBottom: '10px', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
                       🗑 버려야 할 습관
                     </p>
                     <ul style={{ paddingLeft: '18px', margin: 0, display: 'grid', gap: '6px' }}>
                       {(result.survival_strategy.habits_to_abandon ?? []).map((h, i) => (
-                        <li key={i} style={{ fontSize: '13px', lineHeight: 1.6, color: 'var(--text)' }}>{h}</li>
+                        <li key={i} style={{ fontSize: 'var(--fs-sm)', lineHeight: 1.7, color: 'var(--text)' }}>{h}</li>
                       ))}
                     </ul>
                   </div>
                   <div style={{
-                    padding: '14px',
-                    background: 'rgba(74,222,128,0.05)',
-                    border: '1px solid rgba(74,222,128,0.2)',
-                    borderRadius: '10px',
+                    padding: '16px',
+                    background: 'var(--bg)',
+                    border: '1px solid var(--border)',
+                    borderLeft: `3px solid ${LIME.main}`,
+                    borderRadius: '12px',
                   }}>
-                    <p style={{ fontSize: '11px', color: '#16a34a', fontWeight: 700, marginBottom: '10px', letterSpacing: '1px' }}>
+                    <p style={{ fontSize: '11px', color: LIME.ink, fontWeight: 800, marginBottom: '10px', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
                       ⚡ 취해야 할 에너지
                     </p>
                     <ul style={{ paddingLeft: '18px', margin: 0, display: 'grid', gap: '6px' }}>
                       {(result.survival_strategy.energy_to_embrace ?? []).map((e, i) => (
-                        <li key={i} style={{ fontSize: '13px', lineHeight: 1.6, color: 'var(--text)' }}>{e}</li>
+                        <li key={i} style={{ fontSize: 'var(--fs-sm)', lineHeight: 1.7, color: 'var(--text)' }}>{e}</li>
                       ))}
                     </ul>
                   </div>
@@ -951,15 +942,15 @@ export default function ResultDashboard({ result, userInput, onReset, onOpenAuth
                   { label: '1년 후 비전', value: result.survival_strategy.one_year_vision },
                 ].map((r) => (
                   <div key={r.label} style={{
-                    padding: '14px 16px',
-                    background: 'var(--lime-soft)',
+                    padding: '16px 18px',
+                    background: 'var(--bg)',
                     border: '1px solid var(--border)',
-                    borderRadius: '10px',
+                    borderRadius: '12px',
                   }}>
-                    <p style={{ fontSize: '11px', color: '#65a30d', fontWeight: 700, marginBottom: '6px', letterSpacing: '1px' }}>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 800, marginBottom: '8px', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
                       {r.label}
                     </p>
-                    <p style={{ fontSize: '13px', lineHeight: 1.8, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
+                    <p style={{ fontSize: 'var(--fs-sm)', lineHeight: 1.8, color: 'var(--text)', whiteSpace: 'pre-wrap' }}>
                       {r.value}
                     </p>
                   </div>

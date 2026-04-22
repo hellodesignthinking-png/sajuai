@@ -20,8 +20,8 @@ const CustomTooltip = ({ active, payload }: any) => {
       maxWidth: '220px',
       boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
     }}>
-      <p style={{ color: '#115e59', fontWeight: 800, marginBottom: '5px', fontSize: '14px' }}>
-        {d.age_range} — <span style={{ color: '#14b8a6' }}>{d.score}점</span>
+      <p style={{ color: '#1a1a1a', fontWeight: 800, marginBottom: '5px', fontSize: '14px' }}>
+        {d.age_range} — <span style={{ color: '#404040' }}>{d.score}</span>
       </p>
       <p style={{ color: '#44403c', fontSize: '13px', lineHeight: 1.6 }}>{d.description}</p>
     </div>
@@ -43,17 +43,10 @@ export default function LifeCycleChart({ data, currentAge }: Props) {
     <div style={{ width: '100%', height: 270 }}>
       <ResponsiveContainer>
         <AreaChart data={data} margin={{ top: 12, right: 12, left: -20, bottom: 8 }}>
-          <defs>
-            <linearGradient id="tealGradLC" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%"  stopColor="#14b8a6" stopOpacity={0.35} />
-              <stop offset="50%" stopColor="#14b8a6" stopOpacity={0.12} />
-              <stop offset="95%" stopColor="#14b8a6" stopOpacity={0.01} />
-            </linearGradient>
-          </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
           <XAxis
             dataKey="age_range"
-            tick={{ fill: '#44403c', fontSize: 13, fontWeight: 700 }}
+            tick={{ fill: '#404040', fontSize: 13, fontWeight: 700 }}
             axisLine={false}
             tickLine={false}
           />
@@ -65,7 +58,7 @@ export default function LifeCycleChart({ data, currentAge }: Props) {
           />
           <Tooltip
             content={<CustomTooltip />}
-            cursor={{ stroke: '#14b8a6', strokeWidth: 1.5, strokeDasharray: '4 2' }}
+            cursor={{ stroke: '#1a1a1a', strokeWidth: 1, strokeDasharray: '4 2' }}
           />
           {data.find((d) => d.age_range === currentRange) && (
             <ReferenceLine
@@ -78,18 +71,19 @@ export default function LifeCycleChart({ data, currentAge }: Props) {
                 position: 'insideTopRight',
                 fill: '#3f6212',
                 fontSize: 11,
-                fontWeight: 700,
+                fontWeight: 800,
               }}
             />
           )}
           <Area
             type="monotone"
             dataKey="score"
-            stroke="#14b8a6"
-            strokeWidth={3}
-            fill="url(#tealGradLC)"
-            dot={{ fill: '#14b8a6', r: 5, strokeWidth: 2, stroke: '#fff' }}
-            activeDot={{ r: 7, fill: '#0891b2', strokeWidth: 2, stroke: '#fff' }}
+            stroke="#1a1a1a"
+            strokeWidth={2}
+            fill="#1a1a1a"
+            fillOpacity={0.06}
+            dot={{ fill: '#1a1a1a', r: 4, strokeWidth: 2, stroke: '#fff' }}
+            activeDot={{ r: 6, fill: '#84cc16', strokeWidth: 2, stroke: '#fff' }}
           />
         </AreaChart>
       </ResponsiveContainer>

@@ -27,8 +27,8 @@ const CustomTooltip = ({ active, payload }: any) => {
   );
 };
 
-// Rank palette — lime #1, then supporting neutrals
-const BAR_COLORS = ['#84cc16', '#65a30d', '#a3a3a3', '#d4d4d4', '#e5e5e5'];
+// V67 monochrome — #1 gets lime, rest neutral gray ramp
+const BAR_COLORS = ['#84cc16', '#404040', '#737373', '#a3a3a3', '#d4d4d4'];
 
 export default function GoldenYearsChart({ data }: Props) {
   const sorted = [...data].sort((a, b) => b.score - a.score);
